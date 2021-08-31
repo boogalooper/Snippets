@@ -28,3 +28,4 @@ function main() {
         executeAction(s2t("set"), d, DialogModes.NO);
     }
 }
+

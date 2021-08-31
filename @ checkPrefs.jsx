@@ -32,7 +32,7 @@ for (var i = 0; i < len; i++) {
     //r.putIndex(keys[i], 1)
     r.putProperty(s2t('property'), keys[i]);
     //   r.putClass(s2t('eyedropperTool'))
-    r.putEnumerated(s2t('layer'), s2t('targetEnum'), s2t('ordinal'));
+    r.putEnumerated(s2t('action'), s2t('targetEnum'), s2t('ordinal'));
     try {
         executeActionGet(r);
         logFile.writeln(t2s(keys[i]))

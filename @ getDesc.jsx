@@ -3,17 +3,17 @@ s2t = stringIDToTypeID;
 
 /*
 (r = new ActionReference());//.putProperty(s2t('property'), p = s2t('textKey'))
-r.putEnumerated(s2t('path'), s2t('ordinal'), s2t('targetEnum'));
+r.putEnumerated(s2t('contentLayer'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 eval('textKey = ' + executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
 $.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')))
 */
 
 (r = new ActionReference());//.putProperty(s2t('property'), p = s2t('textKey'))
-r.putEnumerated(s2t('path'), s2t('ordinal'), s2t('targetEnum'));
-$.writeln(executeActionGet(r).getObjectValue(s2t('pathContents')).getList(s2t('pathComponents')).count)
+r.putEnumerated(s2t('action'), s2t('ordinal'), s2t('targetEnum'));
+checkDesc(executeActionGet(r))
 
-checkDesc(executeActionGet(r).getObjectValue(s2t('pathContents')).getList(s2t('pathComponents')).getObjectValue(0).getList(s2t('subpathListKey')).getObjectValue(0).getBoolean(s2t('closedSubpath')))
+
 function checkDesc(d) {
     var c = d.count,
         str = '';

@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
 
+
+    {
+        "type": "extendscript-debug",
+        "request": "launch",
+        "name": "@ checkPrefs.jsx",
+        "program": "${workspaceFolder}/@ checkPrefs.jsx",
+        "stopOnEntry": false
+    },
+
      
         {
             "type": "extendscript-debug",
