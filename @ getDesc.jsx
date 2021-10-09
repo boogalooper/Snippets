@@ -1,17 +1,79 @@
 ﻿#target photoshop
 s2t = stringIDToTypeID;
 
-/*
-(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('textKey'))
-r.putEnumerated(s2t('contentLayer'), s2t('ordinal'), s2t('targetEnum'));
+
+(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('textKey'));
+r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 eval('textKey = ' + executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
 $.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')))
+
+/*
+(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('textKey'))
+r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
+checkDesc(executeActionGet(r))
 */
 
-(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('textKey'))
-r.putEnumerated(s2t('action'), s2t('ordinal'), s2t('targetEnum'));
-checkDesc(executeActionGet(r))
+/*
+s2t = stringIDToTypeID;
+
+(r = new ActionReference()).putProperty(s2t('property'), p = s2t('hasBackgroundLayer'));
+r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'))
+var indexFrom = executeActionGet(r).getBoolean(p) ? 0 : 1;
+
+(r = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
+r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
+var len = executeActionGet(r).getInteger(p),
+    vis = [s2t('hide'), s2t('show')],
+    lrs = [];
+
+for (var i = indexFrom; i <= len; i++) {
+    (r = new ActionReference()).putProperty(s2t('property'), n = s2t('name'))
+    r.putIndex(s2t('layer'), i);
+    (r1 = new ActionReference()).putProperty(s2t('property'), v = s2t('visible'))
+    r1.putIndex(s2t('layer'), i);
+    lrs.push({ name: executeActionGet(r).getString(n), visible: Number(executeActionGet(r1).getBoolean(v)) });
+}
+
+(r = new ActionReference()).putOffset(s2t('document'), -1);
+(d = new ActionDescriptor()).putReference(s2t('target'), r);
+executeAction(s2t('select'), d, DialogModes.NO);
+
+do {
+    var cur = lrs.shift();
+    (r = new ActionReference()).putName(s2t('layer'), cur.name);
+    (d = new ActionDescriptor()).putReference(s2t('target'), r);
+    try { executeAction(vis[cur.visible], d, DialogModes.NO) } catch (e) { };
+} while (lrs.length)
+
+*/
+
+/** 
+var s2t = stringIDToTypeID;
+
+(r = new ActionReference).putProperty(s2t('property'), p = s2t('targetLayersIDs'));
+r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
+var lrs = executeActionGet(r).getList(p),
+    sel = new ActionReference();
+
+for (var i = 0; i < lrs.count; i++) {
+    sel.putIdentifier(s2t('layer'), s = lrs.getReference(i).getIdentifier(s2t('layerID')));
+
+    (r = new ActionReference).putProperty(s2t('property'), p = s2t('layerKind'));
+    r.putIdentifier(s2t('layer'), s);
+    if (executeActionGet(r).getInteger(p) == 1) {
+        (r = new ActionReference).putIdentifier(s2t('layer'), s);
+        (d = new ActionDescriptor()).putReference(s2t("target"), r);
+        executeAction(s2t('select'), d, DialogModes.NO);
+        executeAction(s2t('delete'), undefined, DialogModes.NO);
+    }
+}
+
+(d = new ActionDescriptor()).putReference(s2t("target"), sel);
+executeAction(s2t('select'), d, DialogModes.NO);*/
+
+
+
 
 
 function checkDesc(d) {

@@ -6,6 +6,8 @@
     "configurations": [
 
 
+
+
     {
         "type": "extendscript-debug",
         "request": "launch",
@@ -28,8 +30,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Layers - make separate paths from selection.jsx",
-        "program": "${workspaceFolder}/Layers - make separate paths from selection.jsx",
+        "name": "Layers - update masks v2.jsx",
+        "program": "${workspaceFolder}/Layers - update masks v2.jsx",
         "stopOnEntry": false
     },
 

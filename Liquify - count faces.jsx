@@ -10,27 +10,30 @@
 activeDocument.suspendHistory('Count faces', 'countFaces()')
 
 function countFaces() {
-    try {
+
     var lr = new AM('layer'),
         doc = new AM('document'),
         pth = new AM('path')
 
     lr.copyCurentToLayer()
-    lr.liquify()
-    lr.fade('difference')
-    lr.levels([5, 0.5, 20])
-    lr.blur(10)
-    lr.equalize()
-    doc.makeSelectionFromChannel('red')
+    try {
+        lr.liquify()
+
+        lr.fade('difference')
+        lr.levels([5, 0.5, 20])
+        lr.blur(10)
+        lr.equalize()
+        doc.makeSelectionFromChannel('red')
+    } catch (e) { }
+    doc.deleteCurrentLayer()
 
     if (doc.hasProperty('selection')) {
         doc.createPath(10)
         var len = pth.getProperty('pathContents').getList(stringIDToTypeID('pathComponents')).count
         doc.deleteCurrentPath()
-        doc.deleteCurrentLayer()
         lr.renameLayer(len)
     }
-} catch (e) {}
+
 }
 
 function AM(target) {
