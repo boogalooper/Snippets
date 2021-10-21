@@ -1,52 +1,51 @@
 #target photoshop
 
-main()
-function main() {
-    var lrs = getLayersCollection(),
-        doc = new AM('document'),
-        layers = [],
-        masks = [],
-        targetLayers = doc.getProperty('targetLayersIDs');
+var lrs = getLayersCollection(),
+    doc = new AM('document'),
+    layers = [],
+    masks = [],
+    targetLayers = doc.getProperty('targetLayersIDs');
 
-    for (var i = 0; i < lrs.length; i++) {
-        if (lrs[i].name.match(/mask/i)) {
-            if (lrs[i].layerKind == 7) masks.push(lrs[i]) else layers.push(lrs[i])
-        }
+for (var i = 0; i < lrs.length; i++) {
+    if (lrs[i].name.match(/mask/i)) {
+        if (lrs[i].layerKind == 7) masks.push(lrs[i]) else layers.push(lrs[i])
     }
+}
 
-    var lr = new AM('layer'),
-        restoreSelection = [];
+var lr = new AM('layer'),
+    restoreSelection = [];
 
-    do {
-        var cur = masks.shift();
-        for (var i = 0; i < layers.length; i++) {
-            if (layers[i].name.match(new RegExp(cur.name, 'i'))) {
-                lr.selectLayerByIDList([cur.layerID])
-                lr.duplicate()
-                lr.merge()
-                lr.threshold(2)
-                lr.selectPixels('allEnum')
-                lr.copyPixels()
-                lr.delete()
-                lr.selectLayerByIDList([layers[i].layerID])
-                var mask = new AM('channel');
+do {
+    var cur = masks.shift();
+    for (var i = 0; i < layers.length; i++) {
+        if (layers[i].name.match(new RegExp(cur.name, 'i'))) {
+            lr.selectLayerByIDList([cur.layerID])
+            lr.duplicate()
+            lr.merge()
+            lr.threshold(2)
+            lr.selectPixels('allEnum')
+            lr.copyPixels()
+            lr.delete()
+            lr.selectLayerByIDList([layers[i].layerID])
+            var mask = new AM('channel');
+            try {
                 mask.selectMaskChannel()
                 mask.delete()
-                lr.makeMask()
-                mask.selectMaskChannel()
-                lr.pastePixels()
-                lr.selectRGBChannel()
-                lr.selectPixels('none')
-            }
+            } catch (e) { }
+            lr.makeMask()
+            mask.selectMaskChannel()
+            lr.pastePixels()
+            lr.selectRGBChannel()
+            lr.selectPixels('none')
         }
-    } while (masks.length)
-
-    for (var i = 0; i < targetLayers.count; i++) {
-        restoreSelection.push(targetLayers.getReference(i).getIdentifier(stringIDToTypeID('layerID')))
     }
+} while (masks.length)
 
-    lr.selectLayerByIDList(restoreSelection)
+for (var i = 0; i < targetLayers.count; i++) {
+    restoreSelection.push(targetLayers.getReference(i).getIdentifier(stringIDToTypeID('layerID')))
 }
+
+lr.selectLayerByIDList(restoreSelection)
 
 function getLayersCollection() {
     var doc = new AM('document'),

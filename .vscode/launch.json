@@ -8,6 +8,10 @@
 
 
 
+
+
+
+
     {
         "type": "extendscript-debug",
         "request": "launch",
@@ -30,8 +34,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Layers - update masks v2.jsx",
-        "program": "${workspaceFolder}/Layers - update masks v2.jsx",
+        "name": "Tools - fingerprint toggle.jsx.jsx",
+        "program": "${workspaceFolder}/Tools - fingerprint toggle.jsx",
         "stopOnEntry": false
     },
 

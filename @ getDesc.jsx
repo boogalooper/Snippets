@@ -2,8 +2,8 @@
 s2t = stringIDToTypeID;
 
 
-(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('textKey'));
-r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
+(r = new ActionReference())//.putProperty(s2t('property'), p = s2t('json'));
+r.putEnumerated(s2t('textLayer'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 eval('textKey = ' + executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
 $.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')))
