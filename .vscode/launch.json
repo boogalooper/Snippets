@@ -12,6 +12,7 @@
 
 
 
+
     {
         "type": "extendscript-debug",
         "request": "launch",
@@ -34,8 +35,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Tools - fingerprint toggle.jsx.jsx",
-        "program": "${workspaceFolder}/Tools - fingerprint toggle.jsx",
+        "name": "Layers - apply action to selected.jsx",
+        "program": "${workspaceFolder}/Layers - apply action to selected.jsx",
         "stopOnEntry": false
     },
 
