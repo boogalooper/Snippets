@@ -13,6 +13,7 @@
 
 
 
+
     {
         "type": "extendscript-debug",
         "request": "launch",
@@ -35,8 +36,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Layers - apply action to selected.jsx",
-        "program": "${workspaceFolder}/Layers - apply action to selected.jsx",
+        "name": "Layers - slices to layers.jsx",
+        "program": "${workspaceFolder}/Layers - slices to layers.jsx",
         "stopOnEntry": false
     },
 
