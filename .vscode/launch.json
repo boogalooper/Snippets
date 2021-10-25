@@ -14,6 +14,7 @@
 
 
 
+
     {
         "type": "extendscript-debug",
         "request": "launch",
@@ -36,8 +37,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Layers - slices to layers.jsx",
-        "program": "${workspaceFolder}/Layers - slices to layers.jsx",
+        "name": "Documents - random crop.jsx",
+        "program": "${workspaceFolder}/Documents - random crop.jsx",
         "stopOnEntry": false
     },
 
