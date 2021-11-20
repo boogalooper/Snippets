@@ -5,16 +5,7 @@
     "version": "0.2.0",
     "configurations": [
 
-
-
-
-
-
-
-
-
-
-
+    
     {
         "type": "extendscript-debug",
         "request": "launch",
@@ -37,8 +28,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Documents - random crop.jsx",
-        "program": "${workspaceFolder}/Documents - random crop.jsx",
+        "name": "Layers - collapse SO effects.jsx",
+        "program": "${workspaceFolder}/Layers - collapse SO effects.jsx",
         "stopOnEntry": false
     },
 
