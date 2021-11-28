@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
 
+
+    {
+        "type": "extendscript-debug",
+        "request": "launch",
+        "name": "Layers - parse layers pallette to object.jsx",
+        "program": "${workspaceFolder}/Layers - parse layers pallette to object.jsx",
+        "stopOnEntry": false
+    },
+    
+
+
     
     {
         "type": "extendscript-debug",
@@ -28,8 +39,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Layers - collapse SO effects.jsx",
-        "program": "${workspaceFolder}/Layers - collapse SO effects.jsx",
+        "name": "Text - set styles for other layers.jsx",
+        "program": "${workspaceFolder}/Text - set styles for other layers.jsx",
         "stopOnEntry": false
     },
 

@@ -1,3 +1,6 @@
+/**JavaScript Script: Trigger Action through ENTER key of Path Deselection
+ * https://community.adobe.com/t5/photoshop/javascript-script-trigger-action-through-enter-key-of-path-deselection/m-p/11573965
+ */
 #target photoshop
 
 s2t = stringIDToTypeID,

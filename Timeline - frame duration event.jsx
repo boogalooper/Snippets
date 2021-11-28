@@ -1,3 +1,6 @@
+/**Timeline and Action Manager
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/timeline-and-action-manager/m-p/11241601
+ */
 #target photoshop
 
 s2t = stringIDToTypeID;

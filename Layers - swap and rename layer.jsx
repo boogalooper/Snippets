@@ -1,4 +1,4 @@
-﻿// BEGIN__HARVEST_EXCEPTION_ZSTRING
+﻿/**transfer of the selected layer to another document  */
 
 <javascriptresource>
 <category>jazzy</category>

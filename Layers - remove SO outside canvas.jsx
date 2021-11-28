@@ -1,3 +1,5 @@
+/**Selecting all smart objects outside canvas?
+ * https://community.adobe.com/t5/photoshop-ecosystem/selecting-all-smart-objects-outside-canvas/m-p/12330706
 /*
 <javascriptresource>
 <category>jazzy</category>

@@ -1,3 +1,6 @@
+/**Randomize selected solid color layers always with (S > 25% & B = 50%)
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/randomize-selected-solid-color-layers-always-with-s-gt-25-amp-b-50/m-p/12459879
+ */
 #target photoshop
 
 var s2t = stringIDToTypeID;

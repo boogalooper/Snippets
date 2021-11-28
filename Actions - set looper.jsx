@@ -1,4 +1,7 @@
-﻿#target photoshop
+﻿/**Script to play all actions in a set against a single image
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-play-all-actions-in-a-set-against-a-single-image/m-p/11866609
+ */
+#target photoshop
 /*
 <javascriptresource>
 <name>Play all actions</name>

@@ -1,3 +1,6 @@
+/**Crop/trim image automation 3:4
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/crop-trim-image-automation-3-4/m-p/12185480
+ */
 #target photoshop
 
 var lr = new AM('layer'),

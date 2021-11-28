@@ -1,3 +1,6 @@
+/**Is it possible to automate filling multiple selections with random colors?
+ * https://community.adobe.com/t5/photoshop-ecosystem/is-it-possible-to-automate-filling-multiple-selections-with-random-colors/m-p/12346406
+ */
 #target photoshop
 
 var s2t = stringIDToTypeID;

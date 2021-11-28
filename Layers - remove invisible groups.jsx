@@ -1,3 +1,6 @@
+/**jsx script extremely slow
+ * https://community.adobe.com/t5/photoshop-ecosystem/jsx-script-extremely-slow/m-p/12314061
+ */
 #target photoshop
 
 $.hiresTimer

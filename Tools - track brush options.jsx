@@ -1,4 +1,7 @@
-﻿#target photoshop
+﻿/**  Photoshop Tool Preset Parameters via Script
+ * https://community.adobe.com/t5/photoshop/photoshop-tool-preset-parameters-via-script/m-p/11847219
+*/
+#target photoshop
 
 var t2s = typeIDToStringID,
     s2t = stringIDToTypeID,

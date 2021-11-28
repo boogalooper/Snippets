@@ -1,3 +1,6 @@
+/**Configure mixer brush tool
+ * https://community.adobe.com/t5/photoshop/configure-mixer-brush-tool/m-p/12022639
+ */
 #target photoshop;
 
 var s2t = stringIDToTypeID,

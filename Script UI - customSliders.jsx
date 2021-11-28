@@ -1,3 +1,6 @@
+/**Label controls?
+ * https://community.adobe.com/t5/photoshop/label-controls/m-p/11471812
+ */
 #target photoshop
 // DIALOG
 // ======

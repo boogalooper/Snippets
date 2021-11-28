@@ -1,3 +1,6 @@
+/**How to cut out photos
+ * https://community.adobe.com/t5/photoshop-ecosystem/how-to-cut-out-photos/m-p/12222294
+ */
 #target photoshop
 
 var lr = new AM('layer'),

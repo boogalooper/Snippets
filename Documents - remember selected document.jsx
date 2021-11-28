@@ -1,4 +1,6 @@
-
+/**How to change the order of open documents for an action?
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-change-the-order-of-open-documents-for-an-action/m-p/12438243
+ */
 #target photoshop
 
 /*

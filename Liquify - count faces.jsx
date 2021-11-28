@@ -1,3 +1,5 @@
+/*counting the number of faces in an image using liquify */
+
 /*
 <javascriptresource>
 <category>jazzy</category>

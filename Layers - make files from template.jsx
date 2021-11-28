@@ -1,3 +1,6 @@
+/**Fill shape colour by adding DMC number
+ * https://community.adobe.com/t5/photoshop-ecosystem/fill-shape-colour-by-adding-dmc-number/m-p/12317703#M573923
+ */
 #target photoshop
 
 app.doProgress('', 'main()')

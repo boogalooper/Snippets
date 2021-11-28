@@ -1,3 +1,6 @@
+/**In-script event listener for save event
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/in-script-event-listener-for-save-event/m-p/11265789
+ */
 #target photoshop
 try { var target = arguments[0], event = arguments[1] } catch (e) { }
 

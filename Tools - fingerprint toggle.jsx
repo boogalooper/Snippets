@@ -1,3 +1,6 @@
+/** Smudge tool "finger painting" option shortcut
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/smudge-tool-quot-finger-painting-quot-option-shortcut/m-p/12462498
+*/
 #target photoshop;
 
 var s2t = stringIDToTypeID,

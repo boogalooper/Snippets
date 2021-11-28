@@ -1,3 +1,7 @@
+/**Can a script call transform tool and wait for it to finish?
+ * https://community.adobe.com/t5/photoshop-ecosystem/can-a-script-call-transform-tool-and-wait-for-it-to-finish/m-p/12239360
+ */
+
 #target photoshop
 
 var s2t = stringIDToTypeID;

@@ -1,3 +1,4 @@
+/**Run munu item by name */
 #target photoshop
 s2t = stringIDToTypeID;
 (r = new ActionReference()).putName(s2t('menuItemClass'), "Remove Background");

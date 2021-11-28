@@ -1,3 +1,6 @@
+/**Create Shape in Marquee Tool
+ * https://community.adobe.com/t5/photoshop/create-shape-in-marquee-tool/m-p/12124188
+ */
 #target photoshop;
 
 var s2t = stringIDToTypeID,

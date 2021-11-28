@@ -1,3 +1,6 @@
+/**Divide my image to layers
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/divide-my-image-to-layers/m-p/12467520
+ */
 #target photoshop
 var s2t = stringIDToTypeID,
     AR = ActionReference,

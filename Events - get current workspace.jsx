@@ -1,3 +1,6 @@
+/**How to determine the name of the active work environment?
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-determine-the-name-of-the-active-work-environment/m-p/12150059
+ */
 #target photoshop
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID,
@@ -24,9 +27,6 @@ try {
         alert('event listening disabled!')
     } else {
         alert('event listening enabled!')
-
-        //app.notifiers.add('slct', f)
-      //  app.notifiers.add('Mk  ', f, 'AdjL')
         app.notifiers.add('Mk  ', f)
         var r = new ActionReference();
         r.putProperty(s2t('property'), s2t('menuBarInfo'));
@@ -70,45 +70,3 @@ if (w == localize('$$$/FileName/Presets/WorkSpaces/Photography')) {
 } else if (w == localize('$$$/FileName/Presets/WorkSpaces/Painting')) {
     // call function for painting workspace here
 }
-/*
-#target photoshop
-s2t = stringIDToTypeID;
-
-var r = new ActionReference();
-r.putProperty(s2t('property'), s2t('menuBarInfo'));
-r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
-var mainMenu = executeActionGet(r).getObjectValue(s2t('menuBarInfo')).getList(s2t('submenu'))
-
-var windowMenu = new ActionDescriptor(),
-    windowTitle = localize('$$$/Menu/Window').replace(/\&/, '');
-for (var i = 0; i < mainMenu.count; i++) {
-    if (mainMenu.getObjectValue(i).getString(s2t('title')).replace(/\&/, '') == windowTitle) {
-        var windowMenu = mainMenu.getObjectValue(i).getList(s2t('submenu'))
-        break;
-    }
-}
-
-var workspaceMenu = new ActionDescriptor(),
-    workspaceTitle = localize('$$$/Menu/Window/ProjectWorkSpace').replace(/\&/, '');
-for (var i = 0; i < windowMenu.count; i++) {
-    if (windowMenu.getObjectValue(i).getString(s2t('title')).replace(/\&/, '') == workspaceTitle) {
-        workspaceMenu = windowMenu.getObjectValue(i).getList(s2t('submenu'))
-        break;
-    }
-}
-
-var reset = localize("$$$/Menu/WorkSpace/Reset=&Reset ^0").replace(/[(\&)( \^0$)]/g, '');
-for (var i = 0; i < workspaceMenu.count; i++) {
-    if (workspaceMenu.getObjectValue(i).getString(s2t('title')).replace(/\&/, '').indexOf(reset) != -1) {
-        var currentWorkspaceTitle = workspaceMenu.getObjectValue(i).getString(s2t('title')).replace(/\&/, '').replace(RegExp(reset + ' '), '')
-
-        if (currentWorkspaceTitle == localize('$$$/FileName/Presets/WorkSpaces/Photography').replace(/\&/, '')){
-            alert ('фото')
-            // call function for photography workspace here
-        }else if (currentWorkspaceTitle == localize('$$$/FileName/Presets/WorkSpaces/Painting').replace(/\&/, '')) {
-            // call function for painting workspace here
-            alert ('рисовач')
-        }
-        break;
-    }
-}*/

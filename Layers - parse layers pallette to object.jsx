@@ -1,4 +1,9 @@
+/**getting the structure of the document taking into account nested groups and layers  */
 #target photoshop
+
+$.hiresTimer
+var a = getLayersCollection()
+$.writeln($.hiresTimer)
 
 function getLayersCollection() {
     var doc = new AM('document'),
@@ -10,9 +15,9 @@ function getLayersCollection() {
 
     function layersCollection(from, to, parentItem, group) {
         parentItem = parentItem ? parentItem : [];
-
         for (var i = from; i <= to; i++) {
-            if (lr.getProperty('layerSection', i, true).value == 'layerSectionEnd') {
+            var layerSection = lr.getProperty('layerSection', i, true).value;
+            if (layerSection == 'layerSectionEnd') {
                 i = layersCollection(i + 1, to, [], parentItem)
                 continue;
             }
@@ -23,7 +28,11 @@ function getLayersCollection() {
             properties.type = lr.getProperty('layerKind', i, true)
             properties.visible = lr.getProperty('visible', i, true)
 
-            if (lr.getProperty('layerSection', i, true).value == 'layerSectionStart') {
+            properties.bounds = lr.descToObject(lr.getProperty('bounds', i, true).value)
+            properties.boundsNoEffects = lr.descToObject(lr.getProperty('boundsNoEffects', i, true).value)
+            properties.boundsNoMask = lr.descToObject(lr.getProperty('boundsNoMask', i, true).value)
+
+            if (layerSection == 'layerSectionStart') {
                 for (o in properties) { parentItem[o] = properties[o] }
                 group.push(parentItem);
                 return i;
@@ -65,7 +74,7 @@ function AM(target, order) {
         }
         return o
     }
-    
+
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };

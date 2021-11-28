@@ -1,3 +1,6 @@
+/**How do I batch export layers in a cumulative way? Better explanation in post.
+ * https://community.adobe.com/t5/photoshop-ecosystem/how-do-i-batch-export-layers-in-a-cumulative-way-better-explanation-in-post/m-p/12223051
+ */
 #target photoshop
 
 s2t = stringIDToTypeID;

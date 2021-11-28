@@ -1,3 +1,6 @@
+/**Random crop batch processing script
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/random-crop-batch-processing-script/m-p/12468477
+ */
 #target photoshop;
 
 randomSquareCropAndSave(10, 1000, 'e:/watermark.png')

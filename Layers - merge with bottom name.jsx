@@ -1,3 +1,7 @@
+/**Is it possible to make the name of combined layers the bottom one's?
+ * https://community.adobe.com/t5/photoshop-ecosystem/is-it-possible-to-make-the-name-of-combined-layers-the-bottom-one-s/m-p/12237497
+ */
+
 function main() {
 	var s2t = stringIDToTypeID;
 

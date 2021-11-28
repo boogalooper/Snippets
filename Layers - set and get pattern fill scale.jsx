@@ -1,3 +1,6 @@
+/**How to Create a Small Script?
+ * https://community.adobe.com/t5/photoshop-ecosystem/how-to-create-a-small-script/m-p/12318773
+ */
 set();
 get();
 

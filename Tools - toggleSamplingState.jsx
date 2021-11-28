@@ -1,3 +1,6 @@
+/**Toggle “Sample Current Layer” option of eyedroppper
+ * https://community.adobe.com/t5/photoshop-ecosystem/toggle-sample-current-layer-option-of-eyedroppper/m-p/12238757
+ */
 #target photoshop
 var s2t = stringIDToTypeID;
 

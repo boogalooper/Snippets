@@ -1,3 +1,6 @@
+/**Script that updates (Copy/Paste) masks on multiple layers
+ * https://community.adobe.com/t5/photoshop-ecosystem/script-that-updates-copy-paste-masks-on-multiple-layers/m-p/12314515
+ */
 #target photoshop
 
 var doc = new AM('document'),

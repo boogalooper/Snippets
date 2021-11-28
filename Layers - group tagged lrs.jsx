@@ -1,3 +1,6 @@
+/**Layer Selections based on parts of the layername
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/layer-selections-based-on-parts-of-the-layername/m-p/11116345
+ */
 #target photoshop
 
 s2t = stringIDToTypeID;

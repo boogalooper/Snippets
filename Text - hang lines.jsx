@@ -1,3 +1,4 @@
+/**removing orphans from text  */
 #target photoshop
 
 s2t = stringIDToTypeID;

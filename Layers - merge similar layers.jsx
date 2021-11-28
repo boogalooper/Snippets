@@ -1,3 +1,6 @@
+/**Need a script for merging Layers with the same names
+ * https://community.adobe.com/t5/photoshop/need-a-script-for-merging-layers-with-the-same-names/m-p/11468541
+ */
 #target photoshop
 
 s2t = stringIDToTypeID;

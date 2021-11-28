@@ -1,3 +1,5 @@
+/**creates a blur layer based on the size of the document  */
+
 #target photoshop
 
 try { activeDocument.suspendHistory('Make blur layer', 'main()') } catch (e) { alert(e) }

@@ -1,3 +1,6 @@
+/**  Export results from photoshop count
+ * https://community.adobe.com/t5/photoshop/export-results-from-photoshop-count/m-p/11992381
+*/
 #target photoshop
 s2t = stringIDToTypeID;
 
@@ -18,10 +21,6 @@ if (p.hasKey(k)) {
         }
     }
 }
-//(d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
-//eval('var a = ' + executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
-//$.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
-
 
 
 function AMReference(desiredClass) {

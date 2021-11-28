@@ -1,4 +1,5 @@
-﻿// BEGIN__HARVEST_EXCEPTION_ZSTRING
+﻿/**creating a dodge & burn adjustment layer  */
+// BEGIN__HARVEST_EXCEPTION_ZSTRING
 
 <javascriptresource>
 <category>User</category>

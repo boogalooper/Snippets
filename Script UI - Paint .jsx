@@ -1,4 +1,5 @@
-﻿#target photoshop
+﻿/**IDFN */
+#target photoshop
 
 var bt = new BridgeTalk(),
     ph = BridgeTalk.getSpecifier('photoshop'),

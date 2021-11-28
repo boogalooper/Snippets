@@ -1,3 +1,6 @@
+/**Superscript text font change using script
+ * https://community.adobe.com/t5/photoshop/superscript-text-font-change-using-script/m-p/11479999
+ */
 #target photoshop
 
 var oldColor = [255, 0, 0], // [R,G,B]

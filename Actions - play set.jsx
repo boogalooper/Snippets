@@ -1,3 +1,6 @@
+/**Script to play all actions in a set against a single image
+ * community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-play-all-actions-in-a-set-against-a-single-image/m-p/11864769
+ */
 #target photoshop
 
 var s2t = stringIDToTypeID,

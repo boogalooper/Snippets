@@ -1,3 +1,5 @@
+/**the script tries to bring the complexion to the given coordinates using curves  */
+
 #target photoshop
 
 //var targetRGB = 180

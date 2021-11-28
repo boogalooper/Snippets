@@ -1,3 +1,6 @@
+/**Dynamicly calculating/updating masks through scripting
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/dynamicly-calculating-updating-masks-through-scripting/m-p/12441295
+ */
 #target photoshop
 
 var lrs = getLayersCollection(),

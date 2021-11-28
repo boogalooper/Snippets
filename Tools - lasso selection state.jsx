@@ -1,3 +1,6 @@
+/**Get Active Tool (Tool Palette)
+ * https://community.adobe.com/t5/photoshop/get-active-tool-tool-palette/m-p/11478858
+ */
 #target photoshop;
 
 var s2t = stringIDToTypeID,

@@ -1,4 +1,9 @@
-﻿#target photoshop;
+﻿/**How to get text transform box boundary?
+ * @r-bin
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-get-text-transform-box-boundary/m-p/11159325
+ */
+
+#target photoshop;
 
 s2t = stringIDToTypeID;
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('resolution'));

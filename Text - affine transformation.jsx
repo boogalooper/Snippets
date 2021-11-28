@@ -1,4 +1,8 @@
-﻿try 
+﻿/**How to get text transform box boundary?
+ * @r-bin
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-get-text-transform-box-boundary/m-p/11159325
+ */
+try 
 {
 
 function show_points(p1, p2)

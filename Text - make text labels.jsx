@@ -1,3 +1,6 @@
+/**Script that assigns a layer name identification label to each layer in an image?
+ * https://community.adobe.com/t5/photoshop/script-that-assigns-a-layer-name-identification-label-to-each-layer-in-an-image/m-p/11482458
+ */
 #target photoshop
 
 var align = ['right', 'bottom'], // [x, y] x - right or left, y - top or bottom

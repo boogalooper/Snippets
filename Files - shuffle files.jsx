@@ -1,3 +1,4 @@
+/**random mixing of files from one folder to another with preservation of numbering  */
 #target photoshop
 
 var cfg = new Config,

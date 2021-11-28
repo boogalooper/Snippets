@@ -1,6 +1,8 @@
+/**automatic creation of a new layer when trying to paint on a locked layer  */
+
 #target photoshop
 
-s2t = stringIDToTypeID,
+var s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
 
 try { var evt = arguments[0] } catch (e) { }

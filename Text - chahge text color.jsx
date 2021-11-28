@@ -1,3 +1,6 @@
+/**Change a certain color of texts to a new color
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/change-a-certain-color-of-texts-to-a-new-color/m-p/11469078
+ */
 #target photoshop
 
 var oldColor = [255, 0, 0], // [R,G,B]

@@ -1,6 +1,8 @@
+/**Action or Script to close Smart Object layer styles drawer
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/action-or-script-to-close-smart-object-layer-styles-drawer/m-p/12537306#M600783
+ */
 #target photoshop
 s2t = stringIDToTypeID;
-
 
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfDocuments'));
 r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));

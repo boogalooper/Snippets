@@ -1,4 +1,6 @@
+/**trying to align two different objects on different layers  */
 #target photoshop
+
 main()
 
 function main() {

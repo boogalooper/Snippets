@@ -1,3 +1,6 @@
+/**How to add transition by script
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-add-transition-by-script/m-p/11248646
+ */
 #target photoshop
 
 var s2t = stringIDToTypeID,

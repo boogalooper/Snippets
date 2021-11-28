@@ -1,3 +1,6 @@
+/**List of missing fonts in Photoshop (.psd images)
+ * https://community.adobe.com/t5/photoshop/list-of-missing-fonts-in-photoshop-psd-images/m-p/11845539
+ */
 #target photoshop
 
 var s2t = stringIDToTypeID,

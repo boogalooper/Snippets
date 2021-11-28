@@ -1,3 +1,6 @@
+/**Go to the top-most layer in a set of clipping masked-layers 
+ * https://community.adobe.com/t5/photoshop-ecosystem/go-to-the-top-most-layer-in-a-set-of-clipping-masked-layers/m-p/12230092
+*/
 #target photoshop
 
 s2t = stringIDToTypeID;

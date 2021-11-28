@@ -1,3 +1,7 @@
+/**Toggle anti-aliasing tools on and off
+ * https://community.adobe.com/t5/photoshop/toggle-anti-aliasing-tools-on-and-off/m-p/11817340
+ */
+
 #target photoshop;
 
 var s2t = stringIDToTypeID,

@@ -1,3 +1,7 @@
+/**Can you automatically give every subsequent letter a different color for a batch of text designs
+ * https://community.adobe.com/t5/photoshop-ecosystem/can-you-automatically-give-every-subsequent-letter-a-different-color-for-a-batch-of-text-designs/m-p/12325550
+ */
+
 #target photoshop
 
 var s2t = stringIDToTypeID;

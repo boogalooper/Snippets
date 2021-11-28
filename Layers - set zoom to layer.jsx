@@ -1,4 +1,7 @@
-﻿#target photoshop;
+﻿/**Scripting the "zoom to layers bounds" feature...
+ * https://community.adobe.com/t5/photoshop/scripting-the-quot-zoom-to-layers-bounds-quot-feature/m-p/11289176
+ */
+#target photoshop;
 
 $.hiresTimer    
 zoomToLayer (app.activeDocument.activeLayer.id,0.5)

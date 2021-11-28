@@ -1,4 +1,5 @@
-﻿#target photoshop;
+﻿/**work with path components */
+#target photoshop;
 
 var s2t = stringIDToTypeID,
 t2s = typeIDToStringID;
@@ -6,7 +7,6 @@ t2s = typeIDToStringID;
 r.putEnumerated(s2t("document"), s2t("ordinal"), s2t("targetEnum"));
 var len = executeActionGet(r).getInteger(p)
 
-// получаем координаты точек линий
 var lines = []
 for (var i = 1; i <= len; i++) {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('pathContents'));

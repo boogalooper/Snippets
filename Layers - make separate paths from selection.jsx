@@ -1,3 +1,6 @@
+/**Is it possible to automate filling multiple selections with random colors?
+ * https://community.adobe.com/t5/photoshop-ecosystem/is-it-possible-to-automate-filling-multiple-selections-with-random-colors/m-p/12348736
+ */
 #target photoshop
 
 activeDocument.suspendHistory('fill selection', 'main()')

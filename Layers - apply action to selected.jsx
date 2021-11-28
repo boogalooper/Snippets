@@ -1,3 +1,6 @@
+/**Applying an action to all the layers in a document.
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/applying-an-action-to-all-the-layers-in-a-document/m-p/12463566
+ */
 #target photoshop
 var s2t = stringIDToTypeID;
 

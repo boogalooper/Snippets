@@ -1,3 +1,6 @@
+/**Determine compression used on Tiff file
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/determine-compression-used-on-tiff-file/m-p/11141851
+ */
 #target photoshop
 var f = new File('e:/_output/testfile.tif'),
     compression = { 1: 'uncompressed', 2: 'CCITT', 5: 'LZW', 7: 'JPEG', 8: 'ZIP' }

@@ -1,3 +1,6 @@
+/**Need help with randomizing gradient fills
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/need-help-with-randomizing-gradient-fills/m-p/12349293
+ */
 s2t = stringIDToTypeID;
 
 (r = new ActionReference()).putClass(s2t("contentLayer"));

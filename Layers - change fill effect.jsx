@@ -1,3 +1,6 @@
+/**Modify a “LayerEffects” object
+ * https://community.adobe.com/t5/photoshop-ecosystem/modify-a-layereffects-object/m-p/12196380
+ */
 #target photoshop
 
 changeFill(255, 0, 0); // R, G, B values

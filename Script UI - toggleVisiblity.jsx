@@ -1,3 +1,6 @@
+/**Photoshop UI button toggle
+ * https://community.adobe.com/t5/photoshop/photoshop-ui-button-toggle/m-p/11145729
+ */
 #target photoshop
 var bt = new BridgeTalk(),
     ph = BridgeTalk.getSpecifier('photoshop'),

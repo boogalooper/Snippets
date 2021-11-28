@@ -1,3 +1,6 @@
+/**How can I rename a layer group or a layer with the same name using an action?
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-can-i-rename-a-layer-group-or-a-layer-with-the-same-name-using-an-action/m-p/12493670
+ */
 #target photoshop
 
 s2t = stringIDToTypeID;

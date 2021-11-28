@@ -1,3 +1,6 @@
+/*Detect if mask or layer is selected with JS script.
+* https://community.adobe.com/t5/photoshop/detect-if-mask-or-layer-is-selected-with-js-script/m-p/11153249
+*/
 #target photoshop
 
 s2t = stringIDToTypeID;

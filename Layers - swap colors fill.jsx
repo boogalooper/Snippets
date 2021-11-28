@@ -1,3 +1,6 @@
+/**Swap Colors of Solid Fill
+ * https://community.adobe.com/t5/photoshop-ecosystem/swap-colors-of-solid-fill/m-p/12351024
+ */
 #target photoshop
 
 var s2t = stringIDToTypeID;
