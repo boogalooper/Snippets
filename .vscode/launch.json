@@ -6,14 +6,8 @@
     "configurations": [
 
 
-    {
-        "type": "extendscript-debug",
-        "request": "launch",
-        "name": "Layers - parse layers pallette to object.jsx",
-        "program": "${workspaceFolder}/Layers - parse layers pallette to object.jsx",
-        "stopOnEntry": false
-    },
-    
+
+
 
 
     
@@ -39,8 +33,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "Text - set styles for other layers.jsx",
-        "program": "${workspaceFolder}/Text - set styles for other layers.jsx",
+        "name": "test",
+        "program": "${workspaceFolder}/Timeline - set transition.jsx",
         "stopOnEntry": false
     },
 
