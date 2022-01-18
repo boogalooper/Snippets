@@ -10,6 +10,9 @@
 
 
 
+
+
+
     
     {
         "type": "extendscript-debug",
@@ -33,8 +36,8 @@
     {
         "type": "extendscript-debug",
         "request": "launch",
-        "name": "test",
-        "program": "${workspaceFolder}/Timeline - set transition.jsx",
+        "name": "RUN",
+        "program": "${workspaceFolder}/Layers - relink layers.jsx",
         "stopOnEntry": false
     },
 

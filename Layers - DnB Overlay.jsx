@@ -2,11 +2,18 @@
 // BEGIN__HARVEST_EXCEPTION_ZSTRING
 
 <javascriptresource>
-<category>User</category>
+<category>Tools</category>
+<name>DnB Overlay</name>
 <enableinfo>true</enableinfo>
 </javascriptresource>
 
-// END__HARVEST_EXCEPTION_ZSTRING
+#target photoshop
+s2t = stringIDToTypeID;
+
+
+(r = new ActionReference()).putName(s2t('layer'), 'H');
+(d = new ActionDescriptor()).putReference(s2t('null'), r);
+try { executeAction(s2t('select'), d, DialogModes.NO) } catch (e) { }
 
 // =======================================================
 var idMk = charIDToTypeID( "Mk  " );

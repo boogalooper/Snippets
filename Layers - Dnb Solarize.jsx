@@ -2,27 +2,17 @@
 // BEGIN__HARVEST_EXCEPTION_ZSTRING
 
 <javascriptresource>
-<category>User</category>
+<category>Tools</category>
+<name>Dnb Solarize</name>
 <enableinfo>true</enableinfo>
 </javascriptresource>
 
-// END__HARVEST_EXCEPTION_ZSTRING
+#target photoshop
+s2t = stringIDToTypeID;
 
-// =======================================================
-var idslct = charIDToTypeID( "slct" );
-    var desc14 = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-        var ref7 = new ActionReference();
-        var idLyr = charIDToTypeID( "Lyr " );
-        ref7.putName( idLyr, "H" );
-    desc14.putReference( idnull, ref7 );
-    var idMkVs = charIDToTypeID( "MkVs" );
-    desc14.putBoolean( idMkVs, false );
-    var idLyrI = charIDToTypeID( "LyrI" );
-        var list3 = new ActionList();
-        list3.putInteger( 13 );
-    desc14.putList( idLyrI, list3 );
-executeAction( idslct, desc14, DialogModes.NO );
+(r = new ActionReference()).putName(s2t('layer'), 'H');
+(d = new ActionDescriptor()).putReference(s2t('null'), r);
+try { executeAction(s2t('select'), d, DialogModes.NO) } catch (e) { }
 
 // =======================================================
 var idMk = charIDToTypeID( "Mk  " );
@@ -149,4 +139,10 @@ var idGrpL = charIDToTypeID( "GrpL" );
         ref10.putEnumerated( idLyr, idOrdn, idTrgt );
     desc20.putReference( idnull, ref10 );
 executeAction( idGrpL, desc20, DialogModes.NO );
+
+
+(r = new ActionReference()).putName(s2t('layer'), 'H');
+(d = new ActionDescriptor()).putReference(s2t('null'), r);
+try { executeAction(s2t('select'), d, DialogModes.NO) } catch (e) { }
+
 
