@@ -16,6 +16,10 @@
 
 
 
+
+
+
+
     
     {
         "type": "extendscript-debug",
@@ -40,7 +44,7 @@
         "type": "extendscript-debug",
         "request": "launch",
         "name": "RUN",
-        "program": "${workspaceFolder}/Layers - relink layers.jsx",
+        "program": "${workspaceFolder}/Layers - relink layers 2.jsx",
         "stopOnEntry": false
     },
 

@@ -4,7 +4,7 @@
 s2t = stringIDToTypeID;
 
 /*using json object*/
-(r = new ActionReference())//.putProperty(s2t('property'), p = s2t('json'));
+(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('itemIndex'));
 r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 $.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')))
@@ -29,7 +29,7 @@ function getValues(d, keyNum) {
         case DescValueType.LISTTYPE: return d.getList(p);
         case DescValueType.REFERENCETYPE: return d.getReference(p);
         case DescValueType.BOOLEANTYPE: return d.getBoolean(p);
-        case DescValueType.STRINGTYPE: return d.getString(p);
+        case DescValueType.STRINGTYPE: return d.getSstring(p);
         case DescValueType.INTEGERTYPE: return d.getInteger(p);
         case DescValueType.LARGEINTEGERTYPE: return d.getLargeInteger(p);
         case DescValueType.DOUBLETYPE: return d.getDouble(p);

@@ -19,7 +19,7 @@ const UUID = "03d4b7b6-58ed-4446-9ccd-e625b96fce39",
         red: "\u0089PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\n\x00\x00\x00\n\b\x06\x00\x00\x00\u008D2\u00CF\u00BD\x00\x00\x00;IDAT\x18\u0095c\u00FCci\u00F3\u009F\u0081\b\u00C0\x02R\u00C2((\u0084W\u00E5\u00FF\u00F7\u00EF \n\u00C1\u0080\u0087\x17\u00BB\u00AA/\u009F\u00C1\x14\x131\u00D6\x0E\x15\u0085\b_C}\u0087W!(\u009C\u00F0\x02\x06\x06\x06\x00\x18\u00EF\fO\u0083\b\u00CC\u00FD\x00\x00\x00\x00IEND\u00AEB`\u0082",
         green: "\u0089PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\n\x00\x00\x00\n\b\x06\x00\x00\x00\u008D2\u00CF\u00BD\x00\x00\x00=IDAT\x18\u0095c\u00F4\u00DEo\u00F8\u009F\u0081\b\u00C0\x02R\"\u00C6\u00C9\u008FW\u00E5\u00AB\u00EF\x1F!\nA@\u0090\u009D\x1B\u00AB\u00A2\u00F7?\u00BF\u0082i&b\u00AC\x1D*\n\u00E1\u00BE\u0086\u00F9\x0E\u00AFBP8\u00E1\x05\f\f\f\x000\x1F\x0E\x05z4V\u0094\x00\x00\x00\x00IEND\u00AEB`\u0082",
         yellow: "\u0089PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\n\x00\x00\x00\n\b\x06\x00\x00\x00\u008D2\u00CF\u00BD\x00\x00\x00;IDAT\x18\u0095c\u00FCp@\u00ED?\x03\x11\u0080\x05\u00A4\u0084\u0089\u0093\x1B\u00AF\u00CA\x7F\u00DF\u00BFB\x14\u0082\x15\u00B3s`W\u00F4\u00F3\x07D\u009E\x18k\u0087\u008AB\u00B8\u00AFa\u00BE\u00C3\u00AB\x10\x14Nx\x01\x03\x03\x03\x00+\u00AA\x0E\u00CA*\u0090\u00C3\u00A2\x00\x00\x00\x00IEND\u00AEB`\u0082",
-    }, u;
+    }, undefined;
 var allowedExtensions = function (s) { var t = {}; for (var i = 0; i < s.length; i++) t[s[i]] = true; return t }(["PSD", "PDD", "PSDT", "PSB", "BMP", "RLE", "DIB", "GIF", "EPS", "IFF", "TDI", "JPG", "JPEG", "JPE", "JPF", "JPX", "JP2", "J2C",
     "J2K", "JPC", "JPS", "MPO", "PCX", "PDF", "PDP", "PXR", "PNG", "SCT", "TGA", "VDA", "ICB", "VST", "TIFF", "PBM", "PGM", "PPM", "PNM", "PFM", "PAM",
     "DCM", "DC3", "DIC", "TIF", "CRW", "NEF", "RAF", "ORF", "MRW", "MOS", "SRF", "PEF", "DCR", "CR2", "DNG", "ERF", "X3F", "RAW", "ARW", "CR3", "KDC", "3FR",
@@ -98,10 +98,10 @@ if (apl.getProperty('numberOfDocuments')) {
     }
     function showDialog(fileList) {
         var w = new Window("dialog {text: 'Linked smart objects'}"),
-            l = w.add("listbox", [0, 0, 600, 400], u, { multiselect: true }),
+            l = w.add("listbox", [0, 0, 600, 400], undefined, { multiselect: true }),
             gRelink = w.add("group{alignChildren: ['left','center'], alignment: ['fill','top']}"),
             rl = gRelink.add("button{text: 'Relink all', preferredSize: [170, -1]}"),
-            dl = gRelink.add("dropdownlist", u, u, { items: ["change folder to current", "choose a new folder"] }),
+            dl = gRelink.add("dropdownlist", undefined, undefined, { items: ["change folder to current", "choose a new folder"] }),
             chMatch = gRelink.add("checkbox{text: 'match file extension', preferredSize: [150, -1]}"),
             gCollect = w.add("group{alignChildren: ['left','center'], alignment: ['fill','top']}"),
             chCollect = gCollect.add("checkbox{text: 'collect assets in subfolder:', preferredSize: [170, -1]}"),
@@ -110,8 +110,8 @@ if (apl.getProperty('numberOfDocuments')) {
             chGroup = gSubCollect.add("checkbox{text: 'group by extension', preferredSize: [120, -1]}"),
             chMove = gSubCollect.add("checkbox{text: 'move files', preferredSize: [70, -1]}"),
             gButtons = w.add("group"),
-            bnOk = gButtons.add("button {text:'Ok'}", u, u, { name: "ok" }),
-            bnCancel = gButtons.add("button {text:'Cancel'}", u, u, { name: "cancel" }),
+            bnOk = gButtons.add("button {text:'Ok'}", undefined, undefined, { name: "ok" }),
+            bnCancel = gButtons.add("button {text:'Cancel'}", undefined, undefined, { name: "cancel" }),
             cfg = (new AM()).getScriptSettings(),
             targetFolder = null;
         l.graphics.font = "dialog:12";
@@ -429,6 +429,7 @@ if (apl.getProperty('numberOfDocuments')) {
             }
             var desc = new ActionDescriptor()
             desc.putReference(s2t("target"), ref)
+            desc.putBoolean(s2t("makeVisible"), false)
             executeAction(s2t("select"), desc, DialogModes.NO)
         }
         function getDescValue(d, p) {
