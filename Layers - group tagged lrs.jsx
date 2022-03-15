@@ -1,20 +1,18 @@
-/**Layer Selections based on parts of the layername
+/**Скрипт для создания групп слоев в зависимости от названия слоя
+ * (в примере в качестве критерия выделения используется нижнее подчеркивание)
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/layer-selections-based-on-parts-of-the-layername/m-p/11116345
+ * https://youtu.be/UuYGSsv9RHk
  */
 #target photoshop
-
 s2t = stringIDToTypeID;
-
 (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
 ref.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var len = executeActionGet(ref).getInteger(p);
-
 var lrs = {}
 for (var i = 1; i <= len; i++) {
     (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('name'));
     ref.putIndex(s2t('layer'), i);
     n = executeActionGet(ref).getString(p).split('_');
-
     if (n.length > 1) {
         (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('layerID'));
         ref.putIndex(s2t('layer'), i);
@@ -23,12 +21,10 @@ for (var i = 1; i <= len; i++) {
         if (lrs[tag]) lrs[tag].push(id) else lrs[tag] = [id]
     }
 }
-
 for (a in lrs) {
     selectLayerByIDList(lrs[a])
     groupSelectedLrs(a)
 }
-
 function selectLayerByIDList(IDList) {
     var ref = new ActionReference()
     for (var i = 0; i < IDList.length; i++) {
@@ -38,7 +34,6 @@ function selectLayerByIDList(IDList) {
     desc.putReference(s2t("null"), ref)
     executeAction(s2t("select"), desc, DialogModes.NO)
 }
-
 function groupSelectedLrs(tag) {
     (ref = new ActionReference()).putClass(s2t("layerSection"));
     (desc = new ActionDescriptor()).putReference(s2t("null"), ref);

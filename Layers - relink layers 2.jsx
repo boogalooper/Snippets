@@ -10,13 +10,14 @@
 */
 $.localize = true
 //$.locale = 'ru'
+
 const UUID = 'a3e4d053-135c-4225-b741-39bcb6656fd0',
     apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer'),
     fn = new CommonFunctions(),
     str = new Locale(),
-    ver = '0.2';
+    ver = '0.23';
 var allowedExtensions = function (s) { var t = {}; for (var i = 0; i < s.length; i++) t[s[i]] = true; return t }(['PSD', 'PDD', 'PSDT', 'PSB', 'BMP', 'RLE', 'DIB', 'GIF', 'EPS', 'IFF', 'TDI', 'JPG', 'JPEG', 'JPE', 'JPF', 'JPX', 'JP2', 'J2C',
     'J2K', 'JPC', 'JPS', 'MPO', 'PCX', 'PDF', 'PDP', 'PXR', 'PNG', 'SCT', 'TGA', 'VDA', 'ICB', 'VST', 'TIFF', 'PBM', 'PGM', 'PPM', 'PNM', 'PFM', 'PAM',
     'DCM', 'DC3', 'DIC', 'TIF', 'CRW', 'NEF', 'RAF', 'ORF', 'MRW', 'MOS', 'SRF', 'PEF', 'DCR', 'CR2', 'DNG', 'ERF', 'X3F', 'RAW', 'ARW', 'CR3', 'KDC', '3FR',
@@ -31,7 +32,7 @@ function main() {
             var currentSelection = fn.getSelectedLayersIds(),
                 smartObjects = fn.buildSmartObjectsTree(),
                 filesList = fn.buildFilesList(smartObjects);
-            if (filesList.length) {
+       //     if (filesList.length) {
                 if (fn.isDitry) app.refresh()
                 var w = new mainWindow(filesList, runMode),
                     result = w.show();
@@ -39,10 +40,10 @@ function main() {
                     activeDocument.suspendHistory(str.relink.toString(), 'fn.relink(filesList, smartObjects)')
                     if (currentSelection.length) doc.selectLayerByIDList(currentSelection)
                 }
-            } else {
+          /*  } else {
                 alert(str.errNoFiles, str.warning)
                 result = 0
-            }
+            }*/
             fn.isDitry = false
         } while (result == 3)
     } catch (e) {
@@ -196,7 +197,7 @@ function CommonFunctions() {
         var smartObjects = getSmartObjectsList(),
             len = 0;
         if (cfg.checkEmbedded) {
-            for (var a in smartObjects) if (!lr.getProperty('smartObject', a).value.getBoolean(stringIDToTypeID('linked'))) len++
+            for (var a in smartObjects) if (!(lr.getProperty('smartObject', a).value.getBoolean(stringIDToTypeID('linked')))) len++
         }
         this.isDitry = Boolean(len)
         var progress = progressWindow(str.findEmbedded, '', len)
@@ -219,7 +220,7 @@ function CommonFunctions() {
             o.sameFolder = null
             o.missed = null
             o.relink = null
-            o.collected = null
+
             o.relinked = null
             allowedExtensions[o.link.extension.toUpperCase()] = true
             return o
@@ -229,7 +230,7 @@ function CommonFunctions() {
                 with (this[i]) {
                     var cur = this[i].relink ? relink : link
                     if (cur instanceof File) {
-                        sameFolder = fn.documentFolder != null ? (decodeURI(cur).toUpperCase().indexOf(decodeURI(fn.documentFolder).toUpperCase()) == 0 ? true : false) : null
+                        sameFolder = documentFolder != null ? (decodeURI(cur).toUpperCase().indexOf(decodeURI(documentFolder).toUpperCase()) == 0 ? true : false) : null
                         missed = !cur.exists
                     } else {
                         sameFolder = false
@@ -266,7 +267,8 @@ function CommonFunctions() {
             for (var a in toDo) {
                 if (toDo[a].sameFolder) {
                     with (toDo[a]) {
-                        var cur = relink ? relink : link,
+                        relink = null;
+                        var cur = link,//relink ? relink : link,
                             folders = parentFolder != null && cur instanceof File ? (decodeURI(cur.path).replace(new RegExp(decodeURI(parentFolder), 'i'), '').split('/')) : [];
                     }
                     var link = findSimilarFiles(cur.filename, cur.extension, folders, parentFolder);
@@ -316,6 +318,7 @@ function CommonFunctions() {
             }
             var f = checkFile(fle, ext, parent)
             return f ? f : null
+
             function checkFile(fle, ext, pth) {
                 var f = new File(pth + '/' + fle + '.' + ext)
                 if (f.exists) {
@@ -381,10 +384,31 @@ function CommonFunctions() {
                 target = createUniqueFileName(target)
             }
             if (!(Folder(target.path).exists)) Folder(target.path).create()
-            if (cur.copy(target)) {
-                files[i].collected = cur
-                files[i].relink = target
+
+            if (cfg.collect && cfg.move) {
+                if (documentFolder != null && decodeURI(cur).toUpperCase().indexOf(decodeURI(documentFolder).toUpperCase()) == 0) {
+                    if (!target.exists) {
+                        if (cur.rename(target)) {
+                            files[i].relink = target
+                        } else {
+                            if (cur.copy(target)) {
+                                cur.remove()
+                                files[i].relink = target
+                            }
+                        }
+                        var f = Folder(cur.path)
+                        if (f.getFiles().length == 0) {
+                            f.remove()
+                            do {
+                                f = Folder(f.path)
+                                if (f.getFiles().length) break;
+                            } while (f.remove())
+                        }
+                    }
+                }
             }
+            if (files[i].relink != target && cur.copy(target)) files[i].relink = target
+
         }
         progress.close()
         function createUniqueFileName(target) {
@@ -451,25 +475,7 @@ function CommonFunctions() {
                 }
             }
             lockLayers(locked)
-            progress.close()
-            if (cfg.move && cfg.collect) {
-                for (var i = 0; i < files.length; i++) {
-                    if (files[i].collected && files[i].sameFolder && files[i].relinked) {
-                        $.writeln('remove ' + files[i].collected.fsName)
-                        if (files[i].relink.exists) {
-                            files[i].collected.remove()
-                            var cur = Folder(files[i].collected.path)
-                            if (cur.getFiles().length == 0) {
-                                cur.remove()
-                                do {
-                                    cur = Folder(cur.path)
-                                    if (cur.getFiles().length) break;
-                                } while (cur.remove())
-                            }
-                        }
-                    }
-                }
-            }
+
         }
         function relinkEmbedded(files) {
             var len = doc.getProperty('numberOfLayers'),
@@ -601,7 +607,10 @@ function CommonFunctions() {
         for (var a in ids) {
             var cur = doc.descToObject(lr.getProperty('smartObject', a).value)
             if (cur.linked && !checkLocking(lr.getProperty('layerLocking', a).value)) {
-                if (cur.link.type == 'ccLibrariesElement') continue;
+                if (cur.link && cur.link.type && cur.link.type == 'ccLibrariesElement') {
+                    delete ids[a];
+                    continue;
+                }
                 ids[a] = describeSmartObject(cur)
             } else {
                 if (cfg.checkEmbedded) {
@@ -618,7 +627,7 @@ function CommonFunctions() {
         return ids
         function describeSmartObject(o) {
             return {
-                link: splitFilename(o.link == '' ? o.fileReference : File(o.link)),
+                link: splitFilename(!o.link || o.link == '' ? o.fileReference : File(o.link)),
                 fileReference: o.fileReference,
             }
         }
@@ -679,7 +688,11 @@ function CommonFunctions() {
             if (cur) {
                 for (var i = 0; i < f.length; i++) {
                     if (!relinkMode) {
-                        if (f[i] && decodeURI(cur.link).toUpperCase() == decodeURI(f[i].link).toUpperCase()) f[i] = null
+                        if (f[i] instanceof File) {
+                            if (decodeURI(cur.link).toUpperCase() == decodeURI(f[i].link).toUpperCase()) f[i] = null
+                        } else {
+                            if (f[i] && (cur.link.filename + cur.link.extension).toUpperCase() == (f[i].link.filename + f[i].link.extension).toUpperCase()) f[i] = null
+                        }
                     }
                     else {
                         if (f[i] && decodeURI(cur.relink).toUpperCase() == decodeURI(f[i].relink).toUpperCase()) f[i] = null
@@ -712,7 +725,7 @@ function CommonFunctions() {
         return w;
     }
     splitFilename = this.splitFilename;
-    documentFolder = this.documentFolder = doc.hasProperty('fileReference') ? File(doc.getProperty('fileReference').fsName).path : null;
+    documentFolder = this.documentFolder = doc.hasProperty('fileReference') ? Folder(File(doc.getProperty('fileReference').fsName).path) : null;
     isDitry = this.isDitry = false;
     targetFolder = this.targetFolder = null;
 }
@@ -728,10 +741,10 @@ function Locale() {
     this.findEmbedded = { ru: 'Поиск связанных файлов в смарт-объектах', en: 'Find linked files in smart objects' }
     this.searchFile = { ru: 'Поиск файла: ', en: 'Search file: ' }
     this.buildFileList = { ru: 'Обработка каталога: ', en: 'Build list of files: ' }
-    this.copyAssets = { ru: 'Копирование ресурсов', en: 'Copy assets' }
+    this.copyAssets = { ru: 'Сборка ресурсов', en: 'Collect assets' }
     this.relink = { ru: 'Связать заново', en: 'Relink layers' }
     this.linkedFiles = { ru: 'Связанные файлы', en: 'Linked files' }
-    this.findInEmbedded = { ru: 'поиск связанных файлов в смарт-объектах', en: 'find links in smart objects' }
+    this.findInEmbedded = { ru: 'поиск связанных файлов внутри содержимого встроенных смарт-объектов', en: 'find links inside contents of embedded smart objects' }
     this.relinkAll = { ru: 'Связать заново', en: 'Relink all' }
     this.extension = { ru: 'учитывать расширение', en: 'match file extension' }
     this.subfolder = { ru: 'собрать ресурсы в папке:', en: 'collect assets in subfolder:' }
@@ -739,21 +752,18 @@ function Locale() {
     this.move = { ru: 'перемещать', en: 'move files' }
     this.cancel = { ru: 'Отмена', en: 'Cancel' }
     this.currentPath = { ru: 'папка открытого документа', en: 'current document path' }
-    this.newPath = { ru: 'новая папка', en: 'new path' }
+    this.newPath = { ru: 'открыть папку...', en: 'open folder...' }
     this.relinkSelected = { ru: 'Связать выбранные', en: 'Relink selected' }
     this.replaceFor = { ru: 'Заменить связь для ', en: 'Replace link for ' }
     this.strRelinkErr1 = { ru: 'Замена связи не может быть выполнена!', en: 'Relink operation cannot be performed!' }
     this.strRelinkErr2 = { ru: ' тип файлов не поддерживается!', en: ' files does not supported!' }
-    this.strRelinkErr3 = { ru: '- открытый документ не сохранен!', en: '- active document has no path!' }
+    this.strRelinkErr3 = { ru: 'Путь недоступен!\n\n- активный документ не сохранен!', en: 'Path not found!\n\n- active document not saved yet!' }
     this.err = { ru: 'Ошибка', en: 'Error' }
-    this.moveWrn = {
-        ru: 'Эта функция собирает все связанные файлы из открытого документа в указанной папке.\nКак она работает:\n1. Перемещает все связанные файлы в случае если они находятся в том же каталоге, что и указанная папка\n2. Копирует все связанные файлы, если они расположены в других каталогах\n\nДля перемещения файлов скрипт использует сочетание команд "скоировать" и "удалить". Это прекрасно работает в большинстве случаев, однако будьте осторожны - удаление происходит напрямую с диска, минуя корзину!\n\nИспользуйте на собственный риск!\n\nВключить опцию?',
-        en: 'This function collect all linked files of current document in specifed subfolder.\nHow it works:\n1. Moves all asset files if they are in the same folder as the specified directory\n2. Copy all asset files from another folders to the specified directory\n\nTo move files, script uses "copy" and then "delete" commands. This works fine in most cases, but be aware - deletes occurs without moving it to the system trash!\n\nUse at your own risk!\n\nEnable option?'
-    }
     this.warning = { ru: 'Предупреждение', en: 'Warning' }
     this.errGlobal = { ru: 'Произошла ошибка во время выполнения скрипта. Создать файл отчета?', en: 'An error occurred while executing the script. Create a report file? ' }
     this.saveLog = { ru: 'Файл отчета', en: 'Report file' }
     this.select = { ru: 'Быстрый выбор:', en: 'Quick select:' }
+    this.target = { ru: 'Путь назначения:', en: 'Target path:' }
 }
 function mainWindow(fileList, runMode) {
     var w = new Window("dialog {text: '" + str.linkedFiles + " " + ver + "'}"),
@@ -771,6 +781,9 @@ function mainWindow(fileList, runMode) {
         rl = gRelink.add("button{text: '" + str.relinkAll + "', preferredSize: [170, -1]}"),
         dl = gRelink.add("dropdownlist", undefined, undefined, { items: [str.currentPath, str.newPath] }),
         chMatch = gRelink.add("checkbox{text: '" + str.extension + "', preferredSize: [120, -1]}"),
+        gPath = pnRelink.add("group{alignChildren: ['left','center'], alignment: ['fill','top']}"),
+        stPathLabel = gPath.add("statictext{text:'" + str.target + "'}"),
+        stPath = gPath.add("statictext{preferredSize: [450, -1]}"),
         gCollect = w.add("group{alignChildren: ['left','center'], alignment: ['fill','top']}"),
         chCollect = gCollect.add("checkbox{text: '" + str.subfolder + "', preferredSize: [170, -1]}"),
         gSubCollect = gCollect.add("group{alignChildren: ['left','center'], alignment: ['fill','top']}"),
@@ -787,7 +800,8 @@ function mainWindow(fileList, runMode) {
         this.removeAll()
         for (var i = 0; i < items.length; i++) {
             with (items[i]) {
-                this.add('item', link instanceof File ?
+                var cur = relink ? relink : link
+                this.add('item', cur instanceof File ?
                     ((relink ? ' ✎ ' : (missed ? ' ❌ ' : ' ✔ ')) + (relink ? (relink).fsName : link.fsName)) :
                     (' ❌ ' + items[i].fileReference));
                 this.items[i].image = items[i].missed ? str.ico.red : (items[i].sameFolder ? str.ico.green : str.ico.yellow)
@@ -814,33 +828,35 @@ function mainWindow(fileList, runMode) {
             }
         }
     }
-    rl.onClick = function (mode) {
-        switch (dl.selection.index) {
-            case 0:
-                if (fn.documentFolder) {
-                    fn.targetFolder = fn.documentFolder;
-                } else { alert(str.strRelinkErr1 + '\n\n' + str.strRelinkErr3, str.err, 1) }
-                break;
-            case 1:
-                var p = (new Folder(fn.documentFolder ? fn.documentFolder : null)).selectDlg()
-                if (p) { fn.targetFolder = p } else { mode = true }
-                break;
-        }
-        bnOk.enabled = fn.targetFolder
-        if (!mode) {
+    rl.onClick = function () {
+        // bnOk.enabled = fn.targetFolder
+        //     stPath.text = fn.targetFolder ? fn.targetFolder.fsName : ''
+        if (fn.targetFolder) {
             app.doForcedProgress('', 'fn.findLinks(fn.targetFolder, fileList, l.selection)')
             l.fillLinksList(fileList.checkFiles())
         }
     }
+    dl.onClick = function () { alert('dfg') }
+    dl.onChange = function () {
+        if (w.visible) {
+            switch (this.selection.index) {
+                case 0:
+                    fn.targetFolder = fn.documentFolder ? fn.documentFolder : null;
+                    if (!fn.targetFolder) alert(str.strRelinkErr3, str.err, 1)
+                    break;
+                case 1:
+                    var p = (new Folder(fn.documentFolder ? fn.documentFolder : null)).selectDlg()
+                    fn.targetFolder = p ? p : null;
+                    break;
+            }
+        }
+        cfg.relinkMode = this.selection.index
+        rl.enabled = bnOk.enabled = fn.targetFolder ? true : false;
+        stPath.text = fn.targetFolder ? fn.targetFolder.fsName : ''
+    }
     chCollect.onClick = function () { gSubCollect.enabled = cfg.collect = this.value }
     chGroup.onClick = function () { cfg.groupByExtension = this.value }
-    chMove.onClick = function () {
-        cfg.move = this.value
-        if (this.value) {
-            if (!confirm(str.moveWrn, true, 'Warning!'))
-                cfg.move = this.value = false
-        }
-    }
+    chMove.onClick = function () { cfg.move = this.value }
     bnOk.onClick = function () {
         if (fn.targetFolder == null) { rl.onClick(true) }
         w.close(1);
@@ -856,26 +872,26 @@ function mainWindow(fileList, runMode) {
     }
     bnCancel.onClick = function () { fileList = []; w.close(2) }
     chMatch.onClick = function () { cfg.matchExtension = this.value }
-    dl.onChange = function () {
-        cfg.relinkMode = this.selection.index
-        bnOk.enabled = fn.targetFolder = cfg.relinkMode ? null : fn.documentFolder
-    }
     iAll.onClick = function () { qickSelect(0) }
     iGreen.onClick = function () { qickSelect(1) }
     iYellow.onClick = function () { qickSelect(2) }
     iRed.onClick = function () { qickSelect(3) }
     w.onShow = function () {
-        if (!fn.documentFolder) { dl.items[0].enabled = false; cfg.relinkMode = 1 }
-        dl.selection = cfg.relinkMode ? 1 : 0
-        chMatch.value = cfg.matchExtension
-        gSubCollect.enabled = chCollect.value = cfg.collect
-        et.text = cfg.subfolder
-        chGroup.value = cfg.groupByExtension
-        chMove.value = cfg.move
-        chEmbedded.value = cfg.checkEmbedded
+        if (!fn.documentFolder) cfg.relinkMode = 1
+        {
+            dl.selection = cfg.relinkMode ? 1 : 0
+            chMatch.value = cfg.matchExtension
+            gSubCollect.enabled = chCollect.value = cfg.collect
+            et.text = cfg.subfolder
+            chGroup.value = cfg.groupByExtension
+            chMove.value = cfg.move
+            chEmbedded.value = cfg.checkEmbedded
+            chEmbedded.enabled = runMode
+            stPath.text = fn.targetFolder ? fn.targetFolder.fsName : ''
+        }
         dl.size.width = w.size.width - rl.size.width - chMatch.size.width - 90
         et.size.width = w.size.width - chGroup.size.width - chCollect.size.width - chMove.size.width - 80
-        chEmbedded.enabled = runMode
+
         w.layout.layout(true)
         l.fillLinksList(fileList.checkFiles())
     }

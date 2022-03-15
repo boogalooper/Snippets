@@ -1,13 +1,13 @@
-/**Applying an action to all the layers in a document.
+/**Применение одного и того же экшена к выделенным слоям в документе
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/applying-an-action-to-all-the-layers-in-a-document/m-p/12463566
+ * https://www.youtube.com/watch?v=5uzaChlya3Q
  */
+
 #target photoshop
 var s2t = stringIDToTypeID;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('targetLayersIDs'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var lrs = executeActionGet(r).getList(p);
-
 (r = new ActionReference()).putEnumerated(s2t('action'), s2t('ordinal'), s2t('targetEnum'));
 try {
     try {
@@ -15,7 +15,6 @@ try {
             set = executeActionGet(r).getString(s2t('parentName'));
     }
     catch (e) { throw 'Before start select any action from actions palette!' }
-
     for (var i = 0; i < lrs.count; i++) {
         (r = new ActionReference()).putIdentifier(s2t('layer'), lrs.getReference(i).getIdentifier(s2t('layerID')));
         (d = new ActionDescriptor()).putReference(s2t('target'), r);

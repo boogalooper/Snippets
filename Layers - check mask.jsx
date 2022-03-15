@@ -1,5 +1,6 @@
-/*Detect if mask or layer is selected with JS script.
+/*Определить активен ли слой или его маска, переключить между ними
 * https://community.adobe.com/t5/photoshop/detect-if-mask-or-layer-is-selected-with-js-script/m-p/11153249
+https://youtu.be/-tVW4Kqsswc
 */
 #target photoshop
 

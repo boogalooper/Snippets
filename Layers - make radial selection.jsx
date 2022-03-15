@@ -1,10 +1,12 @@
-/*Scripting radial cutout's
-https://community.adobe.com/t5/photoshop-ecosystem-discussions/scripting-radial-cutout-s/td-p/12637485*/
+/**Создание радиального выделения с заданными отступами от границ документа
+https://community.adobe.com/t5/photoshop-ecosystem-discussions/scripting-radial-cutout-s/td-p/12637485
+https://youtu.be/Wu2iCI2punY
+*/
 
 #target photoshop
 
-var selWidth = 70, //percents
-    selHeight = 90, //percents
+var selWidth = 50, //percents
+    selHeight = 100, //percents
     doc = new AM('document'),
     res = doc.getProperty('resolution'),
     docWidth = doc.getProperty('width') * res / 72,

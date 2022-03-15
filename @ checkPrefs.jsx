@@ -1,4 +1,18 @@
 /*iteration over all descriptor parameters based on PIStringTerminology.h*/
+/*
+var outfile = File('~/desktop/png/strings.png');
+var strings = [];
+outfile.open("w");
+
+for (var i = 0; i < 0xFFFFFFFF; i++) {
+    var s = typeIDToStringID(i);
+    if (s) {
+            outfile.writeln(s);
+    }
+}
+
+outfile.close()
+*/
 #target photoshop
 
 var f = File(File($.fileName).path + '/PIStringTerminology.h'),
@@ -27,18 +41,19 @@ logFile.open("a");
 
 for (var i = 0; i < len; i++) {
     $.writeln((i + ': ' + t2s(keys[i])));
-    //    for (var n = 0; n < len; n++) {
+    //  for (var n = 0; n < len; n++) {
     var r = new ActionReference();
     //r.putIndex(keys[i], 1)
+
     r.putProperty(s2t('property'), keys[i]);
-      r.putClass(s2t('timeline'))
-    //r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
+    //    r.putClass(s2t('timeline'));
+    //   r.putEnumerated(s2t('brush'), s2t('ordinal'), s2t('targetEnum'));
     try {
         var k = executeActionGet(r);
-        logFile.writeln(t2s(keys[i]));
+        //         logFile.writeln('Class ' /*+ t2s(keys[n]) */+ ' : ' + t2s(keys[i]));
         (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), k);
         logFile.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
     } catch (e) { }
-    //   }
+    //    }
 }
 logFile.close();

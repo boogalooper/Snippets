@@ -1,12 +1,13 @@
-/**How to change the order of open documents for an action?
+/**Запоминание текущего открытого документа и последующий возврат к нему
+ * (скрипт предназначен для записи в экшен, но может использоваться и в автономном режиме)
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-change-the-order-of-open-documents-for-an-action/m-p/12438243
+ * https://www.youtube.com/watch?v=az3XF_z7i-w
  */
-#target photoshop
 
+#target photoshop
 /*
 <javascriptresource>
 <name>Target document</name>
-
 <eventid>a4a27371-cedc-4af8-a6d1-f25765eca0cb</eventid>
 <enableinfo>true</enableinfo>
 <terminology><![CDATA[<< /Version 1 
@@ -18,18 +19,14 @@
                       >> ]]></terminology>
 </javascriptresource>
 */
-
 var s2t = stringIDToTypeID,
     isCancelled = false,
     UUID = 'a4a27371-cedc-4af8-a6d1-f25765eca0cb',
     id = null;
-
 const REMEMBER = 'remebmer current document',
     SELECT = "select remembered document";
-
 try { d = getCustomOptions(UUID) } catch (e) { }
 if (d != undefined) id = d.getInteger(s2t('documentID'))
-
 if (!app.playbackParameters.count) {
     var w = buildWindow(), result = w.show()
     switch (result) {
@@ -52,16 +49,13 @@ else {
             }
         }
     }
-
     if (app.playbackDisplayDialogs != DialogModes.ALL) {
         if (mode == SELECT) selectDocumentByID(id) else {
             saveSettings(0, true, false)
         }
     }
 }
-
 isCancelled ? 'cancel' : undefined
-
 function buildWindow(sel) {
     var u = undefined,
         d = new Window("dialog {text: 'Target document' }"),
@@ -73,16 +67,13 @@ function buildWindow(sel) {
     bnOk.onClick = function () { w.close(dl.selection.index) }
     return d;
 }
-
 function saveSettings(mode, renewId, renewMode) {
     if (renewId) putCustomOptions(UUID, getDocumentID(), false);
     if (renewMode) {
         (d = new ActionDescriptor()).putString(s2t('select'), mode ? SELECT : REMEMBER);
         playbackParameters = d;
     }
-
 }
-
 function selectDocumentByID(id, silentMode) {
     if (id) {
         (r = new ActionReference()).putIdentifier(s2t('document'), id);
@@ -91,12 +82,8 @@ function selectDocumentByID(id, silentMode) {
     }
     else { alert('No remembered document!') }
 }
-
 function getDocumentID() {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('documentID'));
     r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
     return executeActionGet(r);
 }
-
-
-

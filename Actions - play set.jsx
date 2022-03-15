@@ -1,8 +1,9 @@
-/**Script to play all actions in a set against a single image
+/**Последовательный запуск группы экшенов для активного документа (с возможностью выбора группы)
  * community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-play-all-actions-in-a-set-against-a-single-image/m-p/11864769
+ * https://www.youtube.com/watch?v=C66Ow1QqQws
  */
-#target photoshop
 
+#target photoshop
 var s2t = stringIDToTypeID,
     w = new Window("dialog {text: 'Select action set', orientation: 'column', alignChildren: ['center','top']}"),
     l = w.add("listbox{helpTip: 'doble click to play all actions', preferredSize: [250, 200]}"),
@@ -10,7 +11,6 @@ var s2t = stringIDToTypeID,
     ok = g.add("button", undefined, 'Play all actions', { name: 'ok' }),
     cancel = g.add("button", undefined, 'Cancel', { name: 'cancel' }),
     idx = 1;
-
 while (true) {
     (r = new ActionReference()).putIndex(s2t('actionSet'), idx++);
     try { l.add('item', executeActionGet(r).getString(s2t('name'))) } catch (e) { break; }

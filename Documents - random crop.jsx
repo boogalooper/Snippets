@@ -1,10 +1,11 @@
-/**Random crop batch processing script
+/**Произвольное кадрирование документа (для создания превью фрагмента заданного размера и заданного процента перекрытия) 
+ * с возможностью нанесения водяного знака (из отдельного файла)
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/random-crop-batch-processing-script/m-p/12468477
+ * https://www.youtube.com/watch?v=tYb6Zjwgpag
  */
+
 #target photoshop;
-
-randomSquareCropAndSave(10, 1000, 'e:/watermark.png')
-
+randomSquareCropAndSave(10, 1000, 'e:/Path to watermark.png')
 function randomSquareCropAndSave(coveragePercent, size, watermark) {
     try {
         try {
@@ -15,16 +16,11 @@ function randomSquareCropAndSave(coveragePercent, size, watermark) {
                 docPath = doc.getProperty(p = 'fileReference'),
                 quardSide = parseInt(Math.sqrt((coveragePercent / 100) * docWidth * docHeight) / 2);
         } catch (e) { throw ('Document property "' + p + '" not found!\n\n' + e) }
-
         if (quardSide * 2 > docWidth || quardSide * 2 > docHeight) throw ('Cropping area is larger than the document area!')
-
         var centerX = parseInt((quardSide + Math.random() * (docWidth - quardSide * 2))),
             centerY = parseInt((quardSide + Math.random() * (docHeight - quardSide * 2)));
-
         doc.makeNewCopy()
-
         doc.crop(centerY - quardSide, centerX - quardSide, centerY + quardSide, centerX + quardSide, size, size, docRes)
-
         if (watermark && File(watermark.exists)) doc.place(File(watermark))
         doc.saveAsJpg(function (fle, ext) {
             var uniqueFileName = fle + ext,
@@ -39,13 +35,10 @@ function randomSquareCropAndSave(coveragePercent, size, watermark) {
         doc.close();
     } catch (e) { alert(e) }
 }
-
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     target = target ? s2t(target) : null;
-
     this.getProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -53,7 +46,6 @@ function AM(target) {
             r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         return getDescValue(executeActionGet(r), property)
     }
-
     this.hasProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -61,7 +53,6 @@ function AM(target) {
             : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         return executeActionGet(r).hasKey(property)
     }
-
     this.makeNewCopy = function () {
         (r = new ActionReference()).putClass(s2t('document'));
         (d = new ActionDescriptor()).putReference(s2t('target'), r);
@@ -69,7 +60,6 @@ function AM(target) {
         d.putReference(s2t('using'), r1);
         executeAction(s2t('make'), d, DialogModes.NO);
     }
-
     this.crop = function (top, left, bottom, right, width, height, resolution) {
         (d = new ActionDescriptor()).putUnitDouble(s2t('top'), s2t('pixelsUnit'), top);
         d.putUnitDouble(s2t('left'), s2t('pixelsUnit'), left);
@@ -84,7 +74,6 @@ function AM(target) {
         d1.putUnitDouble(s2t('resolution'), s2t('densityUnit'), resolution);
         executeAction(s2t('crop'), d1, DialogModes.NO);
     }
-
     this.saveAsJpg = function (pth, quality) {
         (d = new ActionDescriptor()).putInteger(s2t('extendedQuality'), quality);
         d.putEnumerated(s2t('matteColor'), s2t('matteColor'), s2t('none'));
@@ -92,17 +81,14 @@ function AM(target) {
         d1.putPath(s2t('in'), pth);
         executeAction(s2t('save'), d1, DialogModes.NO);
     }
-
     this.close = function () {
         (d = new ActionDescriptor()).putEnumerated(s2t('saving'), s2t('yesNo'), s2t('no'));
         executeAction(s2t('close'), d, DialogModes.NO)
     }
-
     this.place = function (pth) {
         (d = new ActionDescriptor()).putPath(s2t("null"), pth);
         executeAction(s2t("placeEvent"), d, DialogModes.NO);
     }
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };

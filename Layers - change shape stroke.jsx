@@ -1,11 +1,10 @@
-/**Photoshop script to iterate through all layers and change shape stroke size!??!
+/**Изменение толщины обводки (относительно исходного размера) всех слоев типа Shape документа
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/photoshop-script-to-iterate-through-all-layers-and-change-shape-stroke-size/td-p/12689665
+ * https://youtu.be/7lk-rnzEkvY
  */
 #target photoshop
-
 var s2t = stringIDToTypeID,
     delta = 10;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var len = executeActionGet(r).getInteger(p),
@@ -25,8 +24,7 @@ if (lrs.length) {
         (r = new ActionReference()).putIdentifier(s2t('layer'), lrs[i]);
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
         executeAction(s2t('select'), d, DialogModes.NO);
-
-        (r = new ActionReference()).putProperty(s2t('property'), p = s2t('AGMStrokeStyleInfo1'));
+        (r = new ActionReference()).putProperty(s2t('property'), p = s2t('AGMStrokeStyleInfo'));
         r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
         try {
             var stroke = executeActionGet(r).getObjectValue(p);

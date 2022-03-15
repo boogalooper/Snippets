@@ -1,22 +1,16 @@
-/**Is it possible to automate filling multiple selections with random colors?
+/**Заливка выделенных shapes прозвольными цветами
  * https://community.adobe.com/t5/photoshop-ecosystem/is-it-possible-to-automate-filling-multiple-selections-with-random-colors/m-p/12346406
  */
 #target photoshop
-
 var s2t = stringIDToTypeID;
-
 doProgress("", "main()")
-
 function main() {
-
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('targetLayersIDs'));
     r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
     var lrs = executeActionGet(r).getList(p);
-
     for (var i = 0; i < lrs.count; i++) {
         app.updateProgress(i + 1, lrs.count);
         app.changeProgressText(i);
-
         (r = new ActionReference()).putIdentifier(s2t('layer'), lrs.getReference(i).getIdentifier(s2t('layerID')));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
         executeAction(s2t('select'), d, DialogModes.NO);
@@ -31,4 +25,3 @@ function main() {
         executeAction(s2t("set"), d, DialogModes.NO);
     }
 }
-

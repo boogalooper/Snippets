@@ -1,16 +1,21 @@
-/**Fill shape colour by adding DMC number
- * https://community.adobe.com/t5/photoshop-ecosystem/fill-shape-colour-by-adding-dmc-number/m-p/12317703#M573923
+/**Заполнение макета на основе табличных данных
+ * таблица с данными в формате CSV (тип разделителя указывается в коде)
+ * скрипт поддерживает 2 типа данных для вставки - текст и цвет
+ * для того чтобы скрипт сделал подстановку данных слой должен быть назван также как и заголовок столбца таблицы
+ * цвет может кодироваться в двух форматах:
+ * - три столбца Red Green Blue (в этом случае слой должен быть назван RGB)
+ * - один столбец с Hex (в этом случае слой должен быть назван HEX)
+ * перед запуском скрипта файл должен быть сохранен
+ * https://community.adobe.com/t5/phostoshop-ecosystem/fill-shape-colour-by-adding-dmc-number/m-p/12317703#M573923
+ * https://youtu.be/Dv95Y646KaE
  */
 #target photoshop
-
 app.doProgress('', 'main()')
-
 function main() {
     try {
         var doc = new AM('document'),
             lr = new AM('layer'),
             strDelimiter = ';'; // change csv div here if needed
-
         if (doc.hasProperty('numberOfLayers')) {
             var len = doc.getProperty('numberOfLayers'),
                 names = [];
@@ -23,37 +28,31 @@ function main() {
                 }
             }
         } else throw (new Error('No open template!'))
-
         if (names.length) {
             var source = doc.hasProperty('fileReference') ? doc.getProperty('fileReference') : null,
                 ext = source ? decodeURI(source.name).match(/\..*$/)[0] : null,
                 pth = Folder(source.path);
         } else throw (new Error('No matching layer names found!'))
-
         if (pth) {
             var csv = pth.getFiles(/\.(csv)$/i);
         } else throw (new Error('Cannot find csv because template file do not saved yet!'))
-
         if (csv.length) {
             do {
                 var fileContent = [],
                     currentFile = csv.shift(),
                     fileName = decodeURI(currentFile.name).replace(/\.csv/i, '');
-
                 currentFile.open("r");
                 do {
                     var line = currentFile.readln()
                     if (line != "") fileContent.push(line)
                 } while (!currentFile.eof)
                 currentFile.close()
-
                 if (fileContent.length) {
                     var csvContent = [];
                     do {
                         csvContent.push(splitCSVLine(fileContent.shift(), strDelimiter))
                     } while (fileContent.length)
                 } else throw (new Error('CSV file is empty!'))
-
                 var headers = csvContent.shift(),
                     numberOfLines = csvContent.length;
                 csvObject = {};
@@ -64,16 +63,13 @@ function main() {
                         csvObject[cur].push(csvContent[i].shift())
                     }
                 } while (headers.length)
-
                 for (var x = 1; x <= numberOfLines; x++) {
                     app.updateProgress(x, numberOfLines)
                     app.changeProgressText(x + ' of ' + numberOfLines)
-
                     var newFilename = fileName + ' ' + (('0000' + x).slice(-4));
                     for (var i = 0; i < names.length; i++) {
                         var cur = names[i];
                         if (cur.layerKind == 1 && (cur.name.match(/RGB/i) || cur.name.match(/HEX/i))) {
-
                             if (cur.name.match(/RGB/i)) {
                                 if (csvObject['red'].length && csvObject['green'].length && csvObject['blue'].length) {
                                     var c = new SolidColor;
@@ -91,11 +87,9 @@ function main() {
                                     c.rgb.hexValue = csvObject['hex'].shift()
                                 }
                             }
-
                             if (c) lr.changeFillEffect(c.rgb.red, c.rgb.green, c.rgb.blue, cur.id)
                             continue;
                         }
-
                         if (cur.layerKind == 3) {
                             if (csvObject[cur.name]) {
                                 if (csvObject[cur.name].length) {
@@ -109,14 +103,11 @@ function main() {
                     activeDocument.saveAs(File(pth + '/' + newFilename.replace(/\.[^\.]+$/, '')))
                 }
             } while (csv.length)
-
             activeDocument.close()
             app.open(source)
-
         } else throw (new Error('Cannot find csv file in parent folder of template!'))
     } catch (e) { alert(e); return; }
 }
-
 function splitCSVLine(strData, strDelimiter) {
     strDelimiter = (strDelimiter);
     var objPattern = new RegExp(
@@ -129,10 +120,8 @@ function splitCSVLine(strData, strDelimiter) {
     );
     var arrData = [],
         arrMatches = null;
-
     while (arrMatches = objPattern.exec(strData)) {
         var strMatchedDelimiter = arrMatches[1];
-
         if (strMatchedDelimiter != undefined) {
             if (
                 strMatchedDelimiter.length &&
@@ -152,16 +141,12 @@ function splitCSVLine(strData, strDelimiter) {
         }
         arrData.push(strMatchedValue);
     }
-
     return (arrData);
 }
-
 function AM(target, order) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     target = target ? s2t(target) : null;
-
     this.getProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -169,7 +154,6 @@ function AM(target, order) {
             r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
         return getDescValue(executeActionGet(r), property)
     }
-
     this.hasProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -177,7 +161,6 @@ function AM(target, order) {
             : r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
         try { return executeActionGet(r).hasKey(property) } catch (e) { return false }
     }
-
     this.descToObject = function (d) {
         var o = {}
         for (var i = 0; i < d.count; i++) {
@@ -186,31 +169,26 @@ function AM(target, order) {
         }
         return o
     }
-
     this.changeFillEffect = function (red, green, blue, id) {
         (r = new ActionReference()).putProperty(s2t("property"), p = s2t("layerEffects"));
         r.putIdentifier(s2t("layer"), id);
         var fx = executeActionGet(r).hasKey(p) ? executeActionGet(r).getObjectValue(p) : new ActionDescriptor(),
             currentFill = fx.hasKey(p = s2t("solidFill")) ? fx.getObjectValue(p) : new ActionDescriptor();
         if (fx.hasKey(p = s2t("solidFillMulti"))) fx.erase(p);
-
         (d = new ActionDescriptor()).putDouble(s2t("red"), red);
         d.putDouble(s2t("green"), green);
         d.putDouble(s2t("blue"), blue);
         currentFill.putObject(s2t("color"), s2t("RGBColor"), d);
         fx.putObject(s2t("solidFill"), s2t("solidFill"), currentFill);
-
         (d = new ActionDescriptor()).putReference(s2t("null"), r);
         d.putObject(s2t("to"), s2t("layerEffects"), fx);
         executeAction(s2t("set"), d, DialogModes.NO);
     }
-
     this.changeTextKey = function (text, id) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
         r.putIdentifier(s2t('layer'), id);
         if (executeActionGet(r).hasKey(p)) {
             var textKey = executeActionGet(r).getObjectValue(p);
-
             textKey.putString(s2t('textKey'), text);
             (r = new ActionReference()).putIdentifier(s2t('layer'), id);
             (d = new ActionDescriptor()).putReference(s2t('null'), r);
@@ -218,9 +196,6 @@ function AM(target, order) {
             executeAction(s2t('set'), d, DialogModes.NO);
         }
     }
-
-
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };

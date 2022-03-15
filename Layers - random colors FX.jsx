@@ -1,4 +1,5 @@
-/**Can you automatically give every subsequent letter a different color for a batch of text designs
+/**Создание эффекта заливки с использованием случайных цветов для выделенных слоев 
+ * (параметры цвета задаются в HSL. S и L постоянны, меняется Hue)
  * https://community.adobe.com/t5/photoshop-ecosystem/can-you-automatically-give-every-subsequent-letter-a-different-color-for-a-batch-of-text-designs/m-p/12325550
  */
 #target photoshop

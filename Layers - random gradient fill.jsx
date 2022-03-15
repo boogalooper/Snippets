@@ -1,4 +1,4 @@
-/**Need help with randomizing gradient fills
+/**Скрипт генерирующий случайные градиенты 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/need-help-with-randomizing-gradient-fills/m-p/12349293
  */
 s2t = stringIDToTypeID;

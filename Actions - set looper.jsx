@@ -1,5 +1,8 @@
-﻿/**Script to play all actions in a set against a single image
+﻿/**Последовательный запуск экшенов из одной группы для активного документа 
+ * с возможностью указания от какой и до какой операции проигрывать
+ * (скрипт предназначен для записи в экшен, при автономном запуске бесполезен)
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-play-all-actions-in-a-set-against-a-single-image/m-p/11866609
+ * https://www.youtube.com/watch?v=-nDhpjvciG8
  */
 #target photoshop
 /*
@@ -14,11 +17,9 @@
                      >> ]]></terminology>
 </javascriptresource>
 */
-
 var s2t = stringIDToTypeID,
     isCancelled = false,
     u;
-
 if (!playbackParameters.count) {
     (d = new ActionDescriptor()).putString(s2t('target'), 'play from next action');
     if (selectMode(d) == 1) { playbackParameters = d } else { isCancelled = true }
@@ -39,7 +40,6 @@ if (!playbackParameters.count) {
     }
 }
 isCancelled ? 'cancel' : u
-
 function selectMode(d) {
     w = new Window("dialog {text: 'Play all actions', orientation: 'column', alignChildren: ['left','top']}"),
         p = w.add("radiobutton{text: 'play from next action'}"),
@@ -53,12 +53,10 @@ function selectMode(d) {
     s.onClick = function () { d.putString(s2t('target'), this.text) }
     return w.show();
 }
-
 function getActionIdx() {
     (r = new ActionReference()).putEnumerated(s2t('action'), s2t('ordinal'), s2t('targetEnum'));
     command = executeActionGet(r);
     return getSetIdx(command.getInteger(s2t('parentIndex')), command.getString(s2t('parentName')))
-
     function getSetIdx(atnIdx, atnName) {
         var setIdx = 1
         while (true) {
