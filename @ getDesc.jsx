@@ -9,7 +9,6 @@ r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 $.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')))
 
-//var cropTypes = {'bounding box','','media box','crop box', 'bleed box', 'trim box', 'art box' }
 /*classic way*/
 function checkDesc(d) {
     var c = d.count,
