@@ -1,18 +1,4 @@
-/*iteration over all descriptor parameters based on PIStringTerminology.h*/
-/*
-var outfile = File('~/desktop/png/strings.png');
-var strings = [];
-outfile.open("w");
-
-for (var i = 0; i < 0xFFFFFFFF; i++) {
-    var s = typeIDToStringID(i);
-    if (s) {
-            outfile.writeln(s);
-    }
-}
-
-outfile.close()
-*/
+/** Iterating over descriptor parameters based on data from PIStringTerminology.h */
 #target photoshop
 
 var f = File(File($.fileName).path + '/PIStringTerminology.h'),
