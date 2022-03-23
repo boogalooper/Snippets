@@ -1,4 +1,4 @@
-/**Заливка выделенных shapes прозвольными цветами
+/**Fill selected shapes with custom colors
  * https://community.adobe.com/t5/photoshop-ecosystem/is-it-possible-to-automate-filling-multiple-selections-with-random-colors/m-p/12346406
  */
 #target photoshop

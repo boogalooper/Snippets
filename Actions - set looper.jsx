@@ -1,6 +1,6 @@
-﻿/**Последовательный запуск экшенов из одной группы для активного документа 
- * с возможностью указания от какой и до какой операции проигрывать
- * (скрипт предназначен для записи в экшен, при автономном запуске бесполезен)
+﻿/**Sequential launch of actions from the same group for the active document
+ * with the ability to specify from which and to which operation to play
+ * (the script is intended to be written to an action, it is useless when running standalone) 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-play-all-actions-in-a-set-against-a-single-image/m-p/11866609
  * https://www.youtube.com/watch?v=-nDhpjvciG8
  */

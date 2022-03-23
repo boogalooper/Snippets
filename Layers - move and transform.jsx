@@ -1,4 +1,4 @@
-/**Однослойное изображение - переместить выделенный фрагмент трансформацией и заполнить вырезанный фрагмент
+/**Single layer image - move the selected fragment with a transformation and fill the cut fragment 
  * https://community.adobe.com/t5/photoshop-ecosystem/can-a-script-call-transform-tool-and-wait-for-it-to-finish/m-p/12239360
  */
 #target photoshop

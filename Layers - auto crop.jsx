@@ -1,5 +1,5 @@
-/**Кадрирование сканов по границам без использования CropAndStraighten
- * (без учета поворота изображения)
+/**Crop scans along borders without using CropAndStraighten
+ * (excluding image rotation) 
  * https://community.adobe.com/t5/photoshop-ecosystem/how-to-cut-out-photos/m-p/12222294
  * https://www.youtube.com/watch?v=A1ajth43iSo
  */

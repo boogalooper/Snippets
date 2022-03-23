@@ -1,4 +1,4 @@
-/*Создание копии текущего документа с использованием того же имени
+/*Create a copy of the current document using the same name 
 * https://www.youtube.com/watch?v=D0sLd7B0bEY
 */
 

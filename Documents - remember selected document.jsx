@@ -1,5 +1,5 @@
-/**Запоминание текущего открытого документа и последующий возврат к нему
- * (скрипт предназначен для записи в экшен, но может использоваться и в автономном режиме)
+/**Remembering the current open document and then returning to it
+ * (the script is designed to be written to the action, but can also be used standalone) 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-change-the-order-of-open-documents-for-an-action/m-p/12438243
  * https://www.youtube.com/watch?v=az3XF_z7i-w
  */

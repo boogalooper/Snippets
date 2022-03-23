@@ -1,4 +1,4 @@
-/**Объединяем слои с одинаковыми именами
+/**Merge layers with the same name 
  * https://community.adobe.com/t5/photoshop/need-a-script-for-merging-layers-with-the-same-names/m-p/11468541
  */
 #target photoshop

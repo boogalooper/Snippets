@@ -1,4 +1,4 @@
-/**Растеризовать все смарт объекты, кроме тех которые имеют смарт-эффекты
+/**Rasterize all smart objects except those with smart effects
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/rasterize-all-smart-objects-except-the-ones-with-smart-filters-script/td-p/12775611
  * https://youtu.be/tIgbQESzBaQ
  */

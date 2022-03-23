@@ -1,4 +1,4 @@
-/**Автоматическое создание выделения при активации слоя
+/**Automatic creation of a selection when a layer is activated 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/choose-a-layer-and-make-it-a-selection/td-p/12795014
  * https://youtu.be/gBOgKLuQX8s
  */

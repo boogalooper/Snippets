@@ -1,4 +1,4 @@
-/**Изменение толщины обводки (относительно исходного размера) всех слоев типа Shape документа
+/**Change the stroke thickness (relative to the original size) of all Shape layers in the document
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/photoshop-script-to-iterate-through-all-layers-and-change-shape-stroke-size/td-p/12689665
  * https://youtu.be/7lk-rnzEkvY
  */

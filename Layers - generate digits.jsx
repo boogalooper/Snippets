@@ -1,11 +1,11 @@
-/**Скрипт для фомирования числовых табло на основе шаблона
- * Переключает макеты цифр, сгруппиорованные по разрядам
- * Требования к макету:
- * - должны быть сформированы макеты цифр от 0 до 9. 
- *   1 цифра - 1 слой (тип слоя не важен). Имя слоя - та же цифра
- * - цифры должны быть сгруппированы по разрядам
- *   (единицы - группа с именем 1, десятки - 10, сотни - 100 и т.п)
- * - перед началом работы все группы с разрядами должны быть выделены, а файл сохранен
+/**Script for generating numerical scoreboards based on a template
+ * Toggles digit layouts grouped by digits
+ * Layout requirements:
+ * - layouts of numbers from 0 to 9 must be formed.
+ * 1 digit - 1 layer (layer type is not important). Layer name - the same number
+ * - numbers must be grouped by digits
+ * (units - a group named 1, tens - 10, hundreds - 100, etc.)
+ * - before starting work, all groups with digits must be selected and the file saved
 https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-write-this-script/td-p/12771527
 https://youtu.be/KVg8aFLoIIM
 */

@@ -1,5 +1,5 @@
-/**Скрипт для создания групп слоев в зависимости от названия слоя
- * (в примере в качестве критерия выделения используется нижнее подчеркивание)
+/**Script to create layer groups depending on the layer name
+ * (in the example, underscore is used as selection criteria) 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/layer-selections-based-on-parts-of-the-layername/m-p/11116345
  * https://youtu.be/UuYGSsv9RHk
  */

@@ -1,6 +1,6 @@
-/**Быстрое получение полной структуры слоев документа (с учетом вложенных групп) 
- * в виде массива объектов. Параметры которые нужно получить указать самостоятельно
- * (в примере скрипт получает имя, id, тип, видимость, три вида границ слоя)
+/**Quick get the full structure of document layers (including nested groups)
+ * as an array of objects. Parameters that you need to specify yourself
+ * (in the example, the script gets the name, id, type, visibility, three types of layer borders)
 */
 
 #target photoshop

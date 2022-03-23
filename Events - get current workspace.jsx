@@ -1,15 +1,15 @@
-/**Слежение за переключением текущей рабочей области и выполнение той или иной функции в завимости от ее имени
- * (в скрипте используются рабочие области "рисование" и "фотография")
- * 
- * Скрипт работает с подсистемой событий Фотошопа, поэтому
- * запуск непосредственно из редактора кода невозможен - скрипт 
- * обязательно должен быть сохранен на диске.
+/**Tracking the switching of the current workspace and executing a particular function depending on its name
+ * (the script uses the "drawing" and "photo" workspaces)
+ *
+ * The script works with Photoshop's event subsystem, so
+ * launching directly from the code editor is not possible - script
+ * must be saved to disk. 
  * 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-determine-the-name-of-the-active-work-environment/m-p/12150059
  * https://www.youtube.com/watch?v=0NTbVPLz1Xo
  */
 
-// код слежения за состоянием рабочего пространства
+// workspace state tracking code 
 #target photoshop
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID,
@@ -64,7 +64,7 @@ try {
     }
 }
 
-// получение данных о рабочем пространстве:
+// getting workspace data: 
 /*
 var s2t = stringIDToTypeID,
     UUID = 'bf7064f7-eee2-4ac2-a639-5c3832469b43';

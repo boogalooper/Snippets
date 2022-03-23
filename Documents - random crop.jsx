@@ -1,5 +1,5 @@
-/**Произвольное кадрирование документа (для создания превью фрагмента заданного размера и заданного процента перекрытия) 
- * с возможностью нанесения водяного знака (из отдельного файла)
+/**Arbitrary cropping of the document (to create a preview of a fragment of a given size and a given percentage of overlap)
+ * with the possibility of applying a watermark (from a separate file) 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/random-crop-batch-processing-script/m-p/12468477
  * https://www.youtube.com/watch?v=tYb6Zjwgpag
  */

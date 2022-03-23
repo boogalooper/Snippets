@@ -1,6 +1,6 @@
-/*
-* Смешивание файлов из двух разных папок с сохранением общей нумерации файлов
-* (съемка постановочных кадров с подмешиванием фиксированного набора ранее снятых сюжетов) 
+/*Mixing files from two different folders while maintaining the same file numbering
+* (shooting staged shots with a fixed set of previously shot scenes mixed in) 
+* 
 * https://www.youtube.com/watch?v=lfjIUta8T8g
 */
 

@@ -1,8 +1,8 @@
-/**Растеризация объекта типа shape после окончания процесса рисования (по нажатию Enter)
- * 
- * Скрипт работает с подсистемой событий Фотошопа, поэтому
- * запуск непосредственно из редактора кода невозможен - скрипт 
- * обязательно должен быть сохранен на диске.
+/**Rasterization of an object of type shape after the end of the drawing process (by pressing Enter)
+ *
+ * The script works with Photoshop's event subsystem, so
+ * launching directly from the code editor is not possible - script
+ * must be saved to disk. 
  * 
  * https://community.adobe.com/t5/photoshop/javascript-script-trigger-action-through-enter-key-of-path-deselection/m-p/11573965
  https://www.youtube.com/watch?v=s_VdcEk3eJw

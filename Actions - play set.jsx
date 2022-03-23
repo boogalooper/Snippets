@@ -1,4 +1,4 @@
-/**Последовательный запуск группы экшенов для активного документа (с возможностью выбора группы)
+/**Sequential launch of a group of actions for the active document (with the ability to select a group) 
  * community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-play-all-actions-in-a-set-against-a-single-image/m-p/11864769
  * https://www.youtube.com/watch?v=C66Ow1QqQws
  */

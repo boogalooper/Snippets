@@ -1,4 +1,4 @@
-/**Объединение ввыделенных слоев с использованием имени нижнего слоя
+/**Merging selected layers using the name of the bottom layer
  * https://community.adobe.com/t5/photoshop-ecosystem/is-it-possible-to-make-the-name-of-combined-layers-the-bottom-one-s/m-p/12237497
  */
 function main() {

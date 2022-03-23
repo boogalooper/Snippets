@@ -1,4 +1,4 @@
-/**Изменение эффекта заливки активного слоя
+/**Change the fill effect of the active layer 
  * https://community.adobe.com/t5/photoshop-ecosystem/modify-a-layereffects-object/m-p/12196380
  * https://youtu.be/m45ATepUvRw
  */

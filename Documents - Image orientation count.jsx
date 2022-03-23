@@ -1,5 +1,5 @@
-/**Вывод информации размеров и ориентации открытых документов с возможностью быстрого переключения между ними
- * цветовыми индикаторами обозначается цветовое пространство документа - CMYK (зеленый), RGB - красный.
+/**Displaying information about the sizes and orientation of open documents with the ability to quickly switch between them
+ * Color indicate the color space of the document - CMYK (green), RGB - red. 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-get-all-open-documnet-dimensions-with-one-alert/m-p/12548870
  * https://www.youtube.com/watch?v=8GDX_P8x8bY
  */

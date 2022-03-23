@@ -1,11 +1,11 @@
-/**Заполнение макета на основе табличных данных
- * таблица с данными в формате CSV (тип разделителя указывается в коде)
- * скрипт поддерживает 2 типа данных для вставки - текст и цвет
- * для того чтобы скрипт сделал подстановку данных слой должен быть назван также как и заголовок столбца таблицы
- * цвет может кодироваться в двух форматах:
- * - три столбца Red Green Blue (в этом случае слой должен быть назван RGB)
- * - один столбец с Hex (в этом случае слой должен быть назван HEX)
- * перед запуском скрипта файл должен быть сохранен
+/**Filling the layout based on tabular data
+ * table with data in CSV format (separator type is specified in the code)
+ * the script supports 2 types of data to insert - text and color
+ * in order for the script to perform data substitution, the layer must be named the same as the table column header
+ * color can be encoded in two formats:
+ * - three columns Red Green Blue (in this case the layer should be named RGB)
+ * - one column with Hex (in this case the layer should be named HEX)
+ * the file must be saved before running the script 
  * https://community.adobe.com/t5/phostoshop-ecosystem/fill-shape-colour-by-adding-dmc-number/m-p/12317703#M573923
  * https://youtu.be/Dv95Y646KaE
  */

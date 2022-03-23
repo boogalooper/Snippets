@@ -1,5 +1,5 @@
-/**Быстрая очистка палитры операций (удаление всех групп экшенов)
- * (убедитесь, что все экшены на палитре заранее сохранены на диск)
+/**Quick clear action palette (delete all action groups)
+* (make sure all actions on the palette are saved to disk beforehand)
  * https://www.youtube.com/watch?v=lK0wKIk9igY
  */
 

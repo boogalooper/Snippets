@@ -1,5 +1,5 @@
-/**Проверка документа на наличие белой рамки 
- * (указыается размер рамки для проверки + максимальное отклонение)
+/**Checking the document for the presence of a white frame 
+ * (use the size of the frame to check + maximum deviation) 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/check-the-document-for-a-margin-or-border/td-p/12563008
  * https://www.youtube.com/watch?v=8PpYKx2t-fs
  */

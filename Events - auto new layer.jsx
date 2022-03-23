@@ -1,9 +1,5 @@
-/**Автоматическое создание нового слоя при попытке рисововать кистью на
- * смарт-объекте, настраиваемом или текстовом слое
- * 
- * Скрипт работает с подсистемой событий Фотошопа, поэтому
- * запуск непосредственно из редактора кода невозможен - скрипт 
- * обязательно должен быть сохранен на диске.
+/**Automatic creation of a new layer when trying to paint with a brush on smart object, custom or text layer
+ * The script works with Photoshop's event subsystem, so launching directly from the code editor is not possible - script must be saved to disk. 
  * https://www.youtube.com/watch?v=-vD3xAXAS1w
 */
 

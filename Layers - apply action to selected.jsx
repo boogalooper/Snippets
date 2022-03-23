@@ -1,4 +1,4 @@
-/**Применение одного и того же экшена к выделенным слоям в документе
+/**Applying the same action to selected layers in a document 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/applying-an-action-to-all-the-layers-in-a-document/m-p/12463566
  * https://www.youtube.com/watch?v=5uzaChlya3Q
  */

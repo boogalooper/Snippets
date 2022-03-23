@@ -1,4 +1,4 @@
-/**Деление выделения на сегменты, заливка каждого сегмента произвольным цветом
+/**Dividing the selection into segments, filling each segment with an arbitrary color 
  * https://community.adobe.com/t5/photoshop-ecosystem/is-it-possible-to-automate-filling-multiple-selections-with-random-colors/m-p/12348736
  * https://youtu.be/9dBFSqCK7ng
  */

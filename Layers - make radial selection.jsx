@@ -1,4 +1,4 @@
-/**Создание радиального выделения с заданными отступами от границ документа
+/**Creating a radial selection with specified indents from the borders of the document
 https://community.adobe.com/t5/photoshop-ecosystem-discussions/scripting-radial-cutout-s/td-p/12637485
 https://youtu.be/Wu2iCI2punY
 */

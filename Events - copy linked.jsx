@@ -1,4 +1,4 @@
-/**Контроль видимости связанных слоев при создании дубликатов
+/**Visibility control of linked layers when creating duplicates 
  * https://community.adobe.com/t5/photoshop-ecosystem-bugs/p-hidden-layers-linked-layer-made-visible-when-duplicated/idc-p/12802559
  * https://www.youtube.com/watch?v=q_9uocqy2Gw
  */

@@ -1,4 +1,4 @@
-/**Изменение эффекта градиентной заливки активного слоя
+/**Changing the active layer's gradient fill effect
  * https://community.adobe.com/t5/photoshop-ecosystem/modify-a-layereffects-object/m-p/12196380#M567928
  * https://youtu.be/Ynj3IKhI5_k
  */

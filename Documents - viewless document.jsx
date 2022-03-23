@@ -2,7 +2,6 @@
 @Jaroslav Bereza
 */
 
-
 const kaddLayerFromViewlessDocStr   = app.stringIDToTypeID("addLayerFromViewlessDoc");
 const kaspectRatioStr         = app.stringIDToTypeID("aspectRatio");
 const keyHeight            = app.charIDToTypeID('Hght');

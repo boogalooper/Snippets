@@ -1,4 +1,4 @@
-/**Переименование слоя по имени кисти, которой на нем рисуют
+/**Renaming a layer after the name of the brush used to paint on it 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/javascript-get-current-brush-shape-name/td-p/12783812
  * https://youtu.be/kc9qTR5ms2c
  * 
