@@ -14,6 +14,7 @@ if (tmp)
             var d = new ActionDescriptor();
             d.fromStream(x);
             if (d.count) {
+                $.writeln(i)
                 i = i + d.toStream(d).length
                 var n = new ActionDescriptor();
                 n.putObject(s2t('null'), s2t('null'), d);

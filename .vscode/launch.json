@@ -4,27 +4,22 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
+
+
+    {
+        "type": "extendscript-debug",
+        "request": "launch",
+        "name": "RUN",
+        "program": "${workspaceFolder}/Text - increase decrease font.jsx",
+        "stopOnEntry": false
+    },
+
         {
             "type": "extendscript-debug",
             "request": "launch",
-            "name": "RUN",
-            "program": "${workspaceFolder}/Text - change text color by line.jsx",
-            "stopOnEntry": false
-        },
-        {
-            "type": "extendscript-debug",
-            "request": "launch",
-            "name": "@ checkPrefs.jsx",
-            "program": "${workspaceFolder}/@ checkPrefs.jsx",
-            "stopOnEntry": false
-        },
-        {
-            "type": "extendscript-debug",
-            "request": "launch",
-            "name": "@ getDesc.jsx",
+            "name": "Get desc",
             "program": "${workspaceFolder}/@ getDesc.jsx",
             "stopOnEntry": false
-        },
+        }
     ]
 }
