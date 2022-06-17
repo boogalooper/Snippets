@@ -4,22 +4,11 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
-
     {
         "type": "extendscript-debug",
-        "request": "launch",
-        "name": "RUN",
-        "program": "${workspaceFolder}/Text - increase decrease font.jsx",
-        "stopOnEntry": false
+        "request": "attach",
+        "name": "Attach to ExtendScript Engine"
     },
 
-        {
-            "type": "extendscript-debug",
-            "request": "launch",
-            "name": "Get desc",
-            "program": "${workspaceFolder}/@ getDesc.jsx",
-            "stopOnEntry": false
-        }
     ]
 }

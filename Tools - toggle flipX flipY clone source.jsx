@@ -1,13 +1,23 @@
-﻿/*getting the parameters of the descriptor*/
 
 #target photoshop
-s2t = stringIDToTypeID;
+var s2t = stringIDToTypeID;
 
-/*using json object*/
-(r = new ActionReference()).putProperty(s2t('property'), p = s2t('viewInfo2'));
-r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
-(d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
-$.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')))
+if (currentTool == 'cloneStampTool') {
+    //currentTool = 'magicStampTool';
+
+    (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('currentToolOptions'));
+    ref.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
+    var cto = executeActionGet(ref).getObjectValue(s2t('currentToolOptions'));
+
+    d = new ActionDescriptor();
+    d.putBoolean(x = s2t("flipX"), !cto.getBoolean(x));
+    d.putBoolean(y = s2t("flipY"), !cto.getBoolean(y));
+    (r = new ActionReference()).putClass(s2t('magicStampTool'));
+    (d1 = new ActionDescriptor()).putReference(s2t('target'), r);
+    d1.putObject(s2t('to'), s2t('target'), d);
+    executeAction(s2t('set'), d1, DialogModes.NO);
+}
+
 
 /*classic way*/
 function checkDesc(d) {

@@ -3,4 +3,3 @@ var w = new Window("dialog"),
 slider.onChanging = function () { w.text = this.value }
 slider.addEventListener('keydown', function () { slider.onChanging() })
 w.show();
-

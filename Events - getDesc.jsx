@@ -2,14 +2,6 @@
  * @r-bin
  */
 
-<javascriptresource>
-
-<name>Script Events Listener...</name>
-
-<category>scriptevents</category>
-
-</javascriptresource>
-
 var log_name = "~/Desktop/EventListener.log";
 
 var dsc_name = "d";

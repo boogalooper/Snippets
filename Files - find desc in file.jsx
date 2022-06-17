@@ -1,14 +1,14 @@
 ﻿#target photoshop
 
 var tmp = (new File()).openDlg()
-if (tmp)
-{
+if (tmp) {
     tmp.open("r");
     tmp.encoding = "BINARY";
     var s = tmp.read()
     tmp.close()
 
-    for (var i = 0; i < s.length; i++) {
+    i = s.indexOf('8BIMphry')
+    for (i; i < s.length; i++) {
         try {
             var x = s.substr(i);
             var d = new ActionDescriptor();
@@ -22,7 +22,8 @@ if (tmp)
                 $.writeln(str += getJSON(d))
             }
         } catch (e) { }
-    }}
+    }
+}
 
 function getJSON(desc) {
     var d = new ActionDescriptor()

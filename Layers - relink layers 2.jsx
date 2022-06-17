@@ -32,18 +32,13 @@ function main() {
             var currentSelection = fn.getSelectedLayersIds(),
                 smartObjects = fn.buildSmartObjectsTree(),
                 filesList = fn.buildFilesList(smartObjects);
-       //     if (filesList.length) {
-                if (fn.isDitry) app.refresh()
-                var w = new mainWindow(filesList, runMode),
-                    result = w.show();
-                if (result == 1) {
-                    activeDocument.suspendHistory(str.relink.toString(), 'fn.relink(filesList, smartObjects)')
-                    if (currentSelection.length) doc.selectLayerByIDList(currentSelection)
-                }
-          /*  } else {
-                alert(str.errNoFiles, str.warning)
-                result = 0
-            }*/
+            if (fn.isDitry) app.refresh()
+            var w = new mainWindow(filesList, runMode),
+                result = w.show();
+            if (result == 1) {
+                activeDocument.suspendHistory(str.relink.toString(), 'fn.relink(filesList, smartObjects)')
+                if (currentSelection.length) doc.selectLayerByIDList(currentSelection)
+            }
             fn.isDitry = false
         } while (result == 3)
     } catch (e) {
@@ -179,6 +174,7 @@ function Config() {
     this.groupByExtension = true
     this.move = false
     this.checkEmbedded = true
+    this.targetFolder = ''
 }
 function CommonFunctions() {
     this.getSelectedLayersIds = function () {
@@ -752,7 +748,7 @@ function Locale() {
     this.move = { ru: 'перемещать', en: 'move files' }
     this.cancel = { ru: 'Отмена', en: 'Cancel' }
     this.currentPath = { ru: 'папка открытого документа', en: 'current document path' }
-    this.newPath = { ru: 'открыть папку...', en: 'open folder...' }
+    this.newPath = { ru: 'выбрать папку...', en: 'choose folder...' }
     this.relinkSelected = { ru: 'Связать выбранные', en: 'Relink selected' }
     this.replaceFor = { ru: 'Заменить связь для ', en: 'Replace link for ' }
     this.strRelinkErr1 = { ru: 'Замена связи не может быть выполнена!', en: 'Relink operation cannot be performed!' }
@@ -829,29 +825,29 @@ function mainWindow(fileList, runMode) {
         }
     }
     rl.onClick = function () {
-        // bnOk.enabled = fn.targetFolder
-        //     stPath.text = fn.targetFolder ? fn.targetFolder.fsName : ''
         if (fn.targetFolder) {
             app.doForcedProgress('', 'fn.findLinks(fn.targetFolder, fileList, l.selection)')
             l.fillLinksList(fileList.checkFiles())
         }
     }
-    dl.onClick = function () { alert('dfg') }
     dl.onChange = function () {
-        if (w.visible) {
-            switch (this.selection.index) {
-                case 0:
-                    fn.targetFolder = fn.documentFolder ? fn.documentFolder : null;
-                    if (!fn.targetFolder) alert(str.strRelinkErr3, str.err, 1)
-                    break;
-                case 1:
+        switch (this.selection.index) {
+            case 0:
+                fn.targetFolder = fn.documentFolder ? fn.documentFolder : null;
+                if (!fn.targetFolder && w.visible) alert(str.strRelinkErr3, str.err, 1)
+                break;
+            case 1:
+                if (w.visible) {
                     var p = (new Folder(fn.documentFolder ? fn.documentFolder : null)).selectDlg()
                     fn.targetFolder = p ? p : null;
-                    break;
-            }
+                } else {
+                    fn.targetFolder = cfg.targetFolder != '' && Folder(cfg.targetFolder).exists ? Folder(cfg.targetFolder) : null
+                }
+                break;
         }
         cfg.relinkMode = this.selection.index
-        rl.enabled = bnOk.enabled = fn.targetFolder ? true : false;
+        cfg.targetFolder = fn.targetFolder ? fn.targetFolder.fsName : ''
+        rl.enabled = bnOk.enabled = fn.targetFolder && fileList.length ? true : false;
         stPath.text = fn.targetFolder ? fn.targetFolder.fsName : ''
     }
     chCollect.onClick = function () { gSubCollect.enabled = cfg.collect = this.value }
@@ -878,20 +874,17 @@ function mainWindow(fileList, runMode) {
     iRed.onClick = function () { qickSelect(3) }
     w.onShow = function () {
         if (!fn.documentFolder) cfg.relinkMode = 1
-        {
-            dl.selection = cfg.relinkMode ? 1 : 0
-            chMatch.value = cfg.matchExtension
-            gSubCollect.enabled = chCollect.value = cfg.collect
-            et.text = cfg.subfolder
-            chGroup.value = cfg.groupByExtension
-            chMove.value = cfg.move
-            chEmbedded.value = cfg.checkEmbedded
-            chEmbedded.enabled = runMode
-            stPath.text = fn.targetFolder ? fn.targetFolder.fsName : ''
-        }
+        dl.selection = cfg.relinkMode ? 1 : 0
+        chMatch.value = cfg.matchExtension
+        gSubCollect.enabled = chCollect.value = cfg.collect
+        et.text = cfg.subfolder
+        chGroup.value = cfg.groupByExtension
+        chMove.value = cfg.move
+        chEmbedded.value = cfg.checkEmbedded
+        chEmbedded.enabled = runMode
+        stPath.text = fn.targetFolder ? fn.targetFolder.fsName : ''
         dl.size.width = w.size.width - rl.size.width - chMatch.size.width - 90
         et.size.width = w.size.width - chGroup.size.width - chCollect.size.width - chMove.size.width - 80
-
         w.layout.layout(true)
         l.fillLinksList(fileList.checkFiles())
     }
