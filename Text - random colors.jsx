@@ -28,11 +28,11 @@ for (var i = 0; i < lrs.count; i++) {
             k.putInteger(s2t('from'), x)
             k.putInteger(s2t('to'), x + 1)
 
-            var saturation = 100,
+            var saturation = 70,
                 lightness = 50,
                 hue = 0;
 
-            do { hue = Math.random() * 360 } while (Math.abs(hueDifference - hue) < 60);
+            do { hue = Math.random() * 360 } while (Math.abs(hueDifference - hue) < 20);
             hueDifference = hue
 
             var RGB = hslToRgb(hue, saturation, lightness)

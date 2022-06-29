@@ -17,15 +17,15 @@ for (var i = 1; i <= len; i++) {
     r.putIndex(s2t('layer'), i);
     if (executeActionGet(r).hasKey(p)) {
         var textKey = executeActionGet(r).getObjectValue(p),
-            sList = textKey.getList(s2t('textStyleRange')),
+            tList = textKey.getList(s2t('textStyleRange')),
             pList = textKey.getList(s2t('paragraphStyleRange')),
             defaultStyle = (p = pList.getObjectValue(0).getObjectValue(s2t('paragraphStyle'))).hasKey(s2t('defaultStyle')) ?
                 p.getObjectValue(s2t('defaultStyle')) : new ActionDescriptor(),
             l = new ActionList(),
             d = new ActionDescriptor();
             
-        for (var x = 0; x < sList.count; x++) {
-            k = sList.getObjectValue(x)
+        for (var x = 0; x < tList.count; x++) {
+            k = tList.getObjectValue(x)
             if (k.getObjectValue(s2t('textStyle')).hasKey(s2t('color'))) {
                 s = copyDesc(defaultStyle, k.getObjectValue(s2t('textStyle')))
                 c = s.getObjectValue(s2t('color'))

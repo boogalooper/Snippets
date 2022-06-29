@@ -8,15 +8,15 @@
  r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
  if (executeActionGet(r).hasKey(p)) {
      var textKey = executeActionGet(r).getObjectValue(p),
-         sList = textKey.getList(s2t('textStyleRange')),
+         tList = textKey.getList(s2t('textStyleRange')),
          l = new ActionList(),
          styleSheet = [],
          lines = textKey.getString(s2t('textKey')).split('\r');
-     for (var i = 0; i < sList.count; i++) {
+     for (var i = 0; i < tList.count; i++) {
          styleSheet.push({
-             from: sList.getObjectValue(i).getInteger(s2t('from')),
-             to: sList.getObjectValue(i).getInteger(s2t('to')),
-             style: sList.getObjectValue(i).getObjectValue(s2t('textStyle'))
+             from: tList.getObjectValue(i).getInteger(s2t('from')),
+             to: tList.getObjectValue(i).getInteger(s2t('to')),
+             style: tList.getObjectValue(i).getObjectValue(s2t('textStyle'))
          })
      };
      var from = 0;
