@@ -1,13 +1,11 @@
 var app = new AM('application'),
     lr = new AM('layer'),
-    scale = 40, // percent
-    angle = 15;
-
+    scale = 30, // %, randomize size of each letter (percent of size)
+    offset = 2, //%. randomize Y position of each letter, (percent of size)
+    angle = 15; //deg, randomize angle of each letter (max angle)
 if (app.getProperty('numberOfDocuments')) activeDocument.suspendHistory('Scattering letters', 'main()')
-
 function main() {
     if (lr.hasProperty('textKey')) {
-
         lr.setVisiblity('show')
         var fx = lr.hasProperty('layerEffects');
         if (fx) lr.copyStyle();
@@ -18,32 +16,28 @@ function main() {
         lr.convertToSmartObject();
         if (fx) lr.pasteStyle();
         lr.editSmartObject();
-
-        activeDocument.suspendHistory('Scatter letters', 'workWithLetters()')
-
-        function workWithLetters() {
+        activeDocument.suspendHistory('Scattering letters', 'splitLetters()')
+        function splitLetters() {
             var letters = lr.describeTextLayer(),
                 baseLayerId = lr.getProperty('layerID');
             doForcedProgress('letter preparation', 'prepareLetters ()')
-            doProgress('transform letters', 'transformLetters ()')
-
+            doForcedProgress('move letters', 'moveLetters ()')
             function prepareLetters() {
-                lr.setRandomSize(letters, scale);
+                lr.randomizeSize(letters, scale);
                 lr.revealAll();
-                lr.separateLetters(letters);
+                lr.splitLetters(letters);
                 var IDs = [];
                 for (var i = 0; i < letters.length; i++) if (letters[i].id) IDs.push(letters[i].id)
                 lr.setVisiblity('hide', IDs)
             }
-
-            function transformLetters() {
+            function moveLetters() {
                 for (var i = 0; i < letters.length; i++) {
                     updateProgress(i + 1, letters.length);
-                    changeProgressText('transform letter: ' + letters[i].content)
+                    changeProgressText('move letter: ' + letters[i].content)
                     if (letters[i].id) {
                         lr.selectLayer([letters[i].id])
-                        lr.blackoutLayer(baseLayerId)
-                        lr.blackLetter(baseLayerId, i)
+                        lr.setWhiteText(baseLayerId)
+                        lr.setBlackText(baseLayerId, i)
                         lr.selectRGBChannel()
                         lr.inverseSelection()
                         lr.alignLayer()
@@ -53,10 +47,13 @@ function main() {
                 for (var i = 0; i < letters.length; i++) {
                     if (letters[i].id) {
                         lr.selectLayer([letters[i].id], true)
-                        lr.rotateLayer(Math.random() > 0.5 ? Math.random() * angle : -Math.random() * angle)
+                        var rotate = Math.random() > 0.5 ? Math.random() * angle : -Math.random() * angle,
+                            bounds = lr.descToObject(lr.getProperty('bounds').value),
+                            height = bounds.bottom - bounds.top,
+                            shift = height * Math.random() > 0.5 ? Math.random() * offset / 100 : -Math.random() * offset / 100;
+                        lr.transform(rotate, 0, shift)
                     }
                 }
-
             }
             lr.selectLayer([baseLayerId])
             lr.removeLayer()
@@ -64,9 +61,7 @@ function main() {
             app.closeDocument(true)
         }
     }
-
 }
-
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
@@ -84,6 +79,14 @@ function AM(target) {
         id ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id))
             : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         try { return executeActionGet(r).hasKey(property) } catch (e) { return false }
+    }
+    this.descToObject = function (d) {
+        var o = {}
+        for (var i = 0; i < d.count; i++) {
+            var k = d.getKey(i)
+            o[t2s(k)] = getDescValue(d, k)
+        }
+        return o
     }
     this.duplicateLayer = function (name) {
         (r = new ActionReference()).putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
@@ -132,11 +135,9 @@ function AM(target) {
         r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
         var textKey = executeActionGet(r).getObjectValue(p),
             tList = textKey.getList(s2t('textStyleRange')),
-
             styleSheet = { textStyle: [], paragraphStyle: [] },
             text = textKey.getString(s2t('textKey')),
             output = [];
-
         for (var i = 0; i < tList.count; i++) {
             styleSheet.textStyle.push({
                 from: tList.getObjectValue(i).getInteger(s2t('from')),
@@ -144,26 +145,21 @@ function AM(target) {
                 style: tList.getObjectValue(i).getObjectValue(s2t('textStyle'))
             })
         };
-
-
         for (var i = 0; i < text.length; i++) {
-
             output.push({
                 content: text.substr(i, 1),
                 textStyle: findStyle(styleSheet.textStyle, i),
-
             });
         };
-
         return output;
-
         function findStyle(style, idx) {
             for (var i = 0; i < style.length; i++) {
                 if (idx >= style[i].from && idx < style[i].to) return copyDesc(style[i].style, new ActionDescriptor())
             }
         }
     }
-    this.setRandomSize = function (letters, ratio) {
+    this.randomizeSize = function (letters, ratio) {
+        ratio = ratio ? ratio : 0.5;
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
         r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
         var textKey = executeActionGet(r).getObjectValue(p);
@@ -172,7 +168,6 @@ function AM(target) {
                 var impliedFontSize = letters[i].textStyle.getUnitDoubleValue(s2t('impliedFontSize'))
                 letters[i].textStyle.putUnitDouble(s2t('impliedFontSize'), s2t('pointsUnit'), impliedFontSize + impliedFontSize * (Math.random() > 0.5 ? Math.random() * ratio / 100 : -Math.random() * ratio / 100));
             }
-
         }
         var l = new ActionList();
         for (var i = 0; i < letters.length; i++) {
@@ -191,7 +186,7 @@ function AM(target) {
     this.revealAll = function () {
         executeAction(s2t('revealAll'), new ActionDescriptor(), DialogModes.NO);
     }
-    this.separateLetters = function (letters) {
+    this.splitLetters = function (letters) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
         r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
         var textKey = executeActionGet(r).getObjectValue(p);
@@ -204,21 +199,19 @@ function AM(target) {
                 d.putInteger(s2t('from'), 0);
                 d.putInteger(s2t('to'), 1);
                 l.putObject(s2t('textStyleRange'), d)
-
                 textKey.putList(s2t('textStyleRange'), l);
                 (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
                 textKey.putString(s2t('textKey'), letters[i].content);
                 d.putObject(s2t('to'), s2t('textLayer'), textKey);
                 executeAction(s2t('set'), d, DialogModes.NO);
-
                 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('layerID'));
                 r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
                 letters[i].id = executeActionGet(r).getInteger(p);
             }
         }
     }
-    this.blackoutLayer = function (id) {
+    this.setWhiteText = function (id) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
         r.putIdentifier(s2t('layer'), id);
         var textKey = executeActionGet(r).getObjectValue(p),
@@ -227,15 +220,12 @@ function AM(target) {
         for (var i = 0; i < tList.count; i++) {
             var k = tList.getObjectValue(i),
                 s = k.getObjectValue(s2t('textStyle'));
-
             var d = new ActionDescriptor();
             d.putDouble(s2t('red'), 255)
             d.putDouble(s2t('grain'), 255)
             d.putDouble(s2t('blue'), 255)
             s.putObject(s2t('color'), s2t('RGBColor'), d)
-
             k.putObject(s2t('textStyle'), s2t('textStyle'), s)
-
             l.putObject(s2t('textStyleRange'), k)
         }
         textKey.putList(s2t('textStyleRange'), l)
@@ -245,7 +235,7 @@ function AM(target) {
         d.putObject(s2t('to'), s2t('textLayer'), textKey);
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-    this.blackLetter = function (id, idx) {
+    this.setBlackText = function (id, idx) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
         r.putIdentifier(s2t('layer'), id);
         var textKey = executeActionGet(r).getObjectValue(p),
@@ -262,7 +252,6 @@ function AM(target) {
                 s.putObject(s2t('color'), s2t('RGBColor'), d)
             }
             k.putObject(s2t('textStyle'), s2t('textStyle'), s)
-
             l.putObject(s2t('textStyleRange'), k)
         }
         textKey.putList(s2t('textStyleRange'), l)
@@ -282,48 +271,35 @@ function AM(target) {
     this.inverseSelection = function () {
         executeAction(s2t('inverse'), undefined, DialogModes.NO);
     }
-    this.rotateLayer = function (angle) {
-
+    this.transform = function (angle, dX, dY) {
         (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
         (d = new ActionDescriptor()).putReference(s2t('target'), r);
         d.putEnumerated(s2t('freeTransformCenterState'), s2t('quadCenterState'), s2t('QCSAverage'));
-
-
-
+        (d1 = new ActionDescriptor()).putUnitDouble(s2t('horizontal'), s2t('distanceUnit'), dX);
+        d1.putUnitDouble(s2t('vertical'), s2t('distanceUnit'), dY);
+        d.putObject(s2t('offset'), s2t('offset'), d1);
         d.putUnitDouble(s2t('angle'), s2t('angleUnit'), angle);
-
         d.putEnumerated(s2t('interfaceIconFrameDimmed'), s2t('interpolationType'), s2t('bicubic'));
         executeAction(s2t('transform'), d, DialogModes.NO);
-
     }
-
     this.alignLayer = function () {
-        var d = new ActionDescriptor();
-        var r = new ActionReference();
-        r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
-        d.putReference(s2t('target'), r);
+        (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
+        (d = new ActionDescriptor()).putReference(s2t('target'), r);
         d.putEnumerated(s2t('using'), s2t('alignDistributeSelector'), s2t('ADSCentersH'));
         d.putBoolean(s2t('alignToCanvas'), false);
         executeAction(s2t('align'), d, DialogModes.NO);
-
-
-        var d = new ActionDescriptor();
-        var r = new ActionReference();
-        r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
-        d.putReference(s2t('target'), r);
+        (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
+        (d = new ActionDescriptor()).putReference(s2t('target'), r);
         d.putEnumerated(s2t('using'), s2t('alignDistributeSelector'), s2t('ADSCentersV'));
-        d.putBoolean(s2t('alignToSelection'), false);
+        d.putBoolean(s2t('alignToCanvas'), false);
         executeAction(s2t('align'), d, DialogModes.NO);
     }
-
     this.deselect = function () {
         (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
         (d = new ActionDescriptor()).putReference(s2t('target'), r);
         d.putEnumerated(s2t('to'), s2t('ordinal'), s2t('none'));
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-
-
     this.closeDocument = function (save) {
         save = save != true ? s2t('no') : s2t('yes');
         (d = new ActionDescriptor()).putEnumerated(s2t('saving'), s2t('yesNo'), save);
@@ -351,7 +327,6 @@ function AM(target) {
         }
         return to
     }
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };
