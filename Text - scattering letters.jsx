@@ -1,3 +1,6 @@
+var app = app;
+
+
 var app = new AM('application'),
     lr = new AM('layer'),
     scale = 30, // %, randomize size of each letter (percent of size)
@@ -166,9 +169,10 @@ function AM(target) {
         for (var i = 0; i < letters.length; i++) {
             if (!/\s/.test(letters[i].content)) {
                 var impliedFontSize = letters[i].textStyle.getUnitDoubleValue(s2t('impliedFontSize'))
-                letters[i].textStyle.putUnitDouble(s2t('impliedFontSize'), s2t('pointsUnit'), impliedFontSize + impliedFontSize * (Math.random() > 0.5 ? Math.random() * ratio / 100 : -Math.random() * ratio / 100));
+                letters[i].textStyle.putUnitDouble(s2t('    '), s2t('pointsUnit'), impliedFontSize + impliedFontSize * (Math.random() > 0.5 ? Math.random() * ratio / 100 : -Math.random() * ratio / 100));
             }
         }
+    
         var l = new ActionList();
         for (var i = 0; i < letters.length; i++) {
             var d = new ActionDescriptor();

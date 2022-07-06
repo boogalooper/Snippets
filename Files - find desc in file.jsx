@@ -7,9 +7,10 @@ if (tmp) {
     var s = tmp.read()
     tmp.close()
 
-    i = s.indexOf('8BIMphry')
+    i = s.indexOf('xpacket')
     for (i; i < s.length; i++) {
         try {
+          //  if (i > 3000) break;
             var x = s.substr(i);
             var d = new ActionDescriptor();
             d.fromStream(x);
@@ -20,6 +21,7 @@ if (tmp) {
                 n.putObject(s2t('null'), s2t('null'), d);
                 var str = t2s(n.getObjectType(n.getKey(0))) + '\n';
                 $.writeln(str += getJSON(d))
+                $.writeln('line ' + i)
             }
         } catch (e) { }
     }

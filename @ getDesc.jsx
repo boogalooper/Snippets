@@ -1,10 +1,10 @@
 ﻿/*getting the parameters of the descriptor*/
 
 #target photoshop
-s2t = stringIDToTypeID;
+s2t = s2t;
 
 /*using json object*/
-(r = new ActionReference()).putProperty(s2t('property'), p = s2t('interfacePrefs'));
+(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('interfacePrefs'));
 r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 //d.putBoolean(stringIDToTypeID("expandSmartObjects"), true);
@@ -49,5 +49,5 @@ function getValues(d, keyNum) {
     };
 };
 
-function s2t(s) { return stringIDToTypeID(s) }
+function s2t(s) { return s2t(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }
