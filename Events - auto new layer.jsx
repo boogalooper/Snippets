@@ -2,7 +2,6 @@
  * The script works with Photoshop's event subsystem, so launching directly from the code editor is not possible - script must be saved to disk. 
  * https://www.youtube.com/watch?v=-vD3xAXAS1w
 */
-
 #target photoshop
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
@@ -19,7 +18,7 @@ if (evt) {
                         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('layerKind'));
                         r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
                         var kind = executeActionGet(r).getInteger(p);
-                        if (tool == 'paintbrushTool' && (kind == 2 || kind == 3 || kind == 5 )) {
+                        if (tool == 'paintbrushTool' && (kind == 2 || kind == 3 || kind == 5)) {
                             (r = new ActionReference()).putClass(s2t("layer"));
                             (d = new ActionDescriptor()).putReference(s2t("null"), r);
                             executeAction(s2t("make"), d, DialogModes.NO);

@@ -17,7 +17,7 @@ for (var i = 1; i <= len; i++) {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('layerID'));
     r.putIndex(s2t('layer'), i);
     var id = executeActionGet(r).getInteger(p);
-    lrs[n].push(id) 
+    lrs[n].push(id)
 }
 for (a in lrs) {
     if (lrs[a].length > 1) {

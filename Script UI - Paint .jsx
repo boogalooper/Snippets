@@ -1,6 +1,5 @@
 ﻿/**IDFN */
 #target photoshop
-
 var bt = new BridgeTalk(),
     ph = BridgeTalk.getSpecifier('photoshop'),
     f = ";f();",
@@ -10,8 +9,6 @@ var bt = new BridgeTalk(),
 bt.target = ph;
 bt.body = "var f=" + z + f;
 bt.send();
-
-
 var bt = new BridgeTalk(),
     ph = BridgeTalk.getSpecifier('photoshop'),
     f = ";f();",

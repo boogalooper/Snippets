@@ -1,7 +1,6 @@
 /**Fonts.length Inaccuracy?
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/fonts-length-inaccuracy/td-p/13051474
  */
-
 const scriptName = 'Create Font List'
 const scriptVersion = '1.0'
 const summary = 'This tool exports a CSV containing information about the fonts in the font library'

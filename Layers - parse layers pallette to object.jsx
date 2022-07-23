@@ -2,7 +2,6 @@
  * as an array of objects. Parameters that you need to specify yourself
  * (in the example, the script gets the name, id, type, visibility, three types of layer borders)
 */
-
 #target photoshop
 var a = getLayersCollection()
 function getLayersCollection() {

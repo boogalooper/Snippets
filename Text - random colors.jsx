@@ -1,42 +1,31 @@
 /**Can you automatically give every subsequent letter a different color for a batch of text designs
  * https://community.adobe.com/t5/photoshop-ecosystem/can-you-automatically-give-every-subsequent-letter-a-different-color-for-a-batch-of-text-designs/m-p/12325550
  */
-
 #target photoshop
-
 var s2t = stringIDToTypeID;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('targetLayersIDs'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var lrs = executeActionGet(r).getList(p);
-
 for (var i = 0; i < lrs.count; i++) {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
     r.putIdentifier(s2t('layer'), lrs.getReference(i).getIdentifier(s2t('layerID')));
-
     if (executeActionGet(r).hasKey(p)) {
         var textKey = executeActionGet(r).getObjectValue(p),
             style = textKey.getList(s2t('textStyleRange')).getObjectValue(0),
             text = textKey.getString(p),
             l = new ActionList(),
             hueDifference = 0;
-
         for (var x = 0; x < text.length; x++) {
             var k = copyDesc(style, new ActionDescriptor()),
                 s = k.getObjectValue(s2t('textStyle'));
-
             k.putInteger(s2t('from'), x)
             k.putInteger(s2t('to'), x + 1)
-
             var saturation = 70,
                 lightness = 50,
                 hue = 0;
-
             do { hue = Math.random() * 360 } while (Math.abs(hueDifference - hue) < 20);
             hueDifference = hue
-
             var RGB = hslToRgb(hue, saturation, lightness)
-
             var d = new ActionDescriptor();
             d.putDouble(s2t('red'), RGB[0])
             d.putDouble(s2t('grain'), RGB[1])
@@ -54,9 +43,7 @@ for (var i = 0; i < lrs.count; i++) {
             executeAction(s2t('set'), d, DialogModes.NO);
         }
     }
-
 }
-
 function copyDesc(from, to) {
     for (var i = 0; i < from.count; i++) {
         var k = from.getKey(i);
@@ -79,18 +66,15 @@ function copyDesc(from, to) {
     }
     return to
 }
-
 function hslToRgb(h, s, l) {
     s /= 100;
     l /= 100;
-
     var c = (1 - Math.abs(2 * l - 1)) * s,
         x = c * (1 - Math.abs((h / 60) % 2 - 1)),
         m = l - c / 2,
         r = 0,
         g = 0,
         b = 0;
-
     if (0 <= h && h < 60) {
         r = c; g = x; b = 0;
     } else if (60 <= h && h < 120) {
@@ -104,6 +88,5 @@ function hslToRgb(h, s, l) {
     } else if (300 <= h && h < 360) {
         r = c; g = 0; b = x;
     }
-
     return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)]
 }

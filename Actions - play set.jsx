@@ -2,7 +2,6 @@
  * community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-play-all-actions-in-a-set-against-a-single-image/m-p/11864769
  * https://www.youtube.com/watch?v=C66Ow1QqQws
  */
-
 #target photoshop
 var s2t = stringIDToTypeID,
     w = new Window("dialog {text: 'Select action set', orientation: 'column', alignChildren: ['center','top']}"),

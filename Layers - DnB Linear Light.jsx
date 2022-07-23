@@ -1,22 +1,15 @@
 /**creating a dodge & burn adjustment layer  */
-
 // BEGIN__HARVEST_EXCEPTION_ZSTRING
-
 <javascriptresource>
     <category>Tools</category>
     <name>DnB Linear Light</name>
     <enableinfo>true</enableinfo>
 </javascriptresource>
-
 #target photoshop
 s2t = stringIDToTypeID;
-
-
 (r = new ActionReference()).putName(s2t('layer'), 'H');
 (d = new ActionDescriptor()).putReference(s2t('null'), r);
 try { executeAction(s2t('select'), d, DialogModes.NO) } catch (e) { }
-
-
 var idMk = charIDToTypeID("Mk  ");
 var desc16 = new ActionDescriptor();
 var idnull = charIDToTypeID("null");
@@ -39,7 +32,6 @@ desc16.putObject(idUsng, idLyr, desc17);
 var idLyrI = charIDToTypeID("LyrI");
 desc16.putInteger(idLyrI, 3);
 executeAction(idMk, desc16, DialogModes.NO);
-
 // =======================================================
 var idslct = charIDToTypeID("slct");
 var desc19 = new ActionDescriptor();

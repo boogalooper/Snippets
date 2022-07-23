@@ -33,7 +33,7 @@ w.onShow = function () {
                 (mode = t2s(getPropertyDesc('document', p = 'mode', i).getEnumerationValue(s2t(p))).replace(new RegExp('Color(Enum)?'), '')) + '/' +
                 getPropertyDesc('document', p = 'depth', i).getInteger(s2t(p))
             )
-            for(var prop in l.items[i - 1].__proto__) alert(prop)
+            for (var prop in l.items[i - 1].__proto__) alert(prop)
             l.items[i - 1].image = mode == 'CMYK' ? icoGreen : icoRed
         }
         l.selection = getPropertyDesc('document', p = 'itemIndex').getInteger(s2t(p)) - 1

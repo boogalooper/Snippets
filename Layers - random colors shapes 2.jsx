@@ -2,9 +2,7 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/randomize-selected-solid-color-layers-always-with-s-gt-25-amp-b-50/m-p/12459879
  */
 #target photoshop
-
 var s2t = stringIDToTypeID;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('adjustment'));
 r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 var fill = executeActionGet(r).getList(p).getObjectValue(0).getObjectValue(s2t('color')),
@@ -14,12 +12,10 @@ with (color.rgb) {
     green = fill.getDouble(s2t('green'))
     blue = fill.getDouble(s2t('blue'))
 }
-
 with (color.hsb) {
     saturation = 25 + Math.random() * 75
     brightness = 50 + Math.random() * 50
 }
-
 (r = new ActionReference()).putEnumerated(s2t("contentLayer"), s2t("ordinal"), s2t("targetEnum"));
 (d = new ActionDescriptor()).putReference(s2t("null"), r);
 (d1 = new ActionDescriptor()).putDouble(s2t('red'), color.rgb.red);
@@ -28,9 +24,6 @@ d1.putDouble(s2t('blue'), color.rgb.blue);
 (d2 = new ActionDescriptor()).putObject(s2t("color"), s2t("RGBColor"), d1);
 d.putObject(s2t("to"), s2t("solidColorLayer"), d2);
 executeAction(s2t("set"), d, DialogModes.NO);
-
-
-
 function checkDesc(d) {
     var c = d.count,
         str = '';
@@ -41,8 +34,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
-
 function getValues(d, keyNum) {
     var p = d.getKey(keyNum);
     switch (d.getType(p)) {
@@ -97,6 +88,5 @@ function getValues(d, keyNum) {
             break;
     };
 };
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }

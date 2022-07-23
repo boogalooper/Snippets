@@ -2,16 +2,13 @@
 https://community.adobe.com/t5/photoshop-ecosystem-discussions/scripting-radial-cutout-s/td-p/12637485
 https://youtu.be/Wu2iCI2punY
 */
-
 #target photoshop
-
 var selWidth = 50, //percents
     selHeight = 100, //percents
     doc = new AM('document'),
     res = doc.getProperty('resolution'),
     docWidth = doc.getProperty('width') * res / 72,
     docHeight = doc.getProperty('height') * res / 72;
-
 doc.makeEllipseSelection(
     (docHeight - docHeight * selHeight / 100) / 2,
     (docWidth - docWidth * selWidth / 100) / 2,
@@ -19,13 +16,10 @@ doc.makeEllipseSelection(
     docWidth - (docWidth - docWidth * selWidth / 100) / 2,
     true
 )
-
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     target = target ? s2t(target) : null;
-
     this.getProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -33,7 +27,6 @@ function AM(target) {
             r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         return getDescValue(executeActionGet(r), property)
     }
-
     this.hasProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -41,7 +34,6 @@ function AM(target) {
             : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         try { return executeActionGet(r).hasKey(property) } catch (e) { return false }
     }
-
     this.descToObject = function (d) {
         var o = {}
         for (var i = 0; i < d.count; i++) {
@@ -50,7 +42,6 @@ function AM(target) {
         }
         return o
     }
-
     this.makeEllipseSelection = function (top, left, bottom, right, AntA) {
         (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
         (d = new ActionDescriptor()).putReference(s2t('target'), r);
@@ -61,7 +52,6 @@ function AM(target) {
         d.putObject(s2t('to'), s2t('ellipse'), d1);
         d.putBoolean(s2t('antiAlias'), AntA);
         executeAction(s2t('set'), d, DialogModes.NO);
-
     }
     function getDescValue(d, k) {
         switch (d.getType(k)) {
@@ -81,4 +71,3 @@ function AM(target) {
         };
     }
 }
-

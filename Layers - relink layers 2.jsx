@@ -10,7 +10,6 @@
 */
 $.localize = true
 //$.locale = 'ru'
-
 const UUID = 'a3e4d053-135c-4225-b741-39bcb6656fd0',
     apl = new AM('application'),
     doc = new AM('document'),
@@ -216,7 +215,6 @@ function CommonFunctions() {
             o.sameFolder = null
             o.missed = null
             o.relink = null
-
             o.relinked = null
             allowedExtensions[o.link.extension.toUpperCase()] = true
             return o
@@ -314,7 +312,6 @@ function CommonFunctions() {
             }
             var f = checkFile(fle, ext, parent)
             return f ? f : null
-
             function checkFile(fle, ext, pth) {
                 var f = new File(pth + '/' + fle + '.' + ext)
                 if (f.exists) {
@@ -380,7 +377,6 @@ function CommonFunctions() {
                 target = createUniqueFileName(target)
             }
             if (!(Folder(target.path).exists)) Folder(target.path).create()
-
             if (cfg.collect && cfg.move) {
                 if (documentFolder != null && decodeURI(cur).toUpperCase().indexOf(decodeURI(documentFolder).toUpperCase()) == 0) {
                     if (!target.exists) {
@@ -404,7 +400,6 @@ function CommonFunctions() {
                 }
             }
             if (files[i].relink != target && cur.copy(target)) files[i].relink = target
-
         }
         progress.close()
         function createUniqueFileName(target) {
@@ -471,7 +466,6 @@ function CommonFunctions() {
                 }
             }
             lockLayers(locked)
-
         }
         function relinkEmbedded(files) {
             var len = doc.getProperty('numberOfLayers'),

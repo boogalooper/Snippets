@@ -3,7 +3,6 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/check-the-document-for-a-margin-or-border/td-p/12563008
  * https://www.youtube.com/watch?v=8PpYKx2t-fs
  */
-
 #target photoshop
 var border = 5, //mm
     threshold = 0.1, // deviation of the size of the border on each side  

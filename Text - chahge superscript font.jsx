@@ -2,54 +2,46 @@
  * https://community.adobe.com/t5/photoshop/superscript-text-font-change-using-script/m-p/11479999
  */
 #target photoshop
-
 var oldColor = [255, 0, 0], // [R,G,B]
     newColor = [0, 255, 0], // [R,G,B]
     s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var len = executeActionGet(r).getInteger(p);
-
 for (var i = 1; i <= len; i++) {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
     r.putIndex(s2t('layer'), i);
-
     if (executeActionGet(r).hasKey(p)) {
         var textKey = executeActionGet(r).getObjectValue(p),
             sList = textKey.getList(s2t('textStyleRange')),
             pList = textKey.getList(s2t('paragraphStyleRange')),
             defStyle = (p = pList.getObjectValue(0).getObjectValue(s2t('paragraphStyle'))).hasKey(s2t('defaultStyle')) ?
                 p.getObjectValue(s2t('defaultStyle')) : new ActionDescriptor(),
-
             l = new ActionList(),
             d = new ActionDescriptor();
-
         pList.getObjectValue(0).getObjectValue(s2t('paragraphStyle')).erase(s2t('defaultStyle'))
-
         for (var x = 0; x < sList.count; x++) {
             k = sList.getObjectValue(x)
             if (k.getObjectValue(s2t('textStyle')).hasKey(s2t('baseline'))) {
                 var s = k.getObjectValue(s2t('textStyle'));
                 if (s.getEnumerationValue(s2t('baseline')) == s2t('superScript')) {
-                       putDefStyle(defStyle, s)
-                      s.putString(s2t('fontPostScriptName'), 'Arial-Black')
+                    putDefStyle(defStyle, s)
+                    s.putString(s2t('fontPostScriptName'), 'Arial-Black')
                 }
                 k.putObject(s2t('textStyle'), s2t('textStyle'), s)
             }
             l.putObject(s2t('textStyleRange'), k)
         }
-       /// if (d.count) {
-            textKey.putList(s2t('textStyleRange'), l);
-            (r = new ActionReference()).putIndex(s2t('layer'), i);
-            (d = new ActionDescriptor()).putReference(s2t('null'), r);
-            d.putObject(s2t('to'), s2t('textLayer'), textKey);
-            executeAction(s2t('set'), d, DialogModes.NO);
-      //  }
+        /// if (d.count) {
+        textKey.putList(s2t('textStyleRange'), l);
+        (r = new ActionReference()).putIndex(s2t('layer'), i);
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        d.putObject(s2t('to'), s2t('textLayer'), textKey);
+        executeAction(s2t('set'), d, DialogModes.NO);
+        //  }
     }
 }
-
 function putDefStyle(from, to) {
     for (var i = 0; i < from.count; i++) {
         var k = from.getKey(i);
@@ -71,8 +63,6 @@ function putDefStyle(from, to) {
         }
     }
 }
-
-
 function checkDesc(d) {
     var c = d.count,
         str = '';
@@ -83,8 +73,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
-
 function getValues(d, kNum) {
     var p = d.getKey(kNum);
     switch (d.getType(p)) {

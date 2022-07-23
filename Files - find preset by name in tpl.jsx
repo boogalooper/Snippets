@@ -1,20 +1,16 @@
 #target photoshop
 var tmp = new File(Folder.temp.fsName + "/" + "TPFL");
-
 newPreset('TEST_STRING')
 saveCurrentPresets(tmp)
-
 tmp.open("r");
 tmp.encoding = "BINARY";
 var s = tmp.read()
 tmp.remove()
-
 var a = 'TEST_STRING',
     c = [];
 for (var i = 0; i < a.length; i++) c.push(String.fromCharCode(a.charCodeAt(i)));
 str = c.join(String.fromCharCode(0));
 var from = s.indexOf(str) + str.length + 2;
-
 var d = new ActionDescriptor();
 d.fromStream(s.substr(from));
 if (d.count) {
@@ -23,7 +19,6 @@ if (d.count) {
     var str = t2s(n.getObjectType(n.getKey(0))) + '\n';
     alert(str += checkDesc(d))
 }
-
 function deletePresets() {
     var index = 1;
     do {
@@ -35,9 +30,7 @@ function deletePresets() {
         }
         catch (e) { break; }
     } while (true)
-
 }
-
 function saveCurrentPresets(pth) {
     (d = new ActionDescriptor()).putPath(s2t("null"), pth);
     (r = new ActionReference()).putProperty(s2t("property"), s2t("toolPreset"));
@@ -45,7 +38,6 @@ function saveCurrentPresets(pth) {
     d.putReference(s2t("to"), r);
     executeAction(s2t("set"), d, DialogModes.NO);
 }
-
 function newPreset(nm) {
     (r = new ActionReference()).putClass(s2t("toolPreset"));
     (d = new ActionDescriptor()).putReference(s2t("null"), r);
@@ -55,10 +47,8 @@ function newPreset(nm) {
     d.putString(s2t("name"), nm);
     executeAction(s2t("make"), d, DialogModes.NO);
 }
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }
-
 function getJSON(desc) {
     var d = new ActionDescriptor()
     d.putObject(s2t('object'), s2t('object'), desc);

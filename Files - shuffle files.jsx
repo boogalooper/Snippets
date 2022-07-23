@@ -3,7 +3,6 @@
 * 
 * https://www.youtube.com/watch?v=lfjIUta8T8g
 */
-
 #target photoshop
 var cfg = new Config,
     GUID = '04f3bac3-e6ef-42e1-aef0-034a2c0bfe48',
@@ -167,8 +166,8 @@ function shuffleTarget(files, len) {
     var rnd = []
     if (!files.length || !len) return [];
     var tmp = files.slice(0),
-        k = tmp.length * 0.02, 
-        div = parseInt(files.length / (len + 1)); 
+        k = tmp.length * 0.02,
+        div = parseInt(files.length / (len + 1));
     for (var i = 0; i < len; i++) {
         var r = Math.round(Math.random() * k * 0.5),
             shuffle = Math.round(Math.random()) ? Math.round(div + r) : Math.round(div - r);

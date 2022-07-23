@@ -3,7 +3,6 @@
 */
 #target photoshop
 s2t = stringIDToTypeID;
-
 (r = new ActionReference()).putProperty(s2t('property'), k = s2t('countClass'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var p = executeActionGet(r);
@@ -21,16 +20,12 @@ if (p.hasKey(k)) {
         }
     }
 }
-
-
 function AMReference(desiredClass) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     ActionDescriptor.prototype.getValue = function (property) {
         if (!property) return this;
         var p = typeof property == 'string' ? s2t(property) : property;
-
         if (this.hasKey(p)) {
             switch (this.getType(p)) {
                 case DescValueType.OBJECTTYPE: return this.getObjectValue(p);
@@ -50,34 +45,27 @@ function AMReference(desiredClass) {
         }
         return null
     }
-
     this.classID = s2t(desiredClass);
-
     this.getProperty = function (property) {
         return new Reference(this.classID, property)
     }
-
     function Reference(c, p) {
         var r = new ActionReference();
         if (p) r.putProperty(s2t('property'), p = s2t(p))
-
         this.byEnum = function () {
             r.putEnumerated(c, s2t('ordinal'), s2t('targetEnum'))
             return executeActionGet(r).getValue(p)
         }
-
         this.byIndex = function (i) {
             r.putIndex(c, i)
             return executeActionGet(r).getValue(p)
         }
-
         this.byClass = function (c) {
             r.putClass(s2t(c))
             return executeActionGet(r).getValue(p)
         }
     }
 }
-
 function checkDesc(d) {
     var c = d.count,
         str = '';
@@ -88,8 +76,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
-
 function getValues(d, keyNum) {
     var p = d.getKey(keyNum);
     switch (d.getType(p)) {
@@ -144,6 +130,5 @@ function getValues(d, keyNum) {
             break;
     };
 };
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }

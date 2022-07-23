@@ -1,14 +1,10 @@
-
 #target photoshop
 var s2t = stringIDToTypeID;
-
 if (currentTool == 'cloneStampTool') {
     //currentTool = 'magicStampTool';
-
     (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('currentToolOptions'));
     ref.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
     var cto = executeActionGet(ref).getObjectValue(s2t('currentToolOptions'));
-
     d = new ActionDescriptor();
     d.putBoolean(x = s2t("flipX"), !cto.getBoolean(x));
     d.putBoolean(y = s2t("flipY"), !cto.getBoolean(y));
@@ -17,8 +13,6 @@ if (currentTool == 'cloneStampTool') {
     d1.putObject(s2t('to'), s2t('target'), d);
     executeAction(s2t('set'), d1, DialogModes.NO);
 }
-
-
 /*classic way*/
 function checkDesc(d) {
     var c = d.count,
@@ -30,7 +24,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
 function getValues(d, keyNum) {
     var p = d.getKey(keyNum);
     switch (d.getType(p)) {
@@ -57,6 +50,5 @@ function getValues(d, keyNum) {
             break;
     };
 };
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }

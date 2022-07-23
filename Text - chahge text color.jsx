@@ -2,16 +2,13 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/change-a-certain-color-of-texts-to-a-new-color/m-p/11469078
  */
 #target photoshop
-
 var oldColor = [255, 0, 0], // [R,G,B]
     newColor = [0, 255, 0], // [R,G,B]
     s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var len = executeActionGet(r).getInteger(p);
-
 for (var i = 1; i <= len; i++) {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
     r.putIndex(s2t('layer'), i);
@@ -23,7 +20,6 @@ for (var i = 1; i <= len; i++) {
                 p.getObjectValue(s2t('defaultStyle')) : new ActionDescriptor(),
             l = new ActionList(),
             d = new ActionDescriptor();
-            
         for (var x = 0; x < tList.count; x++) {
             k = tList.getObjectValue(x)
             if (k.getObjectValue(s2t('textStyle')).hasKey(s2t('color'))) {
@@ -50,7 +46,6 @@ for (var i = 1; i <= len; i++) {
         }
     }
 }
-
 function copyDesc(from, to) {
     for (var i = 0; i < from.count; i++) {
         var k = from.getKey(i);
@@ -73,8 +68,6 @@ function copyDesc(from, to) {
     }
     return to
 }
-
-
 function checkDesc(d) {
     var c = d.count,
         str = '';
@@ -85,8 +78,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
-
 function getValues(d, kNum) {
     var p = d.getKey(kNum);
     switch (d.getType(p)) {

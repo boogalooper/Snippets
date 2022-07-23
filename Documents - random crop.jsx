@@ -3,7 +3,6 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/random-crop-batch-processing-script/m-p/12468477
  * https://www.youtube.com/watch?v=tYb6Zjwgpag
  */
-
 #target photoshop;
 randomSquareCropAndSave(10, 1000, 'e:/Path to watermark.png')
 function randomSquareCropAndSave(coveragePercent, size, watermark) {

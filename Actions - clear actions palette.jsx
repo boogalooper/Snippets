@@ -2,7 +2,6 @@
 * (make sure all actions on the palette are saved to disk beforehand)
  * https://www.youtube.com/watch?v=lK0wKIk9igY
  */
-
 #target photoshop
 s2t = stringIDToTypeID;
 while (true) {

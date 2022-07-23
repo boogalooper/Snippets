@@ -1,10 +1,8 @@
 /**Use the Crop & Straighten, but don't crop.
  * https://community.adobe.com/t5/photoshop-ecosystem/use-the-crop-amp-straighten-but-don-t-crop/m-p/12225478
  */
-
 #target photoshop
 s2t = stringIDToTypeID;
-
 try {
     var d = executeAction(stringIDToTypeID('CropPhotos0001'), undefined, DialogModes.NO);
     var l = d.getList(stringIDToTypeID('value'));

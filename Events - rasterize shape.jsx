@@ -7,7 +7,6 @@
  * https://community.adobe.com/t5/photoshop/javascript-script-trigger-action-through-enter-key-of-path-deselection/m-p/11573965
  https://www.youtube.com/watch?v=s_VdcEk3eJw
  */
-
 #target photoshop
 s2t = stringIDToTypeID,
     t2s = typeIDToStringID;

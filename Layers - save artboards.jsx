@@ -1,29 +1,22 @@
 /**getting the structure of the document taking into account nested groups and layers  */
 #target photoshop
-
 var a = getLayersCollection(),
     lr = new AM('layer');
-
 for (var i = 0; i < a.length; i++) {
     lr.layerVisibilityById(a[i].id, false)
 }
-
 var doc = app.activeDocument;
 for (var i = 0; i < a.length; i++) {
     lr.layerVisibilityById(a[i].id, true)
-    doc.saveAs (File(doc.path + '/' + a[i].name + '.psd'))
+    doc.saveAs(File(doc.path + '/' + a[i].name + '.psd'))
     lr.layerVisibilityById(a[i].id, false)
 }
-
-
 function getLayersCollection() {
     var doc = new AM('document'),
         lr = new AM('layer'),
         indexFrom = doc.getProperty('hasBackgroundLayer') ? 0 : 1,
         indexTo = doc.getProperty('numberOfLayers');
-
     return layersCollection(indexFrom, indexTo)
-
     function layersCollection(from, to, parentItem, group) {
         parentItem = parentItem ? parentItem : [];
         for (var i = from; i <= to; i++) {
@@ -32,13 +25,11 @@ function getLayersCollection() {
                 i = layersCollection(i + 1, to, [], parentItem)
                 continue;
             }
-
             var properties = {};
             properties.name = lr.getProperty('name', i, true)
             properties.id = lr.getProperty('layerID', i, true)
             properties.type = lr.getProperty('layerKind', i, true)
             properties.artboardEnabled = lr.getProperty('artboardEnabled', i, true)
-
             if (layerSection == 'layerSectionStart') {
                 for (o in properties) { parentItem[o] = properties[o] }
                 group.push(parentItem);
@@ -50,13 +41,10 @@ function getLayersCollection() {
         return parentItem
     }
 }
-
 function AM(target, order) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     target = target ? s2t(target) : null;
-
     this.getProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -64,7 +52,6 @@ function AM(target, order) {
             r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
         return getDescValue(executeActionGet(r), property)
     }
-
     this.hasProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -72,7 +59,6 @@ function AM(target, order) {
             : r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
         return executeActionGet(r).hasKey(property)
     }
-
     this.descToObject = function (d) {
         var o = {}
         for (var i = 0; i < d.count; i++) {
@@ -81,7 +67,6 @@ function AM(target, order) {
         }
         return o
     }
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };
@@ -99,7 +84,6 @@ function AM(target, order) {
             default: break;
         };
     }
-
     this.selectLayerByID = function (ID) {
         ref = new ActionReference();
         ref.putIdentifier(s2t("layer"), ID);
@@ -107,7 +91,6 @@ function AM(target, order) {
         desc.putReference(s2t("target"), ref)
         executeAction(s2t("select"), desc, DialogModes.NO)
     }
-
     this.layerVisibilityById = function (id, makeVisible) {
         makeVisible = makeVisible == 1 ? "show" : "hide"
         var desc = new ActionDescriptor()
@@ -116,6 +99,4 @@ function AM(target, order) {
         desc.putReference(s2t("target"), ref)
         executeAction(s2t(makeVisible), desc, DialogModes.NO);
     }
-
 }
-

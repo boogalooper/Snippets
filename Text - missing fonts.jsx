@@ -2,14 +2,11 @@
  * https://community.adobe.com/t5/photoshop/list-of-missing-fonts-in-photoshop-psd-images/m-p/11845539
  */
 #target photoshop
-
 var s2t = stringIDToTypeID,
     missingFontList = {};
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var len = executeActionGet(r).getInteger(p);
-
 for (var i = 1; i <= len; i++) {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
     r.putIndex(s2t('layer'), i);
@@ -25,10 +22,7 @@ for (var i = 1; i <= len; i++) {
         }
     }
 }
-
 alert(missingFontList.toSource())
-
-
 function checkDesc(d) {
     var c = d.count,
         str = '';
@@ -39,8 +33,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
-
 function getValues(d, kNum) {
     var p = d.getKey(kNum);
     switch (d.getType(p)) {

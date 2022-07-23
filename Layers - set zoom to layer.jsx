@@ -2,12 +2,9 @@
  * https://community.adobe.com/t5/photoshop/scripting-the-quot-zoom-to-layers-bounds-quot-feature/m-p/11289176
  */
 #target photoshop;
-
-$.hiresTimer    
-zoomToLayer (app.activeDocument.activeLayer.id,0.5)
-$.writeln ($.hiresTimer)
-
-
+$.hiresTimer
+zoomToLayer(app.activeDocument.activeLayer.id, 0.5)
+$.writeln($.hiresTimer)
 function zoomToLayer(layerID, zoom) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID,
@@ -16,24 +13,19 @@ function zoomToLayer(layerID, zoom) {
         y = lrBounds.getUnitDoubleValue(s2t('top')) + lrBounds.getUnitDoubleValue(s2t('height')) / 2,
         w = lrBounds.getUnitDoubleValue(s2t('width')),
         h = lrBounds.getUnitDoubleValue(s2t('height'));
-
     var activeView = getProperty('document', 'viewInfo').getObjectValue(s2t('activeView')).getObjectValue(s2t('globalBounds'));
-        docW = activeView.getDouble(s2t('right')) - activeView.getDouble(s2t('left')),
+    docW = activeView.getDouble(s2t('right')) - activeView.getDouble(s2t('left')),
         docH = activeView.getDouble(s2t('bottom')) - activeView.getDouble(s2t('top')),
         k = Math.min(docW / w, docH / h) * (zoom ? zoom : 1);
-
     (d = new ActionDescriptor()).putUnitDouble(s2t('zoom'), s2t('percentUnit'), k);
     setProperty('document', 'zoom', d);
-
     (d = new ActionDescriptor()).putUnitDouble(s2t('horizontal'), s2t('distanceUnit'), x * k);
     d.putUnitDouble(s2t('vertical'), s2t('distanceUnit'), y * k);
     setProperty('document', 'center', d);
-
     function getProperty(object, property, id) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t(property));
         id ? r.putIdentifier(s2t(object), id) : r.putEnumerated(s2t(object), s2t('ordinal'), s2t('targetEnum'));
         return getValue(executeActionGet(r), p)
-
         function getValue(d, id) {
             switch (d.getType(id)) {
                 case DescValueType.OBJECTTYPE: return d.getObjectValue(id);
@@ -51,7 +43,6 @@ function zoomToLayer(layerID, zoom) {
             }
         }
     }
-
     function setProperty(target, property, desc) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t(property));
         r.putEnumerated(s2t(target), s2t('ordinal'), s2t('targetEnum'));
@@ -60,7 +51,6 @@ function zoomToLayer(layerID, zoom) {
         executeAction(s2t('set'), d, DialogModes.NO);
     }
 }
-
 function checkDesc(desc) {
     var c = desc.count,
         str = '';
@@ -71,8 +61,6 @@ function checkDesc(desc) {
     };
     $.writeln(str);
 };
-
-
 function getValues(desc, keyNum) {
     var kTypeID = desc.getKey(keyNum);
     switch (desc.getType(kTypeID)) {

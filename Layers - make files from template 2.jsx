@@ -1,6 +1,5 @@
 #target photoshop
 //app.doProgress('', 'main()')
-
 main()
 function main() {
     var doc = new AM('document'),
@@ -9,10 +8,8 @@ function main() {
         ext = source ? decodeURI(source.name).match(/\..*$/)[0] : null,
         pth = Folder(source.path),
         init = activeDocument.activeHistoryState;
-
     if (pth) {
         var csv = pth.getFiles(/\.(csv)$/i);
-
         if (csv.length) {
             var fileContent = [],
                 currentFile = csv.shift(),
@@ -39,7 +36,6 @@ function main() {
                     csvObject[cur].push(csvContent[i].shift())
                 }
             } while (headers.length)
-
             for (var i = 0; i < numberOfLines; i++) {
                 var newFilename = fileName + ' ' + (('0000' + (i + 1)).slice(-4));
                 doc.hslAdjustment(csvObject['hue'][i], csvObject['saturation'][i], csvObject['lightness'][i], csvObject['colorize'][i])
@@ -47,7 +43,6 @@ function main() {
                 activeDocument.activeHistoryState = init
             }
         }
-
     }
 }
 function splitCSVLine(strData, strDelimiter) {
@@ -111,7 +106,6 @@ function AM(target, order) {
         }
         return o
     }
-
     this.hslAdjustment = function (hue, saturation, lightness, colorize) {
         (d = new ActionDescriptor()).putEnumerated(s2t("presetKind"), s2t("presetKindType"), s2t("presetKindCustom"));
         d.putBoolean(s2t("colorize"), colorize == 'true' ? true : false);
@@ -122,7 +116,6 @@ function AM(target, order) {
         d.putList(s2t("adjustment"), l);
         executeAction(s2t("hueSaturation"), d, DialogModes.NO);
     }
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };

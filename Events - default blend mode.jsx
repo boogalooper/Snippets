@@ -1,6 +1,6 @@
 /**Multiply as preset blending mode
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/multiply-as-preset-blending-mode/td-p/13061864
- * 
+ * https://www.youtube.com/watch?v=ryx_vonLmtM
  */
 /*
 <javascriptresource>

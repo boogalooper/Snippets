@@ -1,11 +1,9 @@
 /**removing orphans from text  */
 #target photoshop
-
 s2t = stringIDToTypeID;
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
 r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 var p = executeActionGet(r).getObjectValue(p).getList(s2t('paragraphStyleRange'))
-
 var newParagraphList = new ActionList
 for (var i = 0; i < p.count; i++) {
     var paragraph = p.getObjectValue(i),
@@ -14,15 +12,11 @@ for (var i = 0; i < p.count; i++) {
     paragraph.putObject(s2t('paragraphStyle'), s2t('paragraphStyle'), pStyle)
     newParagraphList.putObject(s2t('paragraphStyleRange'), paragraph)
 }
-
 (t = new ActionDescriptor).putList(s2t('paragraphStyleRange'), newParagraphList);
 (r = new ActionReference).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor).putReference(s2t('target'), r);
 d.putObject(s2t('to'), s2t('textKey'), t);
 executeAction(s2t('set'), d, DialogModes.NO);
-
-
-
 function checkDesc(desc) {
     var c = desc.count,
         str = '';
@@ -33,8 +27,6 @@ function checkDesc(desc) {
     };
     $.writeln(str);
 };
-
-
 function getValues(desc, keyNum) {
     var kTypeID = desc.getKey(keyNum);
     switch (desc.getType(kTypeID)) {
@@ -89,6 +81,5 @@ function getValues(desc, keyNum) {
             break;
     };
 };
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { return typeIDToStringID(t) }

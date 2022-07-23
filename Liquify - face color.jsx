@@ -1,22 +1,16 @@
 /**the script tries to bring the complexion to the given coordinates using curves  */
-
 #target photoshop
-
 //var targetRGB = 180
 var targetRGB = [216, 174, 154]
-
 $.writeln(targetRGB instanceof Array)
-
 if ((new AM('application')).getProperty('numberOfDocuments')) {
     app.activeDocument.suspendHistory('Get face bounds', 'function blankState () {return}')
     app.activeDocument.suspendHistory('Measure face', 'getFaceBounds()')
     app.activeDocument.suspendHistory('Make curves', 'makeCurves()')
 }
-
 function getFaceBounds() {
     var lr = new AM('layer'),
         doc = new AM('document');
-
     doc.flatten()
     lr.copyToNewLayer()
     lr.liquify()
@@ -25,52 +19,41 @@ function getFaceBounds() {
     doc.selectRGBChannel()
     lr.deleteCurrentLayer()
 }
-
 function makeCurves() {
     var doc = new AM('document');
     if (doc.hasProperty('selection') && doc.getProperty('mode')[1] == 'RGBColor') {
-
         var midtone = []
         if (targetRGB instanceof Array) {
             var ch = new AM('channel')
             for (var i = 0; i < 3; i++) {
-                midtone.push(middleToneGamma(targetRGB[i], getMidTone(ch.getProperty('histogram', i+1, true))))
+                midtone.push(middleToneGamma(targetRGB[i], getMidTone(ch.getProperty('histogram', i + 1, true))))
             }
         } else {
             midtone.push(middleToneGamma(targetRGB, getMidTone(doc.getProperty('histogram'))))
         }
-
         doc.deselect()
         doc.stepBack()
         doc.makeCurves(128, midtone)
-
     } else { doc.stepBack() }
 }
-
 function middleToneGamma(x2, x1) {
     return Math.pow(128 / 255, 1 / (Math.log(x1 / 255) / Math.log(x2 / 255))) * 255
 }
-
 function getMidTone(h) {
     var pixels = 0,
         sum = 0;
-
     for (var i = 0; i < h.count; i++) {
         var key = h.getInteger(i)
         pixels += key
         sum += key * i
     }
-
     $.writeln(sum / pixels)
     return sum / pixels
 }
-
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     target = s2t(target)
-
     this.getProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -78,7 +61,6 @@ function AM(target) {
             : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         return getDescValue(executeActionGet(r), property)
     }
-
     this.hasProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -86,7 +68,6 @@ function AM(target) {
             : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         return executeActionGet(r).hasKey(property)
     }
-
     this.descToObject = function (d) {
         var o = {}
         for (var i = 0; i < d.count; i++) {
@@ -95,19 +76,16 @@ function AM(target) {
         }
         return o
     }
-
     switch (t2s(target)) {
         case 'document':
             this.flatten = function () {
                 executeAction(s2t('flattenImage'), undefined, DialogModes.NO);
             }
-
             this.fade = function (mode, opacity) {
                 (d = new ActionDescriptor()).putUnitDouble(s2t('opacity'), s2t('percentUnit'), opacity);
                 d.putEnumerated(s2t('mode'), s2t('blendMode'), s2t(mode));
                 executeAction(s2t('fade'), d, DialogModes.NO);
             }
-
             this.selectRGBChannel = function () {
                 (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
@@ -115,20 +93,17 @@ function AM(target) {
                 d.putReference(s2t('to'), r1);
                 executeAction(s2t('set'), d, DialogModes.NO);
             }
-
             this.stepBack = function () {
                 (r = new ActionReference()).putEnumerated(charIDToTypeID('HstS'), s2t('ordinal'), s2t('previous'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
                 executeAction(s2t('select'), d, DialogModes.NO);
             }
-
             this.deselect = function () {
                 (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
                 d.putEnumerated(s2t('to'), s2t('ordinal'), s2t('none'));
                 executeAction(s2t('set'), d, DialogModes.NO);
             }
-
             this.makeCurves = function (from, to) {
                 (r = new ActionReference()).putClass(s2t('adjustmentLayer'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
@@ -136,14 +111,11 @@ function AM(target) {
                 (d1 = new ActionDescriptor()).putObject(s2t('type'), s2t('curves'), d2);
                 d.putObject(s2t('using'), s2t('adjustmentLayer'), d1);
                 executeAction(s2t('make'), d, DialogModes.NO);
-
                 (r = new ActionReference()).putEnumerated(s2t('adjustmentLayer'), s2t('ordinal'), s2t('targetEnum'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
                 (d1 = new ActionDescriptor()).putEnumerated(s2t('presetKind'), s2t('presetKindType'), s2t('presetKindCustom'));
-
                 var mode = to.length == 1 ? ['composite'] : ['red', 'green', 'blue'],
                     l = new ActionList();
-
                 for (var i = 0; i < to.length; i++) {
                     (r1 = new ActionReference()).putEnumerated(s2t('channel'), s2t('channel'), s2t(mode[i]));
                     (d2 = new ActionDescriptor()).putReference(s2t('channel'), r1);
@@ -159,12 +131,10 @@ function AM(target) {
                     d2.putList(s2t('curve'), l1);
                     l.putObject(s2t('curvesAdjustment'), d2);
                 }
-
                 d1.putList(s2t('adjustment'), l);
                 d.putObject(s2t('to'), s2t('curves'), d1);
                 executeAction(s2t('set'), d, DialogModes.NO);
             }
-
             break;
         case 'layer':
             this.liquify = function () {
@@ -172,7 +142,6 @@ function AM(target) {
                 (d = new ActionDescriptor()).putData(s2t('faceMeshData'), mesh);
                 executeAction(charIDToTypeID('LqFy'), d, DialogModes.NO);
             }
-
             this.levels = function (begin, end) {
                 (d = new ActionDescriptor()).putEnumerated(s2t('presetKind'), s2t('presetKindType'), s2t('presetKindCustom'));
                 (r = new ActionReference()).putEnumerated(s2t('channel'), s2t('channel'), s2t('composite'));
@@ -184,11 +153,9 @@ function AM(target) {
                 d.putList(s2t('adjustment'), l1);
                 executeAction(s2t('levels'), d, DialogModes.NO);
             }
-
             this.copyToNewLayer = function () {
                 executeAction(s2t("copyToLayer"), undefined, DialogModes.NO);
             }
-
             this.deleteCurrentLayer = function () {
                 (r = new ActionReference()).putEnumerated(s2t("layer"), s2t("ordinal"), s2t("targetEnum"));
                 (d = new ActionDescriptor()).putReference(s2t("null"), r);
@@ -196,7 +163,6 @@ function AM(target) {
             }
             break;
     }
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return (d.getObjectValue(p));

@@ -10,10 +10,8 @@ var bt = new BridgeTalk(),
             z.show();
             return;
         }
-
         var dialog = new Window("palette");
         dialog.text = "Toggle visiblity";
-
         dialog.orientation = "column";
         dialog.alignChildren = ["center", "center"];
         dialog.spacing = 10;
@@ -22,19 +20,15 @@ var bt = new BridgeTalk(),
         var toggleButton = panel.add('button', undefined, 'Toggle', {
             name: 'Toggle'
         });
-
         toggleButton.onClick = function () {
             app.activeDocument.activeLayer.visible = !app.activeDocument.activeLayer.visible;
         };
-
         var exitButton = panel.add('button', undefined, 'Exit', {
             name: 'Exit'
         });
-
         exitButton.onClick = function () {
             dialog.close();
         }
-
         dialog.show();
     }
 bt.target = ph;

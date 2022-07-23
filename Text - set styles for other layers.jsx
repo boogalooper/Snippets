@@ -2,17 +2,13 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/photosho-script-copy-text-layer-parameters-to-another-selected-text/m-p/12553881
  */
 #target photoshop
-
 s2t = stringIDToTypeID;
-
 (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
 ref.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var len = executeActionGet(ref).getInteger(p);
-
 (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('layerID'));
 ref.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 var cur = executeActionGet(ref).getInteger(p);
-
 var lrs = []
 for (var i = 1; i <= len; i++) {
     (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('layerKind'));
@@ -23,9 +19,7 @@ for (var i = 1; i <= len; i++) {
         if (executeActionGet(ref).getInteger(p) != cur) lrs.push(executeActionGet(ref).getInteger(p));
     }
 }
-
-for (var i = 0; i < lrs.length; i++) set_text_contents (cur, lrs[i])
-
+for (var i = 0; i < lrs.length; i++) set_text_contents(cur, lrs[i])
 function set_text_contents(source, target) {
     try {
         var sep = /(,|\.|\s)/;
@@ -37,12 +31,10 @@ function set_text_contents(source, target) {
         var style0 = style_list.getObjectValue(0).getObjectValue(s2t("textStyle"));
         var parag0 = parag_list.getObjectValue(0).getObjectValue(s2t("paragraphStyle"));
         var old_text = executeActionGet(r).getObjectValue(s2t("textKey")).getString(s2t("textKey"));
-
         var r1 = new ActionReference();
         r1.putIdentifier(s2t("layer"), target);
         var text = executeActionGet(r1).getObjectValue(s2t("textKey")).getString(s2t("textKey"));
         var old_textKey = executeActionGet(r1).getObjectValue(s2t("textKey"))
-
         var styles = new Array();
         var from = 0;
         var to = old_text.length + 1;
@@ -108,11 +100,9 @@ function set_text_contents(source, target) {
             d.putObject(s2t("paragraphStyle"), s2t("paragraphStyle"), styles[i][3]);
             new_parag.putObject(s2t("paragraphStyleRange"), d);
         }
-
         old_textKey.putList(s2t("textStyleRange"), new_style);
         old_textKey.putList(s2t("paragraphStyleRange"), new_parag);
         old_textKey.putString(s2t("textKey"), text);
-
         var d = new ActionDescriptor();
         d.putReference(s2t("null"), r1);
         d.putObject(s2t("to"), s2t("textLayer"), old_textKey);
@@ -140,15 +130,12 @@ function extend_descriptor(src_desc, dst_desc) {
                 case DescValueType.OBJECTTYPE:
                     dst_desc.putObject(key, src_desc.getObjectType(key), src_desc.getObjectValue(key));
                     break;
-
                 case DescValueType.ENUMERATEDTYPE:
                     dst_desc.putEnumerated(key, src_desc.getEnumerationType(key), src_desc.getEnumerationValue(key));
                     break;
-
                 case DescValueType.UNITDOUBLE:
                     dst_desc.putUnitDouble(key, src_desc.getUnitDoubleType(key), src_desc.getUnitDoubleValue(key));
                     break;
-
                 default: alert("Unknown data type in descriptor"); return false;
             }
         }

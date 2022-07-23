@@ -2,7 +2,6 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-bugs/p-hidden-layers-linked-layer-made-visible-when-duplicated/idc-p/12802559
  * https://www.youtube.com/watch?v=q_9uocqy2Gw
  */
-
 #target photoshop;
 var UUID = '7c9fb9b1-890c-49ee-91cc-aab4cc85efc2',
     s2t = stringIDToTypeID,

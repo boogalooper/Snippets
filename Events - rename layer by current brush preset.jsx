@@ -8,7 +8,6 @@
  * - first run: event listener enabled
  * - next run: event listener disabled
  */
-
 #target photoshop
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
@@ -21,7 +20,7 @@ try {
         d.putObject(s2t('to'), s2t('layer'), d1);
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-} catch (e) {}
+} catch (e) { }
 if (!target) {
     app.notifiersEnabled = true
     var f = File($.fileName),

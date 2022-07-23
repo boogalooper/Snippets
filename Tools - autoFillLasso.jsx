@@ -2,12 +2,9 @@
  * https://community.adobe.com/t5/photoshop/i-am-looking-for-a-way-to-acive-a-very-simple-lasso-fill-tool/m-p/11483066
  */
 #target photoshop
-
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
-
 try { var target = t2s(arguments[1]) } catch (e) { }
-
 try {
     if (target) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('tool'));

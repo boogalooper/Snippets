@@ -2,41 +2,31 @@
  * @r-bin
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-get-text-transform-box-boundary/m-p/11159325
  */
-
 #target photoshop;
-
 s2t = stringIDToTypeID;
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('resolution'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var docRes = executeActionGet(r).getUnitDoubleValue(p);
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('unitsPrefs'));
 r.putEnumerated(s2t("application"), s2t("ordinal"), s2t("targetEnum"));
 var exactPoints = executeActionGet(r).getObjectValue(p).getBoolean(s2t('exactPoints')) ? 72.27 : 72;
-
 (d = new ActionDescriptor()).putUnitDouble(s2t('resolution'), s2t('densityUnit'), exactPoints);
 executeAction(s2t("imageSize"), d, DialogModes.NO);
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('height'))
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var docHeight = executeActionGet(r).getUnitDoubleValue(p);
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('width'))
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var docWidth = executeActionGet(r).getUnitDoubleValue(p);
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'))
 r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 var textKey = executeActionGet(r).getObjectValue(p);
-
 var clickPointH = textKey.getObjectValue(s2t('textClickPoint')).getUnitDoubleValue(s2t('horizontal')),
     clickPointV = textKey.getObjectValue(s2t('textClickPoint')).getUnitDoubleValue(s2t('vertical')),
     clickPointHPx = Math.round(clickPointH / 100 * docWidth),
     clickPointVPx = Math.round(clickPointV / 100 * docHeight);
-
 makeGuide(clickPointHPx, 'vertical')
 makeGuide(clickPointVPx, 'horizontal')
-
 if (typeIDToStringID(textKey.getList(s2t('textShape')).getObjectValue(0).getEnumerationValue(s2t('textType'))) != 'box') {
     var bounds = textKey.getObjectValue(s2t('bounds')),
         left = bounds.getUnitDoubleValue(s2t('left')),
@@ -48,7 +38,6 @@ if (typeIDToStringID(textKey.getList(s2t('textShape')).getObjectValue(0).getEnum
         yy = transform != null ? transform.getDouble(s2t('yy')) : 1,
         xy = transform != null ? transform.getDouble(s2t('xy')) : 1,
         yx = transform != null ? transform.getDouble(s2t('xy')) : 1;
-
     checkDesc(transform)
     makeGuide(left * xx + clickPointHPx, 'vertical');
     makeGuide(top * yy + clickPointVPx, 'horizontal');
@@ -58,7 +47,6 @@ if (typeIDToStringID(textKey.getList(s2t('textShape')).getObjectValue(0).getEnum
 /*
 (d = new ActionDescriptor()).putUnitDouble(s2t('resolution'), s2t('densityUnit'), docRes);
 executeAction(s2t("imageSize"), d, DialogModes.NO);*/
-
 function makeGuide(position, orientation) {
     (d1 = new ActionDescriptor()).putUnitDouble(s2t("position"), s2t("pixelsUnit"), position);
     d1.putEnumerated(s2t("orientation"), s2t("orientation"), s2t(orientation));
@@ -68,7 +56,6 @@ function makeGuide(position, orientation) {
     d.putReference(s2t("null"), r);
     executeAction(s2t("make"), d, DialogModes.NO);
 }
-
 function checkDesc(desc) {
     var c = desc.count,
         str = '';
@@ -79,8 +66,6 @@ function checkDesc(desc) {
     };
     $.writeln(str);
 };
-
-
 function getValues(desc, keyNum) {
     var kTypeID = desc.getKey(keyNum);
     switch (desc.getType(kTypeID)) {
@@ -135,6 +120,5 @@ function getValues(desc, keyNum) {
             break;
     };
 };
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { return typeIDToStringID(t) }

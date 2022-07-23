@@ -2,11 +2,8 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-can-i-rename-a-layer-group-or-a-layer-with-the-same-name-using-an-action/m-p/12493670
  */
 #target photoshop
-
 s2t = stringIDToTypeID;
-
 renameGroup('Cover', 'Cover Group')
-
 function renameGroup(from, to) {
     (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
     ref.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
@@ -15,11 +12,9 @@ function renameGroup(from, to) {
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('layerSection'));
         r.putIndex(s2t('layer'), i);
         if (typeIDToStringID(executeActionGet(r).getEnumerationValue(p)) == 'layerSectionEnd') continue;
-
         (r = new ActionReference()).putProperty(s2t('property'), p = s2t('layerKind'));
         r.putIndex(s2t('layer'), i);
         if (executeActionGet(r).getInteger(p) != 7) continue;
-
         (ref = new ActionReference()).putProperty(s2t('property'), p = s2t('name'));
         ref.putIndex(s2t('layer'), i);
         if (executeActionGet(ref).getString(p).match(new RegExp(from, 'i'))) {

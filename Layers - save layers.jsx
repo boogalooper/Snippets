@@ -2,30 +2,23 @@
  * https://community.adobe.com/t5/photoshop-ecosystem/how-do-i-batch-export-layers-in-a-cumulative-way-better-explanation-in-post/m-p/12223051
  */
 #target photoshop
-
 s2t = stringIDToTypeID;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('hasBackgroundLayer'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'))
 var offset = executeActionGet(r).getBoolean(p) ? 0 : 1;
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('targetLayers'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var lrs = executeActionGet(r).getList(p);
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('fileReference'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var pth = executeActionGet(r).getPath(p).parent;
-
 for (var i = lrs.count - 1; i >= 0; i--) {
     (r = new ActionReference()).putIndex(s2t('layer'), lrs.getReference(i).getIndex(s2t('itemIndex')) + offset);
     (d = new ActionDescriptor()).putReference(s2t(('null')), r);
     executeAction(s2t('show'), d, DialogModes.NO);
-
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('name'));
     r.putIndex(s2t('layer'), lrs.getReference(i).getIndex(s2t('itemIndex')) + offset);
     var nm = executeActionGet(r).getString(p);
-
     var pngOpts = new ExportOptionsSaveForWeb;
     pngOpts.format = SaveDocumentType.PNG
     pngOpts.PNG8 = false;
@@ -34,7 +27,6 @@ for (var i = lrs.count - 1; i >= 0; i--) {
     pngOpts.quality = 100;
     activeDocument.exportDocument(new File(pth + '/' + nm + '.png'), ExportType.SAVEFORWEB, pngOpts);
 }
-
 function checkDesc(d) {
     var c = d.count,
         str = '';
@@ -45,8 +37,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
-
 function getValues(d, keyNum) {
     var p = d.getKey(keyNum);
     switch (d.getType(p)) {
@@ -101,6 +91,5 @@ function getValues(d, keyNum) {
             break;
     };
 };
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }

@@ -3,7 +3,6 @@
  * https://youtu.be/XZr2HluMMWc
  */
 #target photoshop
-
 аvar w = new Window('dialog{orientation:"column"}'),
     g1 = w.add("group"),
     st = g1.add('statictext{text:"base:"}');

@@ -2,12 +2,10 @@
  * https://community.adobe.com/t5/photoshop/photoshop-tool-preset-parameters-via-script/m-p/11847219
 */
 #target photoshop
-
 var t2s = typeIDToStringID,
     s2t = stringIDToTypeID,
     evt = null,
     tgt = null;
-
 var trackTools = {
     spotHealingBrushTool: true,
     magicStampTool: true,
@@ -28,9 +26,7 @@ var trackTools = {
     burnInTool: true,
     saturationTool: true
 };
-
 try { tgt = arguments[0], evt = t2s(arguments[1]) } catch (e) { };
-
 try {
     if (evt) {
         switch (evt) {
@@ -62,13 +58,11 @@ try {
         alert('Brush tracking ' + (status ? 'disabled' : 'enabled') + '!\nRun "' + decodeURI(File($.fileName).name) + '" again to ' + (status ? 'enable' : 'disable') + ' it')
     }
 } catch (e) { }
-
 function getCurrentToolOptions() {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('tool'));
     r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
     var d = executeActionGet(r),
         o = d.getObjectValue(s2t('currentToolOptions'));
-
     if (o.hasKey(s2t('brush'))) {
         return {
             toolName: t2s(d.getEnumerationType(s2t('tool'))),
@@ -76,9 +70,7 @@ function getCurrentToolOptions() {
             brush: o.getObjectValue(s2t('brush'))
         }
     } else return null
-
 }
-
 function Notifiers() {
     this.addNotifier = function () {
         app.notifiersEnabled = true
@@ -86,7 +78,6 @@ function Notifiers() {
         app.notifiers.add('toolModalStateChanged', handlerFile)
         app.notifiers.add('select', handlerFile, 'toolPreset')
     }
-
     this.delNotifier = function () {
         var handlerFile = File($.fileName).name,
             len = app.notifiers.length;
@@ -96,7 +87,6 @@ function Notifiers() {
             }
         }
     }
-
     this.checkNotifier = function () {
         var handlerFile = File($.fileName).name,
             len = app.notifiers.length;

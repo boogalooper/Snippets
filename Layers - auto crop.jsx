@@ -3,7 +3,6 @@
  * https://community.adobe.com/t5/photoshop-ecosystem/how-to-cut-out-photos/m-p/12222294
  * https://www.youtube.com/watch?v=A1ajth43iSo
  */
-
 #target photoshop
 var lr = new AM('layer'),
     doc = new AM('document');
@@ -17,7 +16,7 @@ lr.substractSelection(layerBounds.top, layerBounds.right / 2, layerBounds.bottom
 objectBounds.left = doc.hasProperty('selection') ? lr.descToObject(doc.getProperty('selection')).right : layerBounds.left
 lr.selectOrdinalChannel()
 lr.substractSelection(layerBounds.top, layerBounds.left, layerBounds.bottom, layerBounds.right / 2)
-objectBounds.right = doc.hasProperty('selection') ?  lr.descToObject(doc.getProperty('selection')).left : layerBounds.right
+objectBounds.right = doc.hasProperty('selection') ? lr.descToObject(doc.getProperty('selection')).left : layerBounds.right
 lr.deselect()
 lr.deleteOrdinalLayer()
 lr.motionBlur(0, 2000)

@@ -2,18 +2,15 @@
  * https://community.adobe.com/t5/photoshop/script-that-assigns-a-layer-name-identification-label-to-each-layer-in-an-image/m-p/11482458
  */
 #target photoshop
-
 var align = ['right', 'bottom'], // [x, y] x - right or left, y - top or bottom
     offset = [-20, -20], // [x, y] pixels
     mergeLayers = true, // merge txt with layer or not
     lr = new AM('layer');
-
 if (textKey = lr.getProperty('textKey')) {
     lr.hideLayerByID(lr.getProperty('layerID'))
     var doc = new AM('document'),
         len = doc.getProperty('numberOfLayers'),
         lrs = [];
-
     for (i = 1; i <= len; i++) {
         var lrKind = lr.getProperty('layerKind', i, true)
         if (lrKind == 1 || lrKind == 5) {
@@ -24,38 +21,33 @@ if (textKey = lr.getProperty('textKey')) {
             })
         }
     }
-
     len = lrs.length
     var txt = new AM('textLayer')
     for (i = 0; i < len; i++) {
         lr.selectLayerByIDList([lrs[i].id]);
-        textKey.putString (stringIDToTypeID('textKey'), lrs[i].name)
+        textKey.putString(stringIDToTypeID('textKey'), lrs[i].name)
         var l = textKey.getList(s2t('textStyleRange')),
-        s = l.getObjectValue (l.count-1)
-        s.putInteger (stringIDToTypeID('from'), 0)
-        s.putInteger (stringIDToTypeID('to'), lrs[i].name.length)
-        l.putObject (s2t('textStyleRange'), s)
+            s = l.getObjectValue(l.count - 1)
+        s.putInteger(stringIDToTypeID('from'), 0)
+        s.putInteger(stringIDToTypeID('to'), lrs[i].name.length)
+        l.putObject(s2t('textStyleRange'), s)
         textKey.putList(s2t('textStyleRange'), l)
         var id = (lr.makeTextLayer(textKey)).getInteger(stringIDToTypeID('layerID'));
         //(d = new ActionDescriptor).putString(stringIDToTypeID('textKey'), lrs[i].name);
-       // txt.setPropertyByDesc(d);
-      // lr.setText(lrs[i].name)
+        // txt.setPropertyByDesc(d);
+        // lr.setText(lrs[i].name)
         txt.moveLayer(layerOffset(lr.getProperty('bounds', lrs[i].id), lr.getProperty('bounds', id), align, offset))
         if (mergeLayers) { lr.selectLayerByIDList([lrs[i].id, id]); lr.mergeLayers() }
     }
 }
-
 function layerOffset(src, tgt, align, offset) {
     return [src.getInteger(stringIDToTypeID(align[0])) - tgt.getInteger(stringIDToTypeID(align[0])) + offset[0],
     src.getInteger(stringIDToTypeID(align[1])) - tgt.getInteger(stringIDToTypeID(align[1])) + offset[1]]
 }
-
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     target = s2t(target)
-
     this.getProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -63,7 +55,6 @@ function AM(target) {
             : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
         return executeActionGet(r).hasKey(property) ? getDescValue(executeActionGet(r), property) : null
     }
-
     this.setPropertyByDesc = function (desc, id, idxMode) {
         var r = new ActionReference();
         id ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id))
@@ -72,7 +63,6 @@ function AM(target) {
         d.putObject(s2t('to'), target, desc);
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-
     switch (t2s(target)) {
         case 'layer':
         case 'textLayer':
@@ -82,7 +72,6 @@ function AM(target) {
                 (d = new ActionDescriptor()).putList(s2t('null'), l);
                 executeAction(s2t('hide'), d, DialogModes.NO);
             }
-
             this.selectLayerByIDList = function (IDList) {
                 var ref = new ActionReference()
                 for (var i = 0; i < IDList.length; i++) {
@@ -92,14 +81,12 @@ function AM(target) {
                 desc.putReference(s2t("null"), ref)
                 executeAction(s2t("select"), desc, DialogModes.NO)
             }
-
             this.makeTextLayer = function (textKey) {
                 (r = new ActionReference()).putClass(s2t('textLayer'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
                 d.putObject(s2t('using'), s2t('textLayer'), textKey);
                 return executeAction(s2t('make'), d, DialogModes.NO);
             }
-            
             this.moveLayer = function (offset) {
                 (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
                 (d = new ActionDescriptor()).putReference(s2t('null'), r);
@@ -108,13 +95,11 @@ function AM(target) {
                 d.putObject(s2t('to'), s2t('offset'), d1);
                 executeAction(s2t('move'), d, DialogModes.NO);
             }
-
             this.mergeLayers = function () {
                 executeAction(s2t("mergeLayers"), new ActionDescriptor(), DialogModes.NO);
             }
             break;
     }
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return (d.getObjectValue(p));
@@ -133,11 +118,6 @@ function AM(target) {
         };
     }
 }
-
-
-
-
-
 function checkDesc(d) {
     var c = d.count,
         str = '';
@@ -148,8 +128,6 @@ function checkDesc(d) {
     };
     $.writeln(str);
 };
-
-
 function getValues(d, keyNum) {
     var p = d.getKey(keyNum);
     switch (d.getType(p)) {
@@ -204,6 +182,5 @@ function getValues(d, keyNum) {
             break;
     };
 };
-
 function s2t(s) { return stringIDToTypeID(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }

@@ -1,7 +1,6 @@
 /**Transform corners of irregular rectangle into 90 degrees
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/transform-corners-of-irregular-rectangle-into-90-degrees/m-p/12901163#M639196
  */
-
 #target photoshop
 var lr = new AM('layer'),
     pth = new AM('path'),

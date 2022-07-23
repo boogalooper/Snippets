@@ -1,9 +1,7 @@
 /**Photoshop Purple Skin 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/photoshop-purple-skin/m-p/11483970
 */
-
 #target photoshop
-
 f = $.os.indexOf('Windows') != -1 ? new File(app.path + '/Required/UIColors.txt') : new File(app.path.getFiles('*.app')[0] + '/Contents/Required/UIColors.txt')
 if (!f.exists) f = File.openDialog('Select your UIColors.txt', '*.txt,*.cel', false)
 if (f) {
@@ -14,10 +12,8 @@ if (f) {
   s = s.replace(/00\./g, '0.') + ')'
   var isHex = s.indexOf('0x') != -1 ? true : false
   try { var obj = eval(s) } catch (e) { alert(e, decodeURI(f.name), true) }
-
   if (obj) {
     if (isHex) HexColor(obj)
-
     var w = new Window('dialog', 'UIColors'),
       gt = w.add('group {alignment : ["fill", "center"], alignChildren : ["left", "fill"]}'),
       st = gt.add('statictext {text : "filter:"}'),
@@ -27,22 +23,18 @@ if (f) {
       s = gc.add('scrollbar {stepdelta: 100}', [0, 0, 20, 400]),
       g = p.add('group{orientation : "column"}'),
       gh = w.add('group {alignment : ["fill", "center"], alignChildren : ["left", "fill"], orientation : "row"}'),
-      c = gh.add('checkbox', [0,0,200,20], 'one element color for all themes'),
-      r = gh.add('button', [0,0,145,20], 'random colors'),
+      c = gh.add('checkbox', [0, 0, 200, 20], 'one element color for all themes'),
+      r = gh.add('button', [0, 0, 145, 20], 'random colors'),
       b = w.add('button', undefined, 'Save UIColors.txt', { name: 'ok' });
-
     w.filter = null
     w.changeAll = false
-
     e.onChanging = function () {
       w.filter = this.text.toUpperCase()
       for (var i = g.children.length - 1; i >= 0; i--) { g.remove(g.children[0]) }
       loadLabels()
     }
-
     s.onChanging = function () { g.location.y = -100 * this.value }
     c.onClick = function () { w.changeAll = this.value }
-
     r.onClick = function () {
       for (a in obj.Colors) {
         if (a.toUpperCase().indexOf(w.filter) != -1 || !w.filter) {
@@ -56,7 +48,6 @@ if (f) {
       }
       w.layout.layout(true)
     }
-
     b.onClick = function () {
       var ext = isHex ? 'cel' : 'txt',
         n = f.saveDlg('Save file', '*.' + ext);
@@ -74,13 +65,10 @@ if (f) {
         } else { alert(decodeURI(n) + '\nFile access error\nMake sure you have the required access rights') }
       }
     }
-
     w.onShow = function () {
       loadLabels()
     }
-
     w.show()
-
     function loadLabels() {
       for (a in obj.Colors) {
         if (a.toUpperCase().indexOf(w.filter) != -1 || !w.filter) {
@@ -91,24 +79,19 @@ if (f) {
       s.value = s.minvalue = 0
       s.maxvalue = (g.size.height - p.size.height + 15) / 100
     }
-
     function colorGroup(parent, cpt, col) {
       var g = parent.add('group{orientation : "row", alignChildren : ["left", "center"]}'),
         s = g.add('statictext', undefined, cpt);
       s.preferredSize.width = 200
-
       for (var i = 0; i < 4; i++) { addColor(g, col[i], cpt, i) }
-
       function addColor(parent, col, cpt, idx) {
         var img = parent.add('image {preferredSize : [20,20]}')
-
         img.onDraw = function () {
           var g = this.graphics
           g.ellipsePath(2, 2, 15, 15)
           g.fillPath(g.newBrush(g.BrushType.SOLID_COLOR, [col[0] / 255, col[1] / 255, col[2] / 255, col[3]]))
           g.strokePath(g.newPen(g.PenType.SOLID_COLOR, [0, 0, 0], 2))
         }
-
         img.onClick = function () {
           var a = new SolidColor
           a.rgb.red = col[0]
@@ -130,7 +113,6 @@ if (f) {
         }
       }
     }
-
     function HexColor(obj, backwardMode) {
       for (a in obj.Colors) {
         for (var i = 0; i < 4; i++) {

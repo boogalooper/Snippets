@@ -2,22 +2,18 @@
 const apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer');
-
 if (apl.getProperty('numberOfDocuments')) {
     if (doc.hasProperty('numberOfLayers')) {
         var len = doc.getProperty('numberOfLayers'),
             kind = lr.getProperty('layerKind'),
             layers = [];
-
         for (var i = 1; i <= len; i++) {
             if (lr.getProperty('layerSection', i, true).value == 'layerSectionEnd') continue;
             if ((k = lr.getProperty('layerKind', i, true)) == kind) layers.push(lr.getProperty('layerID', i, true))
         }
     }
-
     if (layers.length) doc.selectLayerByIDList(layers)
 }
-
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;

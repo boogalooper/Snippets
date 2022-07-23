@@ -23,12 +23,10 @@ for (var i = 1; i <= len; i++) {
         }
     };
 }
-
 alert('linkedLayersIDs:\n' + linkedLayers.toSource())
-
 do {
     (r = new ActionReference()).putIdentifier(s2t("layer"), linkedLayers.shift());
     (d = new ActionDescriptor()).putReference(s2t("target"), r);
     executeAction(s2t("select"), d, DialogModes.NO);
-    alert ('linked layer ' + d.getReference(s2t('target')).getIdentifier(s2t('layer')) +' selected!')
+    alert('linked layer ' + d.getReference(s2t('target')).getIdentifier(s2t('layer')) + ' selected!')
 } while (linkedLayers.length)

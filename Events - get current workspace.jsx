@@ -8,7 +8,6 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-determine-the-name-of-the-active-work-environment/m-p/12150059
  * https://www.youtube.com/watch?v=0NTbVPLz1Xo
  */
-
 // workspace state tracking code 
 #target photoshop
 var s2t = stringIDToTypeID,
@@ -63,8 +62,7 @@ try {
         }
     }
 }
-
-// getting workspace data: 
+// getting workspace data:
 /*
 var s2t = stringIDToTypeID,
     UUID = 'bf7064f7-eee2-4ac2-a639-5c3832469b43';

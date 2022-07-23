@@ -1,5 +1,4 @@
 ﻿/** Обновление линкованных объектов внутри смарт-объектов документа* */
-
 #target photoshop
 var doc = new AM('document'),
     lr = new AM('layer'),
@@ -28,7 +27,6 @@ if (len = doc.getProperty('numberOfLayers')) {
         }
     } while (lrs.length)
 }
-
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;

@@ -2,7 +2,6 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/applying-an-action-to-all-the-layers-in-a-document/m-p/12463566
  * https://www.youtube.com/watch?v=5uzaChlya3Q
  */
-
 #target photoshop
 var s2t = stringIDToTypeID;
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('targetLayersIDs'));

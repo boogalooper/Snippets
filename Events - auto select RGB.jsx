@@ -2,9 +2,7 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/clicking-on-a-type-layer-in-the-layers-palette-selects-the-layer-mask-by-default/td-p/12992297
  * https://youtu.be/9InXfjoNGuA
  */
-
 #target photoshop
-
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
 try {

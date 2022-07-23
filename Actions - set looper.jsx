@@ -31,7 +31,7 @@ if (!playbackParameters.count) {
         $.setenv('stop', (d.getString(s2t('target')) == 'stop here'))
         set = getActionIdx()
         for (var i = set.atnIdx; i <= set.len; i++) {
-            if ($.getenv('stop') == 'true') {break; }
+            if ($.getenv('stop') == 'true') { break; }
             (r = new ActionReference()).putIndex(s2t('action'), i);
             r.putIndex(s2t('actionSet'), set.setIdx);
             (d = new ActionDescriptor()).putReference(s2t('target'), r);

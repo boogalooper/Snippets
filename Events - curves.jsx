@@ -32,7 +32,7 @@ try {
             }
         }
     }
-} catch (e) {}
+} catch (e) { }
 if (!evt) {
     dialogWindow();
 }

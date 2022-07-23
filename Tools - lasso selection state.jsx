@@ -2,7 +2,6 @@
  * https://community.adobe.com/t5/photoshop/get-active-tool-tool-palette/m-p/11478858
  */
 #target photoshop;
-
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID,
     tools = {
@@ -16,10 +15,8 @@ var s2t = stringIDToTypeID,
         magicWandTool: 'selectionEnum',
         quickSelectTool: 'quickSelectMode'
     };
-
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('selection'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
-
 if (executeActionGet(r).hasKey(p)) {
     (r = new ActionReference()).putProperty(s2t('property'), p = s2t('tool'));
     r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
