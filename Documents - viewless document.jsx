@@ -63,6 +63,6 @@ function openViewlessDocument( pathname )
    }
    return new ViewlessDocument( result, pathname );
 }
-var fPSDoc = openViewlessDocument ("c://your//path//to//file.png");
+var fPSDoc = openViewlessDocument ("e://IMG_2227.jpg");
 fPSDoc.addToActiveDocument();
-fPSDoc.close();
+//fPSDoc.close();

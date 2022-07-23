@@ -27,19 +27,28 @@ logFile.open("a");
 
 for (var i = 0; i < len; i++) {
     $.writeln((i + ': ' + t2s(keys[i])));
+
+    (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
+    (d = new ActionDescriptor()).putReference(s2t('target'), r);
+    (d1 = new ActionDescriptor()).putBoolean(keys[i], true);
+    d.putObject(s2t('to'), s2t('layer'), d1);
+    // try { executeAction(s2t('set'), d, DialogModes.NO) } catch (e) { };
+
     //  for (var n = 0; n < len; n++) {
-    var r = new ActionReference();
+    //    var r = new ActionReference();
+
     //r.putIndex(keys[i], 1)
 
-    r.putProperty(s2t('property'), keys[i]);
-    //    r.putClass(s2t('timeline'));
-    //   r.putEnumerated(s2t('brush'), s2t('ordinal'), s2t('targetEnum'));
+    // r.putProperty(s2t('property'), keys[i]);
+    //r.putClass(s2t('layer'));
+    //  r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
     try {
-        var k = executeActionGet(r);
+        //   var k = executeActionGet(r);
         //         logFile.writeln('Class ' /*+ t2s(keys[n]) */+ ' : ' + t2s(keys[i]));
-        (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), k);
-        logFile.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
+        executeAction(s2t('set'), d, DialogModes.NO)
+            (z = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), d);
+        logFile.writeln(executeAction(s2t('convertJSONdescriptor'), z).getString(s2t('json')));
     } catch (e) { }
-    //    }
+    //   }
 }
 logFile.close();

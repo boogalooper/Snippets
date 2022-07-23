@@ -24,7 +24,7 @@ for (var i = 0; i < len; i++) {
 
     for (var x = 0; x < len; x++) {
         var r = new ActionReference();
-        r.putProperty(s2t('property'), s2t(keys[x]));
+        r.putProperty(s2t('property'), s2t('viewlessDoc'));
         // r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
         r.putClass(s2t(keys[i]));
         try {

@@ -1,4 +1,4 @@
-/* getting event notifier parameters */
+/* simlpe event notifier parser */
 #target photoshop
 
 s2t = stringIDToTypeID;

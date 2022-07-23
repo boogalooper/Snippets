@@ -1,1 +1,6 @@
-.vscode/
+@ check prefs.jsx
+@ checkStrings.jsx
+@ getDesc.jsx
+PIStringTerminology.h
+PITerminology.h
+strings.txt
