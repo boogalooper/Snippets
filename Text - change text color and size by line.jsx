@@ -36,7 +36,7 @@ if (executeActionGet(r).hasKey(p)) {
             d.putDouble(s2t('blue'), blue)
             cur.putObject(s2t('color'), s2t('RGBColor'), d)
         }
-        cur.putUnitDouble(s2t('impliedFontSize'), s2t('pixelsUnit'), size);
+        cur.putUnitDouble(cur.hasKey(s2t('impliedFontSize')) ? s2t('impliedFontSize') : s2t('size'), s2t('pixelsUnit'), size);
         d = new ActionDescriptor();
         d.putObject(s2t('textStyle'), s2t('textStyle'), cur)
         d.putInteger(s2t('from'), from)
