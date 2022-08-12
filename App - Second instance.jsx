@@ -32,7 +32,8 @@ try {
         w.close()
         fl.close()
         fl.execute()
-        $.sleep(2000)
+        $.sleep(3000)
+        fl.remove()
     }
     w.onShow = function () {
         for (var a in b) dl.add('item', a)
