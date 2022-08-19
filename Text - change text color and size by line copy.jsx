@@ -4,6 +4,7 @@
 #target photoshop
 var newColors = ['ff0000', '1200ff'],
     newSizes = [50, 20],
+    newLeading = ['auto', 30],
     s2t = stringIDToTypeID;
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('textKey'));
 r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
@@ -28,7 +29,8 @@ if (executeActionGet(r).hasKey(p)) {
         var to = from + lines[i].length + 1,
             cur = function (s, idx) { for (var i = 0; i < s.length; i++) if (s[i].from <= idx && s[i].to > idx) return s[i].style }(styleSheet, from),
             color = function (h) { var c = new SolidColor; c.rgb.hexValue = h; newColors.push(h); return c }(newColors.shift()),
-            size = function (s) { newSizes.push(s); return s }(newSizes.shift());
+            size = function (s) { newSizes.push(s); return s }(newSizes.shift()),
+            leading = function (l) { newLeading.push(l); return l }(newLeading.shift());
         var d = new ActionDescriptor();
         with (color.rgb) {
             d.putDouble(s2t('red'), red)
@@ -37,6 +39,12 @@ if (executeActionGet(r).hasKey(p)) {
             cur.putObject(s2t('color'), s2t('RGBColor'), d)
         }
         cur.putUnitDouble(cur.hasKey(s2t('impliedFontSize')) ? s2t('impliedFontSize') : s2t('size'), s2t('pixelsUnit'), size);
+        if (typeof (leading) == 'string') {
+            cur.putBoolean(s2t('autoLeading'), true);
+        } else {
+            cur.putBoolean(s2t('autoLeading'), false);
+            cur.putUnitDouble(cur.hasKey(s2t('impliedLeading')) ? s2t('impliedLeading') : s2t('leading'), s2t('pixelsUnit'), leading);
+        }
         d = new ActionDescriptor();
         d.putObject(s2t('textStyle'), s2t('textStyle'), cur)
         d.putInteger(s2t('from'), from)
