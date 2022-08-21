@@ -1,5 +1,5 @@
 /*https://feedback-readonly.photoshop.com/conversations/photoshop/ps-scripting-viewless-document-more-examples/5f5f45b94b561a3d425c0034
-@Jaroslav Bereza
+* by Jaroslav Bereza
 */
 const kaddLayerFromViewlessDocStr = app.stringIDToTypeID("addLayerFromViewlessDoc");
 const kaspectRatioStr = app.stringIDToTypeID("aspectRatio");

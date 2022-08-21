@@ -1,4 +1,6 @@
-﻿/**work with path components */
+﻿/**work with path components
+ * by r-bin
+ */
 #target photoshop;
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
