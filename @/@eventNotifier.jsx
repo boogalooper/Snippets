@@ -1,4 +1,4 @@
-/* simlpe event notifier parser */
+/* Simlpe event notifier parser using convertJSONdescriptor object */
 #target photoshop
 s2t = stringIDToTypeID;
 t2s = typeIDToStringID;

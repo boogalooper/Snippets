@@ -1,4 +1,4 @@
-/** Iterating over descriptor parameters based on data from strings.txt */
+/** Iterating over descriptor parameters (bruteforce check) based on data from strings.txt */
 #target photoshop
 var f = File(File($.fileName).path + '/strings.txt'),
     s2t = stringIDToTypeID,

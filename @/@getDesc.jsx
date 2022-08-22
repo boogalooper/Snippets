@@ -1,4 +1,4 @@
-﻿/*getting the parameters of the descriptor*/
+﻿/*Getting the parameters of the descriptor in two ways - by convertJSONdescriptor object and 'classic' using getKey() */
 #target photoshop
 s2t = stringIDToTypeID;
 /*using json object*/
@@ -49,4 +49,38 @@ function getValues(d, keyNum) {
 function s2t(s) { return s2t(s) }
 function t2s(t) { if (!typeIDToStringID(t)) { return typeIDToCharID(t) } else { return typeIDToStringID(t) } }
 
+/*
+ Get information about a document.
+     * To find out about the current document, leave documentId empty.
+     * @param {?integer} documentId Optional document ID
+     * @param {?Object.<string, boolean>} flags Optional override of default flags for
+     *   document info request. The optional flags and their default values are:
+     *
+     *   compInfo:             true
+     *   imageInfo:            true
+     *   layerInfo:            true
+     *     Specifies which info to send (image-specific, layer-specific, comp-specific)
+     *     If none of these is specified, all three default to true, otherwise it just
+     *     returns the true values
+     *   expandSmartObjects:   false
+     *     recurse into smart object (placed) documents
+     *   getTextStyles:        true
+     *     get limited text/style info for text layers. Returned in the "text" property of
+     *     layer info
+     *   getFullTextStyles:    false
+     *     get all text/style info for text layers. Returned in the "text" property of
+     *     layer info, can be rather verbose
+     *   selectedLayers:       false
+     *     If true, only return details on the layers that the user has selected. If false,
+     *     all layers are returned
+     *   getCompLayerSettings: true
+     *     If true, send actual layer settings in comps (not just the comp ids, useVisibility,
+     *     usePosition, and useAppearance)
+     *   getDefaultLayerFX:    false
+     *     If true, send all fx settings for enabled fx, even if they match the defaults. If false
+     *     layer fx settings will only be sent if they are different from default settings.
+     *   getPathData:          false
+     *     If true, shape layers will include detailed path data (in the same format as
+     *     generator.getLayerShape)
+     */
 

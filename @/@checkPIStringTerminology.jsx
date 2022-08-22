@@ -1,4 +1,4 @@
-/** Iterating over descriptor parameters based on data from PIStringTerminology.h */
+/** Iterating over descriptor parameters (bruteforce check) based on data from PIStringTerminology.h */
 #target photoshop
 var f = File(File($.fileName).path + '/PIStringTerminology.h'),
     s2t = stringIDToTypeID,
