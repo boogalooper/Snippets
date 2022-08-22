@@ -7,6 +7,7 @@ Most snippets in have a link to the topic in which the issue was discussed (this
 * [@](@) - Tools for exploring and retreiving data from Action Descriptors
 * [Actions](Actions) - Tools for work with actions palette
 * [Application](Application) - Interaction with Application object
+* [Bridge](Bridge) - Some bridge scipts
 * [Documents](Documents) - Working with document attributes
 * [Events](Events) - Interactive scripts using the event subsystem
 * [Files](Files) - Work with FS and files

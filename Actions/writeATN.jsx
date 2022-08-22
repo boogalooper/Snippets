@@ -1,0 +1,10 @@
+﻿var infile = File ("/e/test/1.txt");
+var outfile = File ("/e/test/Set 2.atn");
+infile.open ("r");
+infile.encoding = "UTF-8";
+var temp = eval(infile.read());
+infile.close();
+outfile.open ("w");
+outfile.encoding = "binary";
+outfile.write (temp);
+outfile.close ();
