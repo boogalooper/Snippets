@@ -5,7 +5,8 @@ if (tmp) {
     tmp.encoding = "BINARY";
     var s = tmp.read()
     tmp.close()
-    i = s.indexOf('xpacket')
+    i = s.indexOf('Cnt ') - 14
+    $.writeln(i)
     for (i; i < s.length; i++) {
         try {
             //  if (i > 3000) break;
@@ -20,6 +21,7 @@ if (tmp) {
                 var str = t2s(n.getObjectType(n.getKey(0))) + '\n';
                 $.writeln(str += getJSON(d))
                 $.writeln('line ' + i)
+                break;
             }
         } catch (e) { }
     }

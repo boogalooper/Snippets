@@ -20,18 +20,18 @@ logFile = File(Folder.desktop.fsName + "/" + "checkClasses.log");
 logFile.open("a");
 for (var i = 0; i < len; i++) {
     $.writeln((i + ': ' + t2s(keys[i])));
-    //  for (var n = 0; n < len; n++) {
+    //   for (var n = 0; n < len; n++) {
     var r = new ActionReference();
-    //r.putIndex(keys[i], 1)
-    r.putProperty(s2t('property'), keys[i]);
-    //r.putClass(s2t('layer'));
-    r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
+    r.putIndex(keys[i], 1)
+    // r.putProperty(s2t('property'), keys[i]);
+   // r.putClass(keys[i]);
+ //   r.putEnumerated(keys[i], s2t('ordinal'), s2t('targetEnum'));
     try {
         //   var k = executeActionGet(r);
-        //         logFile.writeln('Class ' /*+ t2s(keys[n]) */+ ' : ' + t2s(keys[i]));
         (z = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
+        // logFile.writeln('Class ' + t2s(keys[n]) + ' : ' + t2s(keys[i]));
         logFile.writeln(executeAction(s2t('convertJSONdescriptor'), z).getString(s2t('json')));
     } catch (e) { }
-    //   }
 }
+//  }
 logFile.close();
