@@ -2,7 +2,7 @@
 #target photoshop
 s2t = stringIDToTypeID;
 /*using json object*/
-(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('fontList'));
+(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('json'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 //d.putBoolean(stringIDToTypeID("expandSmartObjects"), true);
