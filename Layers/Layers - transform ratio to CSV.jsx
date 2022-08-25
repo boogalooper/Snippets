@@ -1,4 +1,4 @@
-/**Получить масштаб трансформации всех смарт-объектов документа и сохранить их в виде таблицы
+/**Get the scale of the transformation of all the smart objects of the document and save them as a table
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-export-all-smart-objects-layer-names-with-scale/m-p/12799010#M628167
  * https://youtu.be/MPk_P-Yfs44
  */

@@ -1,4 +1,4 @@
-/** Экспорт в файл всех координат Count Tool 
+/** Export to the file of all coordinate Count Tool
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/script-to-export-coordinates-x-y-in-pixel/td-p/12558105
 */
 #target photoshop

@@ -1,4 +1,4 @@
-/**Свернуть все эффекты смарт-объектов
+/**Collapse the effects of smart objects
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/action-or-script-to-close-smart-object-layer-styles-drawer/m-p/12537306#M600783
  * https://youtu.be/nv5HRxty5qU
  */

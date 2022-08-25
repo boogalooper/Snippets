@@ -1,4 +1,4 @@
-﻿/** Обновление линкованных объектов внутри смарт-объектов документа* */
+﻿/** Update of linked objects inside smart objects of the document**/
 #target photoshop
 var doc = new AM('document'),
     lr = new AM('layer'),
