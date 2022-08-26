@@ -1,40 +1,46 @@
-/**getting the structure of the document taking into account nested groups and layers  */
-#target photoshop
-var a = getLayersCollection()
-b = 0
-function getLayersCollection() {
-    var doc = new AM('document'),
-        lr = new AM('layer'),
-        indexFrom = doc.getProperty('numberOfLayers');
-    return layersCollection(indexFrom)
-    function layersCollection(from, parentItem, group) {
+/**
+ * When a get layerSet id, any way to get all children layers id by ActionManager?
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/when-a-get-layerset-id-any-way-to-get-all-children-layers-id-by-actionmanager/td-p/13160515
+ */
+var doc = new AM('document'),
+    lr = new AM('layer');
+
+var layerSectionContent = getLayersCollection(lr.getProperty(('itemIndex'), lr.getProperty('layerID'))/*<- get active layer ID*/, true)
+alert(layerSectionContent.toSource())
+
+function getLayersCollection(idx, getLayerSectionContent) {
+    var indexFrom = idx ? (doc.getProperty('hasBackgroundLayer') ? --idx : idx) : doc.getProperty('numberOfLayers'),
+        indexTo = doc.getProperty('hasBackgroundLayer') ? 0 : 1;
+    return enumLayers(indexFrom, indexTo, getLayerSectionContent);
+    function enumLayers(from, to, currentSection, parentItem, group) {
         parentItem = parentItem ? parentItem : [];
-        for (var i = from; i >= 0; i--) {
-            $.writeln(i + ': ' + lr.getProperty('name', i, true) + ' ' + lr.getProperty('layerSection', i, true).value)
+        var isDirty = false;
+        for (var i = from; i >= to; i--) {
             var layerSection = lr.getProperty('layerSection', i, true).value;
             if (layerSection == 'layerSectionStart') {
-                i = layersCollection(i - 1, [], parentItem)
+                i = enumLayers(i - 1, to, undefined, [], parentItem)
+                isDirty = true;
+                if (currentSection) return parentItem[0]
                 continue;
             }
+            if (currentSection && isDirty) return []
             var properties = {};
-            properties.name = lr.getProperty('name', i, true)
+            //collect properties here
+            properties.layerKind = lr.getProperty('name', i, true)
             properties.id = lr.getProperty('layerID', i, true)
-            properties.type = lr.getProperty('layerKind', i, true)
-            properties.visible = lr.getProperty('visible', i, true)
-            properties.bounds = lr.descToObject(lr.getProperty('bounds', i, true).value)
-            properties.boundsNoEffects = lr.descToObject(lr.getProperty('boundsNoEffects', i, true).value)
-            properties.boundsNoMask = lr.descToObject(lr.getProperty('boundsNoMask', i, true).value)
             if (layerSection == 'layerSectionEnd') {
                 for (o in properties) { parentItem[o] = properties[o] }
                 group.push(parentItem);
                 return i;
             } else {
                 parentItem.push(properties)
+                if (currentSection && !isDirty) return parentItem
             }
         }
         return parentItem
     }
 }
+
 function AM(target, order) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
@@ -52,14 +58,6 @@ function AM(target, order) {
         id ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id))
             : r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
         return executeActionGet(r).hasKey(property)
-    }
-    this.descToObject = function (d) {
-        var o = {}
-        for (var i = 0; i < d.count; i++) {
-            var k = d.getKey(i)
-            o[t2s(k)] = getDescValue(d, k)
-        }
-        return o
     }
     function getDescValue(d, p) {
         switch (d.getType(p)) {
