@@ -5,7 +5,8 @@ if (tmp) {
     tmp.encoding = "BINARY";
     var s = tmp.read()
     tmp.close()
-    i = s.indexOf('Cnt ') - 14
+    i=0;
+   // i = s.indexOf('8BIMcust\0\0\0\0\0\0\0')
     $.writeln(i)
     for (i; i < s.length; i++) {
         try {
@@ -21,7 +22,7 @@ if (tmp) {
                 var str = t2s(n.getObjectType(n.getKey(0))) + '\n';
                 $.writeln(str += getJSON(d))
                 $.writeln('line ' + i)
-                break;
+                //   break;
             }
         } catch (e) { }
     }

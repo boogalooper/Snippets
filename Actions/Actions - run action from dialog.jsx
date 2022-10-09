@@ -5,26 +5,20 @@
 
 var s2t = stringIDToTypeID,
     atn = getActionsList(),
-    cur = null;
-
-try {
-    (r = new ActionReference()).putProperty(s2t('property'), p = s2t('name'));
-    r.putEnumerated(s2t('action'), s2t('ordinal'), s2t('targetEnum'));
-    cur = executeActionGet(r).getString(p);
-} catch (e) { }
+    cur = getActionName();
 
 if (cur && atn[cur]) {
     var cursor = (getXY()),
         w = new Window("dialog", cur);
     w.preferredSize = [200, 200];
     w.spacing = 0;
-    w.location = [cursor[0], cursor[1]+100]
+    w.location = [cursor[0], cursor[1] + 100]
     for (var i = 0; i < atn[cur].length; i++) {
         var b = w.add('button')
         b.text = atn[cur][i];
         b.onClick = function () {
             w.close()
-            doAction(b.text, cur)
+            doAction(this.text, cur)
         }
     }
     w.show();
@@ -64,4 +58,24 @@ function getActionsList() {
         }
         return current
     }
+}
+
+function getActionName() {
+    var atn;
+    try {
+        (r = new ActionReference()).putEnumerated(s2t('action'), s2t('ordinal'), s2t('targetEnum'));
+        var parent = executeActionGet(r).getString(s2t('parentName')),
+            title = executeActionGet(r).getString(s2t('name'));
+        try {
+            (r = new ActionReference()).putName(s2t('actionSet'), parent);
+            executeActionGet(r).getInteger(s2t('itemIndex'));
+            atn = parent;
+        } catch (e) {
+            (r = new ActionReference()).putName(s2t('actionSet'), title);
+            executeActionGet(r).getInteger(s2t('itemIndex'));
+            atn = title;
+        }
+    }
+    catch (e) { atn = null }
+    return atn;
 }
