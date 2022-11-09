@@ -3,7 +3,6 @@
  * https://youtu.be/dB3XcZj39AU
  */
 
-#target photoshop
 /*
 // BEGIN__HARVEST_EXCEPTION_ZSTRING
 <javascriptresource>
@@ -23,6 +22,9 @@
 </javascriptresource>
 // END__HARVEST_EXCEPTION_ZSTRING
 */
+
+#target photoshop
+
 $.localize = true
 const UUID = '77f614d4-53a3-4b8c-9475-791849a9f273';
 var str = new Locale(),

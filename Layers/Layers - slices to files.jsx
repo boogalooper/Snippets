@@ -61,8 +61,8 @@ try {
             executeAction(s2t("paste"), d, DialogModes.NO);
             executeAction(s2t("revealAll"), new AD, DialogModes.NO);
             executeAction(s2t("flattenImage"), undefined, DialogModes.NO);
-            (d = new AD).putObject(s2t("as"), s2t("JPEG"), new AD);//photoshop35Format
-            d.putPath(s2t("in"), File(pth.path + '/' + nm + ' ' + ('0' + i).slice(-2) + '.jpg'));
+            (d = new AD).putObject(s2t("as"), s2t("photoshop35Format"), new AD);//photoshop35Format
+            d.putPath(s2t("in"), File(pth.path + '/' + nm + ' ' + ('0' + i).slice(-2) + '.psd'));
             //    d.putEnumerated(s2t("saveStage"), s2t("saveStageType"), s2t("saveBegin"));
             executeAction(s2t("save"), d, DialogModes.NO);
             executeAction(s2t("close"), new AD, DialogModes.NO);
