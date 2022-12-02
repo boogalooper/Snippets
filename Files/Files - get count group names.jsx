@@ -50,7 +50,7 @@ if (doc.hasProperty('countClass')) {
     doc.duplicate('counters', true);
     doc.fill('white', 100)
     activeDocument.xmpMetadata.rawData = '';
-    doc.saveAsJPG(f);
+    doc.saveAs(f);
     doc.closeDocument();
     if (f.exists) {
         f.open("r");

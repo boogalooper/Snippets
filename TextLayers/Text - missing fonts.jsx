@@ -3,7 +3,7 @@
  */
 #target photoshop
 var s2t = stringIDToTypeID,
-    missingFontList = {};
+    documentFonts = {};
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('numberOfLayers'));
 r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 var len = executeActionGet(r).getInteger(p);
@@ -16,13 +16,13 @@ for (var i = 1; i <= len; i++) {
             var k = sList.getObjectValue(x).getObjectValue(s2t('textStyle'))
             if (k.hasKey(s2t('fontAvailable'))) {
                 if (!k.getBoolean(s2t('fontAvailable'))) {
-                    missingFontList[k.getString(s2t('fontPostScriptName'))] = false
+                    documentFonts[k.getString(s2t('fontPostScriptName'))] = false
                 }
             }
         }
     }
 }
-alert(missingFontList.toSource())
+alert(documentFonts.toSource())
 function checkDesc(d) {
     var c = d.count,
         str = '';
