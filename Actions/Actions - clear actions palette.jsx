@@ -2,7 +2,14 @@
 * (make sure all actions on the palette are saved to disk beforehand)
  * https://www.youtube.com/watch?v=lK0wKIk9igY
  */
+
 #target photoshop
+
+<javascriptresource>
+<category>User</category>
+<enableinfo>true</enableinfo>
+</javascriptresource>
+
 s2t = stringIDToTypeID;
 while (true) {
 	(r = new ActionReference()).putIndex(s2t('actionSet'), 1);

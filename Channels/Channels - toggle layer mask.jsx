@@ -1,4 +1,10 @@
 ﻿#target photoshop
+/*
+<javascriptresource>
+<category>User</category>
+<enableinfo>true</enableinfo>
+</javascriptresource>
+*/
 s2t = stringIDToTypeID;
 (r = new ActionReference()).putProperty(s2t('property'), p = s2t('hasUserMask'));
 r.putEnumerated(s2t("layer"), s2t("ordinal"), s2t("targetEnum"));
