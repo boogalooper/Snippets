@@ -8,6 +8,7 @@ Most snippets in have a link to the topic in which the issue was discussed (this
 * [Actions](Actions) - Tools for work with actions palette
 * [Application](Application) - Interaction with Application object
 * [Bridge](Bridge) - Some bridge scipts
+* [Channels](Channels) - Scripts for work with channels
 * [Documents](Documents) - Working with document attributes
 * [Events](Events) - Interactive scripts using the event subsystem
 * [Files](Files) - Work with FS and files
