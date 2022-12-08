@@ -1,9 +1,7 @@
 /**How to use JSX to move the timeline and define keyframe positions
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-use-jsx-to-move-the-timeline-and-define-keyframe-positions/td-p/12559622
  */
-/** How to use JSX to move the timeline and define keyframe positions
- * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-use-jsx-to-move-the-timeline-and-define-keyframe-positions/td-p/12559622
- */
+
 #target photoshop
 var s2t = stringIDToTypeID,
     duration = 5,

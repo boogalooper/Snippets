@@ -30,7 +30,8 @@ if (currentChannel == 0 && !selectMasterChannel && backvardMode) currentChannel 
 if (currentChannel < 0) currentChannel = numberOfChannels;
 
 selectChannel(currentChannel);
-if (masterChannelVisible) showMasterChannel();;
+if (masterChannelVisible) showMasterChannel();
+currentTool = backvardMode? 'burnInTool':'dodgeTool'
 
 function showMasterChannel() {
     (r = new ActionReference()).putEnumerated(s2t('channel'), s2t('ordinal'), s2t('RGB'));

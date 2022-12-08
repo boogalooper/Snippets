@@ -21,19 +21,19 @@ logFile.open("a");
 for (var i = 0; i < len; i++) {
     $.writeln((i + ': ' + t2s(keys[i])));
 
-    for (var n = 0; n < len; n++) {
-        var r = new ActionReference();
-        // r.putIndex(keys[i], 1)
-        // r.putProperty(s2t('property'), keys[i]);
-        //r.putClass(s2t('animationFrameClass'));
-        r.putEnumerated(keys[i], s2t('ordinal'), keys[n]);
-        try {
+    // for (var n = 0; n < len; n++) {
+    var r = new ActionReference();
+    // r.putIndex(keys[i], 1)
+    r.putProperty(s2t('property'), keys[i]);
+    r.putClass(s2t('timeline'));
+    //r.putEnumerated(keys[i], s2t('ordinal'), keys[n]);
+    try {
 
-            //    var k = executeActionGet(r);
-            (z = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
-            logFile.writeln('Class ' + t2s(keys[n]) + ' : ' + t2s(keys[i]));
-            logFile.writeln(executeAction(s2t('convertJSONdescriptor'), z).getString(s2t('json')));
-        } catch (e) { }
-    }
+        //    var k = executeActionGet(r);
+        (z = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
+        logFile.writeln('Class ' + t2s(keys[i]));
+        logFile.writeln(executeAction(s2t('convertJSONdescriptor'), z).getString(s2t('json')));
+    } catch (e) { }
+    //   }
 }
 logFile.close();
