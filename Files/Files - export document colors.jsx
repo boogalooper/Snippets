@@ -2,7 +2,7 @@
  * Export Color Table as hex codes?
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/export-color-table-as-hex-codes/td-p/13217982
  */
-const DE_CIE76 = 10; //color difference: 0-255
+const DE_CIE76 = 0; //color difference: 0-255
 const THRESHOLD = 0; //color pixels threshold
 
 var s2t = stringIDToTypeID,
@@ -41,6 +41,7 @@ if (t2s(executeActionGet(r).getEnumerationValue(p)) == 'RGBColor') {
                     if (!colorsArr[i]) continue;
                     f.writeln('<tr>\n<td>#' + colorsArr[i].hex + '</td>\n<td style="background-color: #' + colorsArr[i].hex + ';"></td>\n<td>' + colorsArr[i].pixels + '</td>\n</tr>')
                 }
+                f.write('</tbody>\n</table>')
             }
             f.close()
         } else { alert(decodeURI(f) + '\nFile access error') }

@@ -29,6 +29,7 @@ function getFaceBounds() {
     lr.makeMaskBySelection()
     lr.applyUserMask()
     doc.cropCanvas(-10, -45)
+    doc.resizeImage(100)
     doc.saveAsRAW(f);
 }
 
@@ -38,6 +39,32 @@ function getColors() {
     var colorsObj = readColors(f.read());
     f.close();
     f.remove();
+
+    for (var a in colorsObj) if (colorsObj[a] > 1) colorsArr.push({ pixels: colorsObj[a], hex: a });
+    filterByDE(colorsArr)
+
+
+    var z = File(Folder.desktop.fsName + "/" + activeDocument.name.replace(/\.[0-9a-z]+$/i, '') + '.csv');
+    z = z.saveDlg('Save file', '*.csv,*.htm');
+    if (z) {
+        if (z.open('w')) {
+            if (z.fsName.match(/\.[0-9a-z]+$/i)[0] == '.csv') {
+                z.writeln('HEX;PixelCount')
+                for (var i = 0; i < colorsArr.length; i++) {
+                    if (!colorsArr[i]) continue;
+                    z.writeln('#' + colorsArr[i].hex + ';' + colorsArr[i].pixels)
+                }
+            } else {
+                z.write('<table>\n<tbody>\n<tr>\n<th>HEX</th>\n<th>Color</th>\n<th>Pixel count</th>\n</tr>')
+                for (var i = 0; i < colorsArr.length; i++) {
+                    if (!colorsArr[i]) continue;
+                    z.writeln('<tr>\n<td>#' + colorsArr[i].hex + '</td>\n<td style="background-color: #' + colorsArr[i].hex + ';"></td>\n<td>' + colorsArr[i].pixels + '</td>\n</tr>')
+                }
+                z.write('</tbody>\n</table>')
+            }
+            z.close()
+        } else { alert(decodeURI(f) + '\nFile access error') }
+    }
 
     function readColors(s) {
         var colorsObj = {};
@@ -55,6 +82,26 @@ function getColors() {
         if (s.charCodeAt(from + 4).toString(16) == 0) return null;
         for (var i = from; i < from + 3; i++) h += (('0' + s.charCodeAt(i).toString(16)).slice(-2));
         return h
+    }
+
+    function filterByDE(c) {
+        for (var i = 0; i < c.length; i++) {
+            if (!c[i]) continue;
+            var cA = new SolidColor;
+            cA.rgb.hexValue = c[i].hex;
+            for (var x = i + 1; x < c.length; x++) {
+                if (!c[x]) continue;
+                var cB = new SolidColor;
+                cB.rgb.hexValue = c[x].hex;
+                if (deltaE(cA, cB) <= 2) {
+                    if (c[i] > c[x]) c[x] = null else c[i] = null
+                }
+            }
+        }
+    }
+
+    function deltaE(a, b) {
+        return Math.sqrt(Math.pow(b.lab.l - a.lab.l, 2) + Math.pow(b.lab.a - a.lab.a, 2) + Math.pow(b.lab.b - a.lab.b, 2))
     }
 }
 
