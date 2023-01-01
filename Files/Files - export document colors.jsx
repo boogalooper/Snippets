@@ -4,7 +4,6 @@
  */
 const DE_CIE76 = 0; //color difference: 0-255
 const THRESHOLD = 0; //color pixels threshold
-
 var s2t = stringIDToTypeID,
     t2s = typeIDToStringID,
     colorsObj = {},
@@ -57,15 +56,21 @@ function readColors(s, colorsObj) {
 function filterByDE(c) {
     for (var i = 0; i < c.length; i++) {
         updateProgress(i, c.length)
-        if (!c[i]) continue;
+        if (c[i] == null) continue;
         var cA = new SolidColor;
         cA.rgb.hexValue = c[i].hex;
         for (var x = i + 1; x < c.length; x++) {
-            if (!c[x]) continue;
+            if (c[x] == null || c[i] == null) continue;
             var cB = new SolidColor;
             cB.rgb.hexValue = c[x].hex;
-            if (deltaE(cA, cB) <= DE_CIE76) {
-                if (c[i] > c[x]) c[x] = null else c[i] = null
+            if (deltaE(cA, cB) <= 10) {
+                if (c[i].pixels > c[x].pixels) {
+                    c[i].pixels += c[x].pixels
+                    c[x] = null
+                } else {
+                    c[x].pixels += c[i].pixels
+                    c[i] = null
+                }
             }
         }
     }

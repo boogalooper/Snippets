@@ -40,24 +40,38 @@ function getColors() {
     f.close();
     f.remove();
 
-    for (var a in colorsObj) if (colorsObj[a] > 1) colorsArr.push({ pixels: colorsObj[a], hex: a });
+    for (var a in colorsObj) if (colorsObj[a] > 1) { colorsArr.push({ pixels: colorsObj[a], hex: a }) };
     filterByDE(colorsArr)
 
+    colorsArr.sort(function (a, b) { return a.pixels < b.pixels ? 1 : -1 })
 
-    var z = File(Folder.desktop.fsName + "/" + activeDocument.name.replace(/\.[0-9a-z]+$/i, '') + '.csv');
-    z = z.saveDlg('Save file', '*.csv,*.htm');
+    var targetColor = [220, 180, 162];
+    // targetColor.rgb.hexValue = [233, 198, 194]
+    var imageColor = new SolidColor;
+    imageColor.rgb.hexValue = colorsArr[0].hex
+    var col = [imageColor.rgb.red, imageColor.rgb.green, imageColor.rgb.blue]
+    var midtone = [];
+    for (var i = 0; i < 3; i++) {
+        midtone.push(middleToneGamma(targetColor[i], col[i]))
+    }
+    doc.makeCurves(midtone, targetColor)
+
+    // $.writeln([targetColor.rgb.red, targetColor.rgb.green, targetColor.rgb.blue])
+
+    var z = File(Folder.desktop.fsName + "/" + activeDocument.name.replace(/\.[0-9a-z]+$/i, '') + '.htm');
+    // z = z.saveDlg('Save file', '*.csv,*.htm');
     if (z) {
         if (z.open('w')) {
             if (z.fsName.match(/\.[0-9a-z]+$/i)[0] == '.csv') {
                 z.writeln('HEX;PixelCount')
                 for (var i = 0; i < colorsArr.length; i++) {
-                    if (!colorsArr[i]) continue;
+                    if (colorsArr[i].pixels == 0) continue;
                     z.writeln('#' + colorsArr[i].hex + ';' + colorsArr[i].pixels)
                 }
             } else {
                 z.write('<table>\n<tbody>\n<tr>\n<th>HEX</th>\n<th>Color</th>\n<th>Pixel count</th>\n</tr>')
                 for (var i = 0; i < colorsArr.length; i++) {
-                    if (!colorsArr[i]) continue;
+                    if (colorsArr[i].pixels == 0) continue;
                     z.writeln('<tr>\n<td>#' + colorsArr[i].hex + '</td>\n<td style="background-color: #' + colorsArr[i].hex + ';"></td>\n<td>' + colorsArr[i].pixels + '</td>\n</tr>')
                 }
                 z.write('</tbody>\n</table>')
@@ -66,6 +80,9 @@ function getColors() {
         } else { alert(decodeURI(f) + '\nFile access error') }
     }
 
+    function middleToneGamma(x1, x2) {
+        return Math.pow(x1 / 255, 1 / (Math.log(x1 / 255) / Math.log(x2 / 255))) * 255
+    }
     function readColors(s) {
         var colorsObj = {};
         for (var i = 0; i < s.length; i += 4) {
@@ -86,15 +103,21 @@ function getColors() {
 
     function filterByDE(c) {
         for (var i = 0; i < c.length; i++) {
-            if (!c[i]) continue;
+            if (c[i].pixels == 0) continue;
             var cA = new SolidColor;
             cA.rgb.hexValue = c[i].hex;
             for (var x = i + 1; x < c.length; x++) {
-                if (!c[x]) continue;
+                if (c[x].pixels == 0 || c[i].pixels == 0) continue;
                 var cB = new SolidColor;
                 cB.rgb.hexValue = c[x].hex;
-                if (deltaE(cA, cB) <= 2) {
-                    if (c[i] > c[x]) c[x] = null else c[i] = null
+                if (deltaE(cA, cB) <= 5) {
+                    if (c[i].pixels > c[x].pixels) {
+                        c[i].pixels += c[x].pixels
+                        c[x].pixels = 0
+                    } else {
+                        c[x].pixels += c[i].pixels
+                        c[i].pixels = 0
+                    }
                 }
             }
         }
@@ -226,6 +249,8 @@ function AM(target) {
         d.putEnumerated(s2t('to'), s2t('ordinal'), s2t('none'));
         executeAction(s2t('set'), d, DialogModes.NO);
     }
+
+    /*
     this.makeCurves = function (from, to) {
         (r = new ActionReference()).putClass(s2t('adjustmentLayer'));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
@@ -266,6 +291,38 @@ function AM(target) {
             l.putObject(s2t('curvesAdjustment'), d2);
         }
 
+        d1.putList(s2t('adjustment'), l);
+        d.putObject(s2t('to'), s2t('curves'), d1);
+        executeAction(s2t('set'), d, DialogModes.NO);
+    }*/
+
+    this.makeCurves = function (from, to) {
+        (r = new ActionReference()).putClass(s2t('adjustmentLayer'));
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        (d2 = new ActionDescriptor()).putEnumerated(s2t('presetKind'), s2t('presetKindType'), s2t('presetKindDefault'));
+        (d1 = new ActionDescriptor()).putObject(s2t('type'), s2t('curves'), d2);
+        d.putObject(s2t('using'), s2t('adjustmentLayer'), d1);
+        executeAction(s2t('make'), d, DialogModes.NO);
+        (r = new ActionReference()).putEnumerated(s2t('adjustmentLayer'), s2t('ordinal'), s2t('targetEnum'));
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        (d1 = new ActionDescriptor()).putEnumerated(s2t('presetKind'), s2t('presetKindType'), s2t('presetKindCustom'));
+        var mode = to.length == 1 ? ['composite'] : ['red', 'green', 'blue'],
+            l = new ActionList();
+        for (var i = 0; i < to.length; i++) {
+            (r1 = new ActionReference()).putEnumerated(s2t('channel'), s2t('channel'), s2t(mode[i]));
+            (d2 = new ActionDescriptor()).putReference(s2t('channel'), r1);
+            (d3 = new ActionDescriptor()).putDouble(s2t('horizontal'), 0);
+            d3.putDouble(s2t('vertical'), 0);
+            (l1 = new ActionList()).putObject(s2t('Pnt '), d3);
+            (d4 = new ActionDescriptor()).putDouble(s2t('horizontal'), from[i]);
+            d4.putDouble(s2t('vertical'), to[i]);
+            l1.putObject(s2t('Pnt '), d4);
+            (d5 = new ActionDescriptor()).putDouble(s2t('horizontal'), 255);
+            d5.putDouble(s2t('vertical'), 255);
+            l1.putObject(s2t('Pnt '), d5);
+            d2.putList(s2t('curve'), l1);
+            l.putObject(s2t('curvesAdjustment'), d2);
+        }
         d1.putList(s2t('adjustment'), l);
         d.putObject(s2t('to'), s2t('curves'), d1);
         executeAction(s2t('set'), d, DialogModes.NO);
