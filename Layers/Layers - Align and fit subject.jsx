@@ -79,7 +79,7 @@ function main() {
 
     subjects.sort(function (a, b) { return a.ratio > b.ratio ? 1 : -1 })
 
-    if (subjects.length > 1) {
+    if (subjects.length >= 1) {
         var from = doc.getProperty('hasBackgroundLayer') ? 0 : 1,
             len = doc.getProperty('numberOfLayers');
 
@@ -106,7 +106,7 @@ function main() {
 
     for (var i = 0; i < frames.length; i++) {
         app.changeProgressText('Get visible frame: ' + lr.getProperty('name', false, frames[i]))
-        doc.makeSelection(frames[i], lr.getProperty('hasVectorMask', false, frames[i]) && !(lr.hasProperty('vectorMaskEmpty', frames[i]) ? lr.getProperty('vectorMaskEmpty',false, frames[i]) : true)) 
+        doc.makeSelection(frames[i], lr.getProperty('hasVectorMask', false, frames[i]) && !(lr.hasProperty('vectorMaskEmpty', frames[i]) ? lr.getProperty('vectorMaskEmpty', false, frames[i]) : true))
         doc.setQuickMask(true)
         doc.levels([128, 1, 240])
         doc.setQuickMask()
@@ -134,14 +134,16 @@ function main() {
 
     app.updateProgress(3, 4)
 
-    var offset = doc.getProperty('hasBackgroundLayer') ? 1 : 0
+    var offset = doc.getProperty('hasBackgroundLayer') ? 1 : 0;
     for (var i = 0; i < subjects.length; i++) {
         app.changeProgressText('Align layer: ' + lr.getProperty('name', false, subjects[i].id))
         for (var x = 0; x < frames.length; x++) {
             if (frames[x].processed) continue;
             if (frames[x].color != subjects[i].color) continue;
 
-            doc.moveLayer(lr.getProperty('itemIndex', false, subjects[i].id) - offset, lr.getProperty('itemIndex', false, frames[x].id) >= lr.getProperty('count', false, frames[x].id) ? lr.getProperty('count', false, frames[x].id) - 1 : lr.getProperty('itemIndex', false, frames[x].id))
+            var subjectIdx = lr.getProperty('itemIndex', false, subjects[i].id) - offset,
+                frameIdx = lr.getProperty('itemIndex', false, frames[x].id) - offset;
+            offset ? doc.moveLayer(subjectIdx, subjectIdx > frameIdx ? frameIdx + 1 : frameIdx) : doc.moveLayer(subjectIdx, subjectIdx > frameIdx ? frameIdx : frameIdx - 1)
 
             lr.selectLayer(subjects[i].id)
             if (!lr.getProperty('group', false, subjects[i].id)) lr.groupCurrentLayer()
@@ -150,14 +152,6 @@ function main() {
             break;
         }
     }
-    /*   } catch (e) {
-           try {
-               (desc = new ActionDescriptor()).putObject(stringIDToTypeID('object'), stringIDToTypeID('object'), d);
-               var desc = executeAction(stringIDToTypeID('convertJSONdescriptor'), desc).getString(stringIDToTypeID('json'));
-           } catch (j) { }
-   
-           alert(e + (desc ? '\n\n' + desc : ''))
-       }*/
 }
 
 function alignLayer(subject, frame) {
