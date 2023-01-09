@@ -6,7 +6,6 @@
 * b) the photo completely overlaps the frame 
 * https://www.youtube.com/watch?v=eRS5aPUFkMY
 */
-
 /*
 <javascriptresource>
 <category>alignment</category>
@@ -14,33 +13,24 @@
 <enableinfo>true</enableinfo>
 </javascriptresource>
 */
-
 #target photoshop
-
 var lr = new AM('layer'),
     doc = new AM('document'),
     previousLayer = new AM('layer', 'backwardEnum');
-
-activeDocument.suspendHistory('Align and fit subject', 'alignAndFit()')
-function alignAndFit() { app.doProgress('', 'main ()') }
-
+activeDocument.suspendHistory('Align and fit subject', 'main()')
 function main() {
-    //  try {
     var subjects = [],
         subjectColors = {},
         subjectIds = {},
         frames = [],
         frameColors = {},
         targetIds = doc.getProperty('targetLayersIDs');
-
-    app.updateProgress(1, 4)
-
+    var progress = progressWindow('Get object bounds', '', targetIds.count);
+    progress.show();
     for (var i = 0; i < targetIds.count; i++) {
         doc.selectLayer(id = targetIds.getReference(i).getIdentifier('layerID'))
-
-        app.changeProgressText('Find object bounds: ' + lr.getProperty('name', false, id))
+        progress.updateProgress(lr.getProperty('name', false, id))
         lr.autoCutout();
-
         if (doc.hasProperty('selection')) {
             var subject = doc.descToObject(doc.getProperty('selection'))
             lr.deselect()
@@ -51,10 +41,8 @@ function main() {
                 subject.vertical = bottom - top > right - left
                 subject.ratio = width / height
             }
-
             subject.layer = doc.descToObject(lr.getProperty('boundsNoEffects'))
             with (subject.layer) { subject.layer.center = { y: top + height / 2, x: left + width / 2 } }
-
             var offset = doc.descToObject(lr.getProperty('boundsNoEffects'))
             with (offset) {
                 top = subject.top - top
@@ -62,27 +50,21 @@ function main() {
                 bottom = bottom - subject.bottom
                 right = right - subject.right
             }
-
             subject.offset = offset
-
             subject.color = lr.getProperty('color')[1]
             subject.id = id
-
             if (!subjectColors[subject.color]) subjectColors[subject.color] = []
             subjectColors[subject.color].push(id)
             subjectIds[id] = subject.color
             subjects.push(subject)
-
             if (subject.color == 'none') break;
         }
     }
-
+    progress.close();
     subjects.sort(function (a, b) { return a.ratio > b.ratio ? 1 : -1 })
-
     if (subjects.length >= 1) {
         var from = doc.getProperty('hasBackgroundLayer') ? 0 : 1,
             len = doc.getProperty('numberOfLayers');
-
         for (var i = from; i <= len; i++) {
             if (lr.getProperty('layerSection', false, i, true)[1] == 'layerSectionEnd') continue;
             if (subjectIds[id = lr.getProperty('layerID', false, i, true)]) continue;
@@ -101,11 +83,10 @@ function main() {
             frames = frames.concat(frameColors[a])
         }
     }
-
-    app.updateProgress(2, 4)
-
+    var progress = progressWindow('Get visible frame', '', frames.length);
+    progress.show();
     for (var i = 0; i < frames.length; i++) {
-        app.changeProgressText('Get visible frame: ' + lr.getProperty('name', false, frames[i]))
+        progress.updateProgress(lr.getProperty('name', false, frames[i]))
         doc.makeSelection(frames[i], lr.getProperty('hasVectorMask', false, frames[i]) && !(lr.hasProperty('vectorMaskEmpty', frames[i]) ? lr.getProperty('vectorMaskEmpty', false, frames[i]) : true))
         doc.setQuickMask(true)
         doc.levels([128, 1, 240])
@@ -115,7 +96,6 @@ function main() {
         doc.deleteCurrentPath()
         var frame = doc.descToObject(doc.getProperty('selection'))
         doc.deselect()
-
         with (frame) {
             frame.height = bottom - top
             frame.width = right - left
@@ -123,28 +103,24 @@ function main() {
             frame.vertical = bottom - top > right - left
             frame.ratio = width / height
         }
-
         frame.color = lr.getProperty('color', false, frames[i])[1]
         frame.id = lr.getProperty('layerID', false, frames[i])
         frame.processed = false
         frames[i] = frame
     }
-
+    progress.close();
     frames.sort(function (a, b) { return a.ratio > b.ratio ? 1 : -1 })
-
-    app.updateProgress(3, 4)
-
-    var offset = doc.getProperty('hasBackgroundLayer') ? 1 : 0;
+    var offset = doc.getProperty('hasBackgroundLayer') ? 1 : 0,
+        progress = progressWindow('Align and fit layer', '', frames.length);
+    progress.show();
     for (var i = 0; i < subjects.length; i++) {
-        app.changeProgressText('Align layer: ' + lr.getProperty('name', false, subjects[i].id))
+        progress.updateProgress(lr.getProperty('name', false, subjects[i].id))
         for (var x = 0; x < frames.length; x++) {
             if (frames[x].processed) continue;
             if (frames[x].color != subjects[i].color) continue;
-
             var subjectIdx = lr.getProperty('itemIndex', false, subjects[i].id) - offset,
                 frameIdx = lr.getProperty('itemIndex', false, frames[x].id) - offset;
             offset ? doc.moveLayer(subjectIdx, subjectIdx > frameIdx ? frameIdx + 1 : frameIdx) : doc.moveLayer(subjectIdx, subjectIdx > frameIdx ? frameIdx : frameIdx - 1)
-
             lr.selectLayer(subjects[i].id)
             if (!lr.getProperty('group', false, subjects[i].id)) lr.groupCurrentLayer()
             alignLayer(subjects[i], frames[x])
@@ -152,16 +128,15 @@ function main() {
             break;
         }
     }
+    progress.close();
+    for (var i = 0; i < targetIds.count; i++) doc.selectLayer(targetIds.getReference(i).getIdentifier('layerID'), true)
 }
-
 function alignLayer(subject, frame) {
     var dH = frame.center.x - subject.center.x,
         dV = frame.center.y - subject.center.y,
         border = subject.offset.right < subject.offset.left ? subject.offset.right : subject.offset.left,
         scale = frame.width / (border * 2 + subject.width) * 100;
-
     lr.transform(dH, dV, scale, subject.center.x, subject.center.y, subject, true)
-
     if (subject.height > frame.height) {
         var ratioTop = frame.height * (frame.vertical ? 0.1 : 0.05);
         ratioTop = ratioTop < subject.offset.top ? ratioTop : subject.offset.top
@@ -170,16 +145,13 @@ function alignLayer(subject, frame) {
         var ratioTop = frame.height * (frame.vertical ? 0.1 : 0.1),
             ratioBottom = frame.height * (frame.vertical ? 0.1 : 0.05),
             ratioWidth = frame.width * (frame.vertical ? 0.05 : 0.1)
-
         ratioTop = ratioTop < subject.offset.top ? ratioTop : subject.offset.top
         ratioBottom = ratioBottom > subject.offset.bottom ? subject.offset.bottom : ratioBottom
         ratioWidth = ratioWidth > subject.offset.right ? subject.offset.right : ratioWidth
         ratioWidth = ratioWidth > subject.offset.left ? subject.offset.left : ratioWidth
-
         if (subject.height < frame.height) {
             lr.transform(0, 0, (frame.bottom - subject.top) / ((subject.bottom + subject.offset.bottom) - subject.top) * 100, subject.center.x, subject.top, subject, true)
             lr.transform(0, 0, (subject.bottom - frame.top) / (subject.bottom - subject.top + subject.offset.top) * 100, subject.center.x, subject.bottom, subject, true)
-
             if (subject.height + ratioTop + ratioBottom < frame.height || subject.width + ratioWidth * 2 < frame.width) {
                 var scale = []
                 scale.push((frame.bottom - subject.center.y) / (subject.bottom + ratioBottom - subject.center.y) * 100)
@@ -197,18 +169,15 @@ function alignLayer(subject, frame) {
             }
         }
     }
-
     if (!previousLayer.getProperty('hasUserMask') || !(previousLayer.hasProperty('userMaskEnabled') ? previousLayer.getProperty('userMaskEnabled') : false)) {
         var visibleFrame = doc.descToObject(previousLayer.getProperty('boundsNoEffects')),
             scale = [];
         with (subject) {
             if (visibleFrame.bottom > bottom + offset.bottom || visibleFrame.top < top - offset.top || visibleFrame.right > right + offset.right || visibleFrame.left < left - offset.left) {
-
                 scale.push((visibleFrame.bottom - frame.center.y) / (bottom + offset.bottom - frame.center.y) * 100)
                 scale.push((frame.center.y - visibleFrame.top) / (frame.center.y - (top - offset.top)) * 100)
                 scale.push((visibleFrame.right - frame.center.x) / (right + offset.right - frame.center.x) * 100)
                 scale.push((frame.center.x - visibleFrame.left) / (frame.center.x - (left - offset.left)) * 100)
-
                 if (scale.length) {
                     scale.sort(function (a, b) { return a < b ? 1 : -1 })
                     lr.transform(0, 0, scale[0], frame.center.x, frame.center.y, subject, true)
@@ -216,7 +185,6 @@ function alignLayer(subject, frame) {
             }
         }
     }
-
     with (subject) {
         top -= offset.top
         left -= offset.left
@@ -226,13 +194,10 @@ function alignLayer(subject, frame) {
         lr.transform(center.x - layer.center.x, center.y - layer.center.y, (right - left) / layer.width * 100, layer.center.x, layer.center.y)
     }
 }
-
 function AM(target, order) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
-
     target = s2t(target)
-
     this.getProperty = function (property, descMode, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -240,7 +205,6 @@ function AM(target, order) {
             r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
         return descMode ? executeActionGet(r) : getDescValue(executeActionGet(r), property)
     }
-
     this.hasProperty = function (property, id, idxMode) {
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
@@ -248,7 +212,6 @@ function AM(target, order) {
             : r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
         return executeActionGet(r).hasKey(property)
     }
-
     this.descToObject = function (d) {
         var o = {}
         for (var i = 0; i < d.count; i++) {
@@ -257,7 +220,6 @@ function AM(target, order) {
         }
         return o
     }
-
     this.selectLayer = function (id, add) {
         add = (add == undefined) ? add = false : add;
         (r = new ActionReference()).putIdentifier(s2t('layer'), id);
@@ -266,7 +228,6 @@ function AM(target, order) {
         d.putBoolean(s2t('makeVisible'), false)
         executeAction(s2t('select'), d, DialogModes.NO)
     }
-
     this.moveLayer = function (from, to) {
         (r = new ActionReference()).putIndex(s2t('layer'), from);
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
@@ -274,19 +235,16 @@ function AM(target, order) {
         d.putReference(s2t('to'), r1);
         executeAction(s2t('move'), d, DialogModes.NO);
     }
-
     this.setQuickMask = function (mode) {
         (r = new ActionReference()).putProperty(s2t('property'), s2t('quickMask'));
         r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
         executeAction(mode ? s2t('set') : s2t('clearEvent'), d, DialogModes.NO);
     }
-
     this.levels = function (paramsArray) {
         var left = paramsArray[0],
             gamma = paramsArray[1],
             right = paramsArray[2];
-
         (d = new ActionDescriptor()).putEnumerated(s2t('presetKind'), s2t('presetKindType'), s2t('presetKindCustom'));
         (r = new ActionReference()).putEnumerated(s2t('channel'), s2t('ordinal'), s2t('targetEnum'));
         (d1 = new ActionDescriptor()).putReference(s2t('channel'), r);
@@ -298,26 +256,22 @@ function AM(target, order) {
         d.putList(s2t('adjustment'), l1);
         executeAction(s2t('levels'), d, DialogModes.NO)
     }
-
     this.deselect = function () {
         (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
         d.putEnumerated(s2t('to'), s2t('ordinal'), s2t('none'));
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-
     this.autoCutout = function (sampleAllLayers) {
         sampleAllLayers = sampleAllLayers == undefined ? false : true;
         (d = new ActionDescriptor()).putBoolean(s2t('sampleAllLayers'), sampleAllLayers);
         executeAction(s2t('autoCutout'), d, DialogModes.NO);
     }
-
     this.groupCurrentLayer = function () {
         (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
         executeAction(s2t('groupEvent'), d, DialogModes.NO);
     }
-
     this.transform = function (dX, dY, scale, x, y, subject, fake) {
         if (!fake) {
             (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
@@ -334,7 +288,6 @@ function AM(target, order) {
             d.putEnumerated(s2t('interfaceIconFrameDimmed'), s2t('interpolationType'), s2t('bicubic'));
             executeAction(s2t('transform'), d, DialogModes.NO);
         }
-
         if (subject) {
             with (subject) {
                 var dV = (height * scale / 100 - (bottom - top)),
@@ -348,7 +301,6 @@ function AM(target, order) {
                 height = height * scale / 100
                 width = width * scale / 100
             }
-
             with (subject.offset) {
                 top = top * scale / 100
                 left = left * scale / 100
@@ -359,7 +311,6 @@ function AM(target, order) {
             }
         }
     }
-
     this.move = function (dX, dY, subject, fake) {
         if (!fake) {
             (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
@@ -369,7 +320,6 @@ function AM(target, order) {
             d.putObject(s2t('to'), s2t('offset'), d1);
             executeAction(s2t('move'), d, DialogModes.NO);
         }
-
         with (subject) {
             center.x += dX
             center.y += dY
@@ -379,12 +329,10 @@ function AM(target, order) {
             right += dX
         }
     }
-
     this.makeSelection = function (id, mask) {
         (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
         r1 = new ActionReference();
-
         if (mask) {
             r1.putEnumerated(s2t("path"), s2t("path"), s2t("vectorMask"));
         } else {
@@ -394,7 +342,6 @@ function AM(target, order) {
         d.putReference(s2t('to'), r1);
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-
     this.makeSelectionFromPath = function () {
         (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
@@ -403,13 +350,11 @@ function AM(target, order) {
         d.putBoolean(s2t('vectorMaskParams'), true);
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-
     this.deleteCurrentPath = function () {
         (r = new ActionReference()).putProperty(s2t('path'), s2t('workPath'));
         (d = new ActionDescriptor()).putReference(s2t('null'), r);
         executeAction(s2t('delete'), d, DialogModes.NO);
     }
-
     this.createPath = function (tolerance) {
         tolerance = tolerance ? tolerance : 10;
         (r = new ActionReference()).putClass(s2t('path'));
@@ -419,7 +364,6 @@ function AM(target, order) {
         d.putUnitDouble(s2t('tolerance'), s2t('pixelsUnit'), tolerance);
         executeAction(s2t('make'), d, DialogModes.NO);
     }
-
     function getDescValue(d, p) {
         switch (d.getType(p)) {
             case DescValueType.OBJECTTYPE: return (d.getObjectValue(p));
@@ -438,42 +382,17 @@ function AM(target, order) {
         };
     }
 }
-
-
-function selection(s) {
-    var idsetd = charIDToTypeID("setd");
-    var desc186 = new ActionDescriptor();
-    var idnull = charIDToTypeID("null");
-    var ref2 = new ActionReference();
-    var idChnl = charIDToTypeID("Chnl");
-    var idfsel = charIDToTypeID("fsel");
-    ref2.putProperty(idChnl, idfsel);
-    desc186.putReference(idnull, ref2);
-    var idT = charIDToTypeID("T   ");
-    var desc187 = new ActionDescriptor();
-    var idTop = charIDToTypeID("Top ");
-    var idPxl = charIDToTypeID("#Pxl");
-    desc187.putUnitDouble(idTop, idPxl, s.top);
-    var idLeft = charIDToTypeID("Left");
-    var idPxl = charIDToTypeID("#Pxl");
-    desc187.putUnitDouble(idLeft, idPxl, s.left);
-    var idBtom = charIDToTypeID("Btom");
-    var idPxl = charIDToTypeID("#Pxl");
-    desc187.putUnitDouble(idBtom, idPxl, s.bottom);
-    var idRght = charIDToTypeID("Rght");
-    var idPxl = charIDToTypeID("#Pxl");
-    desc187.putUnitDouble(idRght, idPxl, s.right);
-    var idRctn = charIDToTypeID("Rctn");
-    desc186.putObject(idT, idRctn, desc187);
-    executeAction(idsetd, desc186, DialogModes.NO);
+function progressWindow(title, message, max) {
+    var w = new Window('palette', title),
+        bar = w.add('progressbar', undefined, 0, max),
+        stProgress = w.add('statictext', undefined, message);
+    stProgress.preferredSize = [350, 20]
+    stProgress.alignment = 'left'
+    bar.preferredSize = [350, 20]
+    w.updateProgress = function (message) {
+        bar.value++;
+        if (message) stProgress.text = bar.value + '/' + max + ': ' + message
+        w.update();
+    }
+    return w;
 }
-/*
-            with (subject) {
-                top -= offset.top
-                left -= offset.left
-                right += offset.right
-                bottom += offset.bottom
-                center = { y: top + (bottom - top) / 2, x: left + (right - left) / 2 }
-                lr.transform(center.x - layer.center.x, center.y - layer.center.y, (right - left) / layer.width * 100, layer.center.x, layer.center.y)
-            }
-            selection(subject); return;*/
