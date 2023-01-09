@@ -106,7 +106,7 @@ function main() {
 
     for (var i = 0; i < frames.length; i++) {
         app.changeProgressText('Get visible frame: ' + lr.getProperty('name', false, frames[i]))
-        doc.selectTransparency(frames[i], lr.getProperty('hasVectorMask', false, frames[i]) && !(lr.hasProperty('vectorMaskEmpty', frames[i]) ? lr.getProperty('vectorMaskEmpty',false, frames[i]) : true)) 
+        doc.makeSelection(frames[i], lr.getProperty('hasVectorMask', false, frames[i]) && !(lr.hasProperty('vectorMaskEmpty', frames[i]) ? lr.getProperty('vectorMaskEmpty',false, frames[i]) : true)) 
         doc.setQuickMask(true)
         doc.levels([128, 1, 240])
         doc.setQuickMask()

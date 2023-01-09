@@ -2,12 +2,33 @@
 #target photoshop
 s2t = stringIDToTypeID;
 /*using json object*/
-(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('colorSamplerList'));
-r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
+/*(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('json'));
+r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
 //r.putName(s2t('channel'),'RGB');
 (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
 //d.putBoolean(stringIDToTypeID("expandSmartObjects"), true);
-$.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
+$.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));*/
+
+
+/**
+ * using JSON property
+ */
+
+try {
+    var r = new ActionReference();
+    var d = new ActionDescriptor();
+
+    r.putProperty(stringIDToTypeID("property"), stringIDToTypeID("json"));
+    r.putEnumerated(stringIDToTypeID("document"), stringIDToTypeID("ordinal"), stringIDToTypeID("targetEnum"));
+    d.putReference(stringIDToTypeID("null"), r);
+
+    d.putBoolean(stringIDToTypeID("expandSmartObjects"), true);
+
+    eval("var json=" + executeAction(stringIDToTypeID("get"), d, DialogModes.NO).getString(stringIDToTypeID("json")));
+
+    $.writeln(json.toSource());
+}
+catch (e) { alert(e); }
 
 /*classic way*/
 function checkDesc(d) {
