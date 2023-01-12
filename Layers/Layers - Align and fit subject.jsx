@@ -120,7 +120,7 @@ function main() {
             if (frames[x].color != subjects[i].color) continue;
             var subjectIdx = lr.getProperty('itemIndex', false, subjects[i].id) - offset,
                 frameIdx = lr.getProperty('itemIndex', false, frames[x].id) - offset;
-            offset ? doc.moveLayer(subjectIdx, subjectIdx > frameIdx ? frameIdx + 1 : frameIdx) : doc.moveLayer(subjectIdx, subjectIdx > frameIdx ? frameIdx : frameIdx - 1)
+            doc.moveLayer(subjectIdx, subjectIdx > frameIdx ? frameIdx + offset : frameIdx - !offset)
             lr.selectLayer(subjects[i].id)
             if (!lr.getProperty('group', false, subjects[i].id)) lr.groupCurrentLayer()
             alignLayer(subjects[i], frames[x])

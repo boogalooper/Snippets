@@ -3,10 +3,11 @@ var tmp = (new File()).openDlg()
 if (tmp) {
     tmp.open("r");
     tmp.encoding = "BINARY";
+   // tmp.seek(tmp.length - 1024 * 1024 * 3)
     var s = tmp.read()
     tmp.close()
-    i=0;
-   // i = s.indexOf('8BIMcust\0\0\0\0\0\0\0')
+    i = 0;
+    // i = s.indexOf('8BIMcust\0\0\0\0\0\0\0')
     $.writeln(i)
     for (i; i < s.length; i++) {
         try {

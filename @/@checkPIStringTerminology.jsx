@@ -25,8 +25,8 @@ for (var i = 0; i < len; i++) {
     var r = new ActionReference();
     // r.putIndex(keys[i], 1)
     r.putProperty(s2t('property'), keys[i]);
-    r.putClass(s2t('timeline'));
-    //r.putEnumerated(keys[i], s2t('ordinal'), keys[n]);
+    //r.putClass(s2t('layer'));
+    r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
     try {
 
         //    var k = executeActionGet(r);
