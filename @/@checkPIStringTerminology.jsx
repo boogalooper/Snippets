@@ -26,7 +26,7 @@ for (var i = 0; i < len; i++) {
     // r.putIndex(keys[i], 1)
     r.putProperty(s2t('property'), keys[i]);
     //r.putClass(s2t('layer'));
-    r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
+    r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
     try {
 
         //    var k = executeActionGet(r);

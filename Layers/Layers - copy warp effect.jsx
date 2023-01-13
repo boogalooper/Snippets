@@ -2,6 +2,7 @@
  * Mirroring wrap.
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/mirroring-wrap/m-p/13484489#M697997
  * https://www.youtube.com/watch?v=xbHJSM4xdto
+ * https://youtu.be/BoUQIo6ui7A
  */
 
 var apl = new AM('application'),
