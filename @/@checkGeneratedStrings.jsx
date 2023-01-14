@@ -16,7 +16,9 @@ for (var i = 0; i < len; i++) {
 
     var r = new ActionReference();
     r.putProperty(s2t('property'), s2t(keys[i]));
-    r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
+    r.putEnumerated(s2t('document'), s2t('ordinal'), s2t('targetEnum'));
+    //r.putIndex(s2t('guides'), 1);
+    // r.putClass(s2t('guides'));
     try {
         (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), executeActionGet(r));
         logFile.writeln(executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));

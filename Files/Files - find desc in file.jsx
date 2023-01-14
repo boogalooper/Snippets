@@ -1,13 +1,13 @@
 ﻿#target photoshop
-var tmp = (new File()).openDlg()
-if (tmp) {
-    tmp.open("r");
-    tmp.encoding = "BINARY";
-   // tmp.seek(tmp.length - 1024 * 1024 * 3)
-    var s = tmp.read()
-    tmp.close()
+var f = (new File()).openDlg()
+if (f) {
+    f.open("r");
+    f.encoding = "BINARY";
+    // tmp.seek(tmp.length - 1024 * 1024 * 3)
+    var s = f.read()
+    f.close()
     i = 0;
-    // i = s.indexOf('8BIMcust\0\0\0\0\0\0\0')
+    i = s.indexOf(String.fromCharCode(04, 08)) //0x0408
     $.writeln(i)
     for (i; i < s.length; i++) {
         try {
