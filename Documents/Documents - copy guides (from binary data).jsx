@@ -48,7 +48,6 @@ function getGuidesFromFile(f) {
     if (i != -1) {
       s = s.substr(i + 24) //skip header and go to fGuideCount 
       var len = parseInt(toHex(s, 0, 4), 16);//read 4 bytes of fGuideCount
-      $.writeln(len)
       s = s.substr(4)
       if (len) {
         for (var i = 0; i < len; i++) {
