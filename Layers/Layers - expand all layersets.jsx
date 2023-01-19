@@ -111,7 +111,6 @@ function openAllLayerSets() {
                 r.putIdentifier(s2t("layer"), IDList[i])
             }
             (d = new ActionDescriptor()).putReference(s2t("target"), r)
-            d.putBoolean(s2t("makeVisible"), false)
             executeAction(s2t("delete"), d, DialogModes.NO)
         }
         function getDescValue(d, p) {
