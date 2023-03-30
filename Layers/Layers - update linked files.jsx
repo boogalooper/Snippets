@@ -3,7 +3,7 @@
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/is-there-a-way-to-alert-when-there-s-modified-content-like-in-indesign/td-p/13678234
  */
 #target photoshop
-apl = new AM('application'),
+var apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer');
 if (apl.getProperty('numberOfDocuments')) {
@@ -19,7 +19,7 @@ if (apl.getProperty('numberOfDocuments')) {
                         var cur =
                         {
                             layerID: lr.getProperty('layerID', i, true),
-                            link: smartObject.link == '' ? smartObject.fileReference : File(smartObject.link)
+                            link: !(smartObject.link instanceof File) ? smartObject.fileReference : File(smartObject.link)
                         }
                         var copyOfLayer = false;
                         for (var x = 0; x < linkedObjects.length; x++) {
