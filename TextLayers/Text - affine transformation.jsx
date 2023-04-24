@@ -19,8 +19,8 @@ try {
             for (var i = 0; i < 4; i++) {
                 var d3 = new ActionDescriptor();
                 var d4 = new ActionDescriptor();
-                d4.putUnitDouble(stringIDToTypeID("horizontal"), stringIDToTypeID("distanceUnit"), p1[i][0]);
-                d4.putUnitDouble(stringIDToTypeID("vertical"), stringIDToTypeID("distanceUnit"), p1[i][1]);
+                d4.putUnitDouble(stringIDToTypeID("horizontal"), stringIDToTypeID("pixelsUnit"), p1[i][0]);
+                d4.putUnitDouble(stringIDToTypeID("vertical"), stringIDToTypeID("pixelsUnit"), p1[i][1]);
                 d3.putObject(stringIDToTypeID("anchor"), stringIDToTypeID("point"), d4);
                 list2.putObject(stringIDToTypeID("pathPoint"), d3);
             }
@@ -37,8 +37,8 @@ try {
             for (var i = 0; i < 4; i++) {
                 var d3 = new ActionDescriptor();
                 var d4 = new ActionDescriptor();
-                d4.putUnitDouble(stringIDToTypeID("horizontal"), stringIDToTypeID("distanceUnit"), p2[i][0]);
-                d4.putUnitDouble(stringIDToTypeID("vertical"), stringIDToTypeID("distanceUnit"), p2[i][1]);
+                d4.putUnitDouble(stringIDToTypeID("horizontal"), stringIDToTypeID("pixelsUnit"), p2[i][0]);
+                d4.putUnitDouble(stringIDToTypeID("vertical"), stringIDToTypeID("pixelsUnit"), p2[i][1]);
                 d3.putObject(stringIDToTypeID("anchor"), stringIDToTypeID("point"), d4);
                 list4.putObject(stringIDToTypeID("pathPoint"), d3);
             }

@@ -2,9 +2,8 @@
  * https://community.adobe.com/t5/photoshop/scripting-the-quot-zoom-to-layers-bounds-quot-feature/m-p/11289176
  */
 #target photoshop;
-$.hiresTimer
 zoomToLayer(app.activeDocument.activeLayer.id, 0.5)
-$.writeln($.hiresTimer)
+
 function zoomToLayer(layerID, zoom) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID,
@@ -51,67 +50,3 @@ function zoomToLayer(layerID, zoom) {
         executeAction(s2t('set'), d, DialogModes.NO);
     }
 }
-function checkDesc(desc) {
-    var c = desc.count,
-        str = '';
-    for (var i = 0; i < c; i++) {
-        str += t2s(desc.getKey(i)) +
-            ': ' + desc.getType(desc.getKey(i)) +
-            ' = ' + getValues(desc, i) + '\n';
-    };
-    $.writeln(str);
-};
-function getValues(desc, keyNum) {
-    var kTypeID = desc.getKey(keyNum);
-    switch (desc.getType(kTypeID)) {
-        case DescValueType.OBJECTTYPE:
-            return (desc.getObjectValue(kTypeID) +
-                '_' + t2s(desc.getObjectType(kTypeID)));
-            break;
-        case DescValueType.LISTTYPE:
-            return desc.getList(kTypeID);
-            break;
-        case DescValueType.REFERENCETYPE:
-            return desc.getReference(kTypeID);
-            break;
-        case DescValueType.BOOLEANTYPE:
-            return desc.getBoolean(kTypeID);
-            break;
-        case DescValueType.STRINGTYPE:
-            return desc.getString(kTypeID);
-            break;
-        case DescValueType.INTEGERTYPE:
-            return desc.getInteger(kTypeID);
-            break;
-        case DescValueType.LARGEINTEGERTYPE:
-            return desc.getLargeInteger(kTypeID);
-            break;
-        case DescValueType.DOUBLETYPE:
-            return desc.getDouble(kTypeID);
-            break;
-        case DescValueType.ALIASTYPE:
-            return desc.getPath(kTypeID);
-            break;
-        case DescValueType.CLASSTYPE:
-            return desc.getClass(kTypeID);
-            break;
-        case DescValueType.UNITDOUBLE:
-            return (desc.getUnitDoubleValue(kTypeID) +
-                '_' + t2s(desc.getUnitDoubleType(kTypeID)));
-            break;
-        case DescValueType.ENUMERATEDTYPE:
-            return (t2s(desc.getEnumerationValue(kTypeID)) +
-                '_' + t2s(desc.getEnumerationType(kTypeID)));
-            break;
-        case DescValueType.RAWTYPE:
-            var tempStr = desc.getData(kTypeID);
-            var rawData = new Array();
-            for (var tempi = 0; tempi < tempStr.length; tempi++) {
-                rawData[tempi] = tempStr.charCodeAt(tempi);
-            }
-            return rawData;
-            break;
-        default:
-            break;
-    };
-};

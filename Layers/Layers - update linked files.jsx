@@ -38,11 +38,18 @@ if (apl.getProperty('numberOfDocuments')) {
 }
 function showDialog(fileList) {
     var w = new Window("dialog {text: 'List of modified links'}"),
+        bnNotifier = w.add("button {text: 'Enable modified links tracking'}"),
         l = w.add("listbox", [0, 0, 600, 400], undefined, { multiselect: true }),
         gButtons = w.add("group"),
         bnOk = gButtons.add("button {text:'Update all files'}", [0, 0, 150, -1], undefined, { name: "ok" }),
-        bnCancel = gButtons.add("button {text:'Cancel'}", undefined, undefined, { name: "cancel" });
+        bnCancel = gButtons.add("button {text:'Cancel'}", undefined, undefined, { name: "cancel" }),
+        evt = new Events();
     l.graphics.font = "dialog:12";
+
+    bnNotifier.onClick = function () {
+        if (evt.checkEvents()) evt.removeEvents() else evt.addEvents()
+        setEnabledButtonValue()
+    }
     bnOk.onClick = function () {
         w.close();
         var ids = [];
@@ -56,9 +63,16 @@ function showDialog(fileList) {
         bnOk.text = 'Update ' + (l.selection == null ? 'all' : 'seleted (' + l.selection.length + ')')
     }
     w.onShow = function () {
+        setEnabledButtonValue()
         for (var i = 0; i < fileList.length; i++) l.add('item', fileList[i].link instanceof File ? fileList[i].link.fsName : fileList[i].link)
     }
+    
     w.show()
+    function setEnabledButtonValue() {
+        var enabled = evt.checkEvents()
+        bnNotifier.text = enabled ? 'Disable adjustments tracking' : 'Enable adjustments tracking'
+        bnNotifier.graphics.foregroundColor = enabled ? bnNotifier.graphics.newPen(bnNotifier.graphics.PenType.SOLID_COLOR, [1, 0.4, 0.4, 1], 1) : bnNotifier.graphics.newPen(bnNotifier.graphics.PenType.SOLID_COLOR, [0, 0.8, 0, 1], 1)
+    }
 }
 function AM(target) {
     var s2t = stringIDToTypeID,
@@ -125,5 +139,24 @@ function AM(target) {
             case DescValueType.ENUMERATEDTYPE: return { type: t2s(d.getEnumerationType(p)), value: t2s(d.getEnumerationValue(p)) };
             default: break;
         };
+    }
+}
+function Events() {
+    var f = File($.fileName);
+    this.addEvents = function () {
+        app.notifiersEnabled = true
+        app.notifiers.add('Opn ', f)
+    }
+    this.removeEvents = function () {
+        for (var i = 0; i < app.notifiers.length; i++) {
+            var ntf = app.notifiers[i]
+            if (ntf.eventFile.name == f.name) { ntf.remove(); i--; }
+        }
+    }
+    this.checkEvents = function () {
+        for (var i = 0; i < app.notifiers.length; i++) {
+            if (app.notifiers[i].eventFile.name == f.name) return true
+        }
+        return false
     }
 }
