@@ -8,8 +8,8 @@ var apl = new AM('application'),
     lr = new AM('layer'),
     tiles = [];
 const THRESHOLD_LEVEL = 80,
-    MINIMUM_RADIUS = 30,
-    BLUR_DISTANCE = 200;
+    MINIMUM_RADIUS = 60,
+    BLUR_DISTANCE = 500;
 try {
     if (apl.getProperty('numberOfDocuments')) {
         activeDocument.suspendHistory('Tile Splitting', 'function () {}');
@@ -194,8 +194,8 @@ function AM(target) {
         executeAction(s2t("save"), d1, DialogModes.NO);
     }
     this.saveToPNG = function (title, pth) {
-        (d = new ActionDescriptor()).putObject(s2t("as"), s2t("PNGFormat"), new ActionDescriptor());
-        d.putPath(s2t("in"), new File(pth + '/' + title + '.png'));
+        (d = new ActionDescriptor()).putObject(s2t("as"), s2t("JPEG"), new ActionDescriptor());
+        d.putPath(s2t("in"), new File(pth + '/' + title + '.jpg'));
         d.putBoolean(s2t("copy"), true);
         executeAction(s2t("save"), d, DialogModes.NO);
     }
