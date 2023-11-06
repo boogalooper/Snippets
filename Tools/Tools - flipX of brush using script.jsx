@@ -13,7 +13,6 @@ if (tool.hasKey(s2t('brush'))) {
     var brush = tool.getObjectValue(s2t('brush'));
 
     brush.putBoolean(s2t('flipX'), true);
-    tool.putObject(s2t('brush'), s2t('computedBrush'), brush);
 
     (r = new ActionReference()).putClass(s2t(currentTool));
     (d = new ActionDescriptor()).putReference(s2t("target"), r);
