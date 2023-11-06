@@ -1,20 +1,26 @@
 #target photoshop
 s2t = stringIDToTypeID;
 
-var f = new File(Folder.temp + '/args.txt')
-if (f.exists) {
-    f.open("r");
-    f.encoding = "UTF";
-    var s = f.read()
-    f.close();
-    f.remove();
-    if (s.indexOf('.atn') > 0) {
-        eval('(new POSHelper).runAction(s);')
+var f = new File(Folder.temp + '/args.txt'),
+    c = 0;
+do {
+    c++;
+    if (f.exists) {
+        f.open("r");
+        f.encoding = "UTF";
+        var s = f.read()
+        f.close();
+        f.remove();
+        if (s.indexOf('.atn') > 0) {
+            eval('(new POSHelper).runAction(s);')
+        }
+        else {
+            eval('(new POSHelper).loadFile(s);')
+        }
+        break;
     }
-    else {
-        eval('(new POSHelper).loadFile(s);')
-    }
-}
+    $.sleep(250)
+} while (c < 5)
 
 function POSHelper() {
     this.runAction = function (arg) {

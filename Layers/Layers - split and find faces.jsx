@@ -6,9 +6,9 @@ var apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer'),
     tiles = [];
-const MAXIMUM_RADIUS = 4, //adjust filters -> other -> maximum filter to remove fine black lines
-    GLOBAL_OFFSET = 30, //offset selection from the top line of the head
-    HEAD_OFFSET = 10;   //offset initial object selection to clarify the position of an object
+const MAXIMUM_RADIUS = 22, //adjust filters -> other -> maximum filter to remove fine black lines
+    GLOBAL_OFFSET = 80, //offset initial object selection to clarify the position of an object
+    HEAD_OFFSET = 30;  //offset selection from the top line of the head 
 try {
     if (apl.getProperty('numberOfDocuments')) {
         activeDocument.suspendHistory('Tile Splitting', 'function () {}');
@@ -31,9 +31,11 @@ function findTiles() {
         for (var i = 0; i < guides.length; i++) {
             var cur = guides[i];
             if (cur.direction == Direction.VERTICAL)
-                v.push(guides[i].coordinate.value) else
-                h.push(guides[i].coordinate.value)
+                v.push(Math.round(guides[i].coordinate.value)) else
+                h.push(Math.round(guides[i].coordinate.value))
         }
+        h.sort();
+        v.sort();
         var top = 0;
         do {
             var len = h.length,
@@ -57,8 +59,6 @@ function saveTile() {
         doc.duplicate(i + 1);
         doc.makeSelection(tiles[i][0], tiles[i][1], tiles[i][2], tiles[i][3])
         doc.crop();
-        lr.straightenLayer();
-        doc.flatten();
         lr.copyToLayer();
         lr.filterMaximum(MAXIMUM_RADIUS, 'squareness')
         lr.selectSubject();
@@ -71,6 +71,8 @@ function saveTile() {
             sel.getDouble(stringIDToTypeID('right')) + GLOBAL_OFFSET
         )
         doc.crop();
+        lr.straightenLayer();
+        doc.flatten();
         lr.selectSubject();
         var sel = doc.getProperty('selection').value;
         doc.makeSelection(
@@ -80,7 +82,7 @@ function saveTile() {
             sel.getDouble(stringIDToTypeID('right'))
         )
         doc.crop();
-        doc.saveToPSD(title + (i + 1), pth);
+        doc.saveToJPG(title + (i + 1), pth);
         doc.close('no')
     }
 }
@@ -125,8 +127,8 @@ function AM(target) {
         (d = new ActionDescriptor()).putBoolean(s2t("delete"), true);
         executeAction(s2t("crop"), d, DialogModes.NO);
     }
-    this.saveToPSD = function (title, pth) {
-        (d = new ActionDescriptor()).putObject(s2t("as"), s2t("photoshop35Format"), new ActionDescriptor());
+    this.saveToJPG = function (title, pth) {
+        (d = new ActionDescriptor()).putObject(s2t("as"), s2t("JPEG"), new ActionDescriptor());
         d.putPath(s2t("in"), new File(pth + '/' + title));
         d.putBoolean(s2t("copy"), true);
         executeAction(s2t("save"), d, DialogModes.NO);
