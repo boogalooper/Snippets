@@ -12,7 +12,7 @@
 
 const moveMode = 1// 0 - Align centers of the layers is turned off, 1 - Align of the centers of layers is included, 2 - Align only horizontally, 3 - Align only vertically
 const transformMode = 1 // 0 - Scaling is turned off, 1 - Scaling is turned on
-const rotateMode = 1 // 0 - The rotation of the head is turned off, 1 - the rotation of the head is turned on
+const rotateMode = 0 // 0 - The rotation of the head is turned off, 1 - the rotation of the head is turned on
 const debugMode = 0 // 0 - Turned off, 1 - draw the found boundaries of the face and the positioning center
 
 #target photoshop
@@ -200,7 +200,7 @@ function transformLayers(selectedLayers, baseLayer) {
                     scaleH = 100 / (selectedLayers[i].height / baseLayer.height),
                     scaleW = 100 / (selectedLayers[i].width / baseLayer.width),
                     scale = selectedLayers[i].height > selectedLayers[i].width ? scaleH : scaleW,
-                    angle = selectedLayers[i].angle - baseLayer.angle
+                    angle = selectedLayers[i].angle - (baseLayer.angle ? baseLayer.angle : 0)
 
                 AM.selectLayerById(selectedLayers[i].id)
 
