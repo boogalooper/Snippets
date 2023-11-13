@@ -14,6 +14,7 @@ const moveMode = 1// 0 - Align centers of the layers is turned off, 1 - Align of
 const transformMode = 1 // 0 - Scaling is turned off, 1 - Scaling is turned on
 const rotateMode = 1 // 0 - The rotation of the head is turned off, 1 - the rotation of the head is turned on
 const debugMode = 0 // 0 - Turned off, 1 - draw the found boundaries of the face and the positioning center
+const dialogMode = DialogModes.NO // DialogModes.ALL - interactive transform,  DialogModes.NO - silent transform
 
 #target photoshop
 
@@ -208,17 +209,18 @@ function transformLayers(selectedLayers, baseLayer) {
                     app.activeDocument.suspendHistory("Draw debug rectangle", "drawDebugRect (selectedLayers[i])")
                 }
 
+                scale = transformMode ? scale : 100
+                angle = rotateMode ? angle : 0
+                switch (moveMode) {
+                    case 0: dV = dH = 0; break;
+                    case 2: dV = 0; break;
+                    case 3: dH = 0; break;
+                }
+
                 if (activeSelection) {
-                    AM.move(dH, dV)
-                    AM.transform(scale, baseLayer.X, baseLayer.Y, angle, app.playbackDisplayDialogs)
+                    if (moveMode) AM.move(dH, dV)
+                    if (transformMode || rotateMode) AM.transform(scale, baseLayer.X, baseLayer.Y, angle, dialogMode)
                 } else {
-                    scale = transformMode ? scale : 100
-                    angle = rotateMode ? angle : 0
-                    switch (moveMode) {
-                        case 0: dV = dH = 0; break;
-                        case 2: dV = 0; break;
-                        case 3: dH = 0; break;
-                    }
                     if (transformMode || rotateMode) AM.transform(scale, selectedLayers[i].X, selectedLayers[i].Y, angle)
                     if (moveMode) AM.move(dH, dV)
                 }
@@ -518,7 +520,7 @@ function ActionManager() {
         this.left = left
         this.bottom = bottom
         this.right = right
-        this.width = 10
+        this.width = right - left
         this.height = bottom - top
         this.X = left + (right - left) / 2
         this.Y = top + (bottom - top) / 2
