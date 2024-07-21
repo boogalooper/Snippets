@@ -5,7 +5,7 @@ var doc = new AM('document'),
     s2t = stringIDToTypeID,
     t2s = typeIDToStringID;
 if (doc.hasProperty('selection')) {
-    var pth = browseFolder(new Folder('/c/Users/Dmitry/stable-diffusion-webui/outputs'));
+    var pth = browseFolder(new Folder('//DMITRYHOME/Users/Dmitry/stable-diffusion-webui/outputs/img2img-images'));
     if (pth.length) {
         pth.sort(function (x, y) {
             return x.time < y.time ? 1 : -1
@@ -13,8 +13,9 @@ if (doc.hasProperty('selection')) {
         var bounds = doc.descToObject(doc.getProperty('selection').value);
         doc.place(pth[0].file)
         var placedBounds = doc.descToObject(lr.getProperty('bounds').value);
-        var dW = (bounds.right - bounds.left) / (placedBounds.right - placedBounds.left)
-        lr.transform(dW * 100)
+        var dW = (bounds.right - bounds.left) / (placedBounds.right - placedBounds.left);
+        var dH = (bounds.bottom - bounds.top) / (placedBounds.bottom - placedBounds.top)
+        lr.transform(dW * 100, dH*100)
         lr.makeMask()
         lr.setName('SD')
     }
@@ -100,13 +101,13 @@ function AM(target, order) {
 
     }
 
-    this.transform = function (scale) {
+    this.transform = function (dw, dh) {
         (d = new ActionDescriptor()).putEnumerated(s2t("freeTransformCenterState"), s2t("quadCenterState"), s2t("QCSAverage"));
         (d1 = new ActionDescriptor()).putUnitDouble(s2t("horizontal"), s2t("pixelsUnit"), 0);
         d1.putUnitDouble(s2t("vertical"), s2t("pixelsUnit"), 0);
         d.putObject(s2t("offset"), s2t("offset"), d1);
-        d.putUnitDouble(s2t("width"), s2t("percentUnit"), scale);
-        d.putUnitDouble(s2t("height"), s2t("percentUnit"), scale);
+        d.putUnitDouble(s2t("width"), s2t("percentUnit"), dw);
+        d.putUnitDouble(s2t("height"), s2t("percentUnit"), dh);
         executeAction(s2t("transform"), d, DialogModes.NO);
     }
 

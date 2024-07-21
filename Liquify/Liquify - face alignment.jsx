@@ -221,7 +221,7 @@ function transformLayers(selectedLayers, baseLayer) {
                     if (moveMode) AM.move(dH, dV)
                     if (transformMode || rotateMode) AM.transform(scale, baseLayer.X, baseLayer.Y, angle, dialogMode)
                 } else {
-                    if (transformMode || rotateMode) AM.transform(scale, selectedLayers[i].X, selectedLayers[i].Y, angle)
+                    if (transformMode || rotateMode) AM.transform(scale, selectedLayers[i].X, selectedLayers[i].Y, angle, dialogMode)
                     if (moveMode) AM.move(dH, dV)
                 }
             }
