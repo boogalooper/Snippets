@@ -27,7 +27,7 @@ for (var i = 0; i < selectedLayers.count; i++) {
     executeAction(s2t('select'), d, DialogModes.NO);
     (d1 = new ActionDescriptor()).putObject(s2t("resetTime"), s2t("timecode"), new ActionDescriptor());
     executeAction(s2t("moveOutTime"), d1, DialogModes.NO);
-    (d = new ActionDescriptor()).putInteger(s2t("seconds"), 2);
+    (d = new ActionDescriptor()).putInteger(s2t("seconds"), 10);
     d.putInteger(s2t("frame"), -1);
     d.putDouble(s2t('frameRate'), frameRate);
     (d1 = new ActionDescriptor()).putObject(s2t("timeOffset"), s2t("timecode"), d);

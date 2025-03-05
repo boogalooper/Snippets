@@ -6,15 +6,13 @@
 #target photoshop
 var lr = new AM('layer'),
     pth = new AM('path'),
-    targetSize = [728, 624];//target width,  height
-    
+    doc = new AM('document');
 lr.makeSelection();
 lr.createPath(1)
 var pthObj = lr.convertToObject(pth.getProperty('pathContents').value, 'pathComponents'),
-    bounds = getCornerPoints(getPoints(pthObj));
+    sourceRect = getCornerPoints(getPoints(pthObj));
 lr.deleteCurrentPath()
-var targetRect = allignCornerPoints(calculateTargetRect(targetSize), bounds.center);
-lr.perspectiveWarpTransform(bounds.bounds, bounds.corners, targetRect.corners)
+lr.perspectiveWarpTransform(sourceRect.bounds, sourceRect.corners, getTargetRect([doc.getProperty('width'), doc.getProperty('height')]))
 function getPoints(pth) {
     var points = [];
     for (a in pth) {
@@ -40,22 +38,19 @@ function getCornerPoints(points) {
         top: points.sort(function (a, b) { return a.y > b.y ? 1 : -1 })[0].y,
         bottom: points.sort(function (a, b) { return a.y < b.y ? 1 : -1 })[0].y
     }
-    with (boundingBox) {
-        var center = { x: left + (right - left) / 2, y: top + (bottom - top) / 2 };
-    }
     var corners = [
         points.sort(function (a, b) { return getLineLength(boundingBox.left, a.x, boundingBox.top, a.y) < getLineLength(boundingBox.left, b.x, boundingBox.top, b.y) ? 0 : 1 }).shift(),
         points.sort(function (a, b) { return getLineLength(boundingBox.right, a.x, boundingBox.top, a.y) < getLineLength(boundingBox.right, b.x, boundingBox.top, b.y) ? 0 : 1 }).shift(),
         points.sort(function (a, b) { return getLineLength(boundingBox.right, a.x, boundingBox.bottom, a.y) < getLineLength(boundingBox.right, b.x, boundingBox.bottom, b.y) ? 0 : 1 }).shift(),
         points.sort(function (a, b) { return getLineLength(boundingBox.left, a.x, boundingBox.bottom, a.y) < getLineLength(boundingBox.left, b.x, boundingBox.bottom, b.y) ? 0 : 1 }).shift()
     ]
-    return { corners: corners, center: center, bounds: boundingBox }
+    return { corners: corners, bounds: boundingBox }
     function getLineLength(x1, x2, y1, y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
     }
 }
-function calculateTargetRect(target) {
-    var corners = [
+function getTargetRect(target) {
+    return ([
         {
             x: 0,
             y: 0
@@ -66,24 +61,13 @@ function calculateTargetRect(target) {
         },
         {
             x: target[0],
-            y: target[1]
+            y: target[1],
         },
         {
             x: 0,
             y: target[1]
         }
-    ],
-        center = { x: Math.round(target[0] / 2), y: Math.round(target[1] / 2) };
-    return { corners: corners, center: center }
-}
-function allignCornerPoints(source, target) {
-    var offsetX = target.x - source.center.x,
-        offsetY = target.y - source.center.y;
-    for (var i = 0; i < 4; i++) {
-        source.corners[i].x += offsetX
-        source.corners[i].y += offsetY
-    }
-    return source
+    ]);
 }
 function AM(target, order) {
     var s2t = stringIDToTypeID,
