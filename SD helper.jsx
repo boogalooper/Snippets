@@ -176,23 +176,23 @@ function AM(target, order) {
         (d = new ActionDescriptor()).putReference(s2t("null"), r);
         executeAction(s2t("select"), d, DialogModes.NO);
     }
-}
-function getDescValue(d, p) {
-    switch (d.getType(p)) {
-        case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };
-        case DescValueType.LISTTYPE: return d.getList(p);
-        case DescValueType.REFERENCETYPE: return d.getReference(p);
-        case DescValueType.BOOLEANTYPE: return d.getBoolean(p);
-        case DescValueType.STRINGTYPE: return d.getString(p);
-        case DescValueType.INTEGERTYPE: return d.getInteger(p);
-        case DescValueType.LARGEINTEGERTYPE: return d.getLargeInteger(p);
-        case DescValueType.DOUBLETYPE: return d.getDouble(p);
-        case DescValueType.ALIASTYPE: return d.getPath(p);
-        case DescValueType.CLASSTYPE: return d.getClass(p);
-        case DescValueType.UNITDOUBLE: return (d.getUnitDoubleValue(p));
-        case DescValueType.ENUMERATEDTYPE: return { type: t2s(d.getEnumerationType(p)), value: t2s(d.getEnumerationValue(p)) };
-        default: break;
-    };
-}
+
+    function getDescValue(d, p) {
+        switch (d.getType(p)) {
+            case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };
+            case DescValueType.LISTTYPE: return d.getList(p);
+            case DescValueType.REFERENCETYPE: return d.getReference(p);
+            case DescValueType.BOOLEANTYPE: return d.getBoolean(p);
+            case DescValueType.STRINGTYPE: return d.getString(p);
+            case DescValueType.INTEGERTYPE: return d.getInteger(p);
+            case DescValueType.LARGEINTEGERTYPE: return d.getLargeInteger(p);
+            case DescValueType.DOUBLETYPE: return d.getDouble(p);
+            case DescValueType.ALIASTYPE: return d.getPath(p);
+            case DescValueType.CLASSTYPE: return d.getClass(p);
+            case DescValueType.UNITDOUBLE: return (d.getUnitDoubleValue(p));
+            case DescValueType.ENUMERATEDTYPE: return { type: t2s(d.getEnumerationType(p)), value: t2s(d.getEnumerationValue(p)) };
+            default: break;
+        };
+    }
 
 }

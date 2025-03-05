@@ -28,7 +28,7 @@ if (apl.getProperty('numberOfDocuments')) {
     if (doc.hasProperty('selection')) {
         var result = true
         if (!strength || runMode) {
-            strength = 0.22
+            if (!strength) strength = 0.22
             result = dialogWindow()
         }
         if (result) {
