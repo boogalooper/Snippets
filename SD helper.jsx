@@ -8,6 +8,7 @@
 </javascriptresource>
 // END__HARVEST_EXCEPTION_ZSTRING
 */
+const SD_Output = 'c:\\Users\\Dmitry\\stable-diffusion-webui\\outputs';
 
 var doc = new AM('document'),
     lr = new AM('layer'),
@@ -24,7 +25,7 @@ const myCustomNamespace = 'Selection',
 var xmpMeta = new XMPMeta(app.activeDocument.xmpMetadata.rawData);
 
 if (doc.hasProperty('selection') || xmpMeta.doesPropertyExist(myCustomNamespace, 'top')) {
-    var pth = browseFolder(new Folder('c:\\Users\\Dmitry\\stable-diffusion-webui\\outputs'));
+    var pth = browseFolder(new Folder(SD_Output));
     if (pth.length) {
         pth.sort(function (x, y) {
             return x.time < y.time ? 1 : -1

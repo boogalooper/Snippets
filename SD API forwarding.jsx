@@ -8,6 +8,10 @@
 </javascriptresource>
 // END__HARVEST_EXCEPTION_ZSTRING
 */
+
+const SD_Output = 'c:\\Users\\Dmitry\\stable-diffusion-webui\\outputs\\img2img-images',
+    SD_Api_Connector = 'd:\\Макеты\\_Скрипты\\Settings\\sd-webui-img2img-api.pyw';
+
 var apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer'),
@@ -53,7 +57,7 @@ if (apl.getProperty('numberOfDocuments')) {
             fl.open("w");
             fl.encoding = "text";
             fl.writeln('Set WshShell = CreateObject("WScript.Shell")')
-            fl.writeln('WshShell.Run "d:\\Макеты\\_Скрипты\\Settings\\sd-webui-img2img-api.pyw ""' + f.fsName.replace('\\', '\\\\') + '"" ' + '""c:\\Users\\Dmitry\\stable-diffusion-webui\\outputs\\img2img-images"" ' + w + ' ' + h + ' ' + strength + '"')
+            fl.writeln('WshShell.Run "' + SD_Api_Connector + ' ""' + f.fsName.replace('\\', '\\\\') + '"" ' + '""' + SD_Output + '"" ' + w + ' ' + h + ' ' + strength + '"')
             fl.close()
             fl.execute()
             $.sleep(300)
