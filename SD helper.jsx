@@ -52,6 +52,9 @@ if (doc.hasProperty('selection') || xmpMeta.doesPropertyExist(myCustomNamespace,
         lr.makeMask(runMode);
         lr.setName('SD')
         doc.selectBrush();
+        doc.setBrushOpacity(50)
+        doc.resetSwatches()
+       // doc.exchangeSwatches()
         pth[0].file.remove();
     }
 }
@@ -178,22 +181,47 @@ function AM(target, order) {
         executeAction(s2t("select"), d, DialogModes.NO);
     }
 
-    function getDescValue(d, p) {
-        switch (d.getType(p)) {
-            case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };
-            case DescValueType.LISTTYPE: return d.getList(p);
-            case DescValueType.REFERENCETYPE: return d.getReference(p);
-            case DescValueType.BOOLEANTYPE: return d.getBoolean(p);
-            case DescValueType.STRINGTYPE: return d.getString(p);
-            case DescValueType.INTEGERTYPE: return d.getInteger(p);
-            case DescValueType.LARGEINTEGERTYPE: return d.getLargeInteger(p);
-            case DescValueType.DOUBLETYPE: return d.getDouble(p);
-            case DescValueType.ALIASTYPE: return d.getPath(p);
-            case DescValueType.CLASSTYPE: return d.getClass(p);
-            case DescValueType.UNITDOUBLE: return (d.getUnitDoubleValue(p));
-            case DescValueType.ENUMERATEDTYPE: return { type: t2s(d.getEnumerationType(p)), value: t2s(d.getEnumerationValue(p)) };
-            default: break;
-        };
+    this.setBrushOpacity = function (opacity) {
+        (r = new ActionReference()).putProperty(s2t('property'), p = s2t('currentToolOptions'));
+        r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
+        var tool = executeActionGet(r).getObjectValue(p);
+
+        tool.putInteger(s2t('opacity'), opacity);
+
+        (r = new ActionReference()).putClass(s2t(currentTool));
+        (d = new ActionDescriptor()).putReference(s2t("target"), r);
+        d.putObject(s2t("to"), s2t("target"), tool);
+        executeAction(s2t("set"), d, DialogModes.NO);
     }
+
+    this.resetSwatches = function () {
+        (r = new ActionReference()).putProperty(s2t("color"), s2t("colors"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        executeAction(s2t("reset"), d, DialogModes.NO);
+    }
+
+    this.exchangeSwatches = function () {
+        (r = new ActionReference()).putProperty(s2t("color"), s2t("colors"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        executeAction(s2t("exchange"), d, DialogModes.NO);
+    }
+
+function getDescValue(d, p) {
+    switch (d.getType(p)) {
+        case DescValueType.OBJECTTYPE: return { type: t2s(d.getObjectType(p)), value: d.getObjectValue(p) };
+        case DescValueType.LISTTYPE: return d.getList(p);
+        case DescValueType.REFERENCETYPE: return d.getReference(p);
+        case DescValueType.BOOLEANTYPE: return d.getBoolean(p);
+        case DescValueType.STRINGTYPE: return d.getString(p);
+        case DescValueType.INTEGERTYPE: return d.getInteger(p);
+        case DescValueType.LARGEINTEGERTYPE: return d.getLargeInteger(p);
+        case DescValueType.DOUBLETYPE: return d.getDouble(p);
+        case DescValueType.ALIASTYPE: return d.getPath(p);
+        case DescValueType.CLASSTYPE: return d.getClass(p);
+        case DescValueType.UNITDOUBLE: return (d.getUnitDoubleValue(p));
+        case DescValueType.ENUMERATEDTYPE: return { type: t2s(d.getEnumerationType(p)), value: t2s(d.getEnumerationValue(p)) };
+        default: break;
+    };
+}
 
 }
