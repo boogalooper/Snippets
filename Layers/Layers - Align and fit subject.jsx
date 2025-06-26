@@ -16,7 +16,8 @@
 #target photoshop
 var lr = new AM('layer'),
     doc = new AM('document'),
-    previousLayer = new AM('layer', 'backwardEnum');
+    previousLayer = new AM('layer', 'backwardEnum'),
+    clipped = 0;
 activeDocument.suspendHistory('Align and fit subject', 'main()')
 function main() {
     var subjects = [],
@@ -24,12 +25,15 @@ function main() {
         subjectIds = {},
         frames = [],
         frameColors = {},
-        targetIds = doc.getProperty('targetLayersIDs');
-    var progress = progressWindow('Get object bounds', '', targetIds.count);
+        targetIds = doc.getProperty('targetLayersIDs'),
+        progress = progressWindow('Get object bounds', '', targetIds.count),
+        curentState = doc.getSelectionMode();
+    if (curentState == 'imageProcessingModeCloud') doc.setSelectionMode('imageProcessingModeDevice');
     progress.show();
     for (var i = 0; i < targetIds.count; i++) {
         doc.selectLayer(id = targetIds.getReference(i).getIdentifier('layerID'))
         progress.updateProgress(lr.getProperty('name', false, id))
+        if (!lr.getProperty('visible')) lr.setLayerVisiblity(id, true)
         lr.autoCutout();
         if (doc.hasProperty('selection')) {
             var subject = doc.descToObject(doc.getProperty('selection'))
@@ -53,6 +57,7 @@ function main() {
             subject.offset = offset
             subject.color = lr.getProperty('color')[1]
             subject.id = id
+            if (lr.getProperty('group')) clipped++
             if (!subjectColors[subject.color]) subjectColors[subject.color] = []
             subjectColors[subject.color].push(id)
             subjectIds[id] = subject.color
@@ -111,7 +116,7 @@ function main() {
     progress.close();
     frames.sort(function (a, b) { return a.ratio > b.ratio ? 1 : -1 })
     var offset = doc.getProperty('hasBackgroundLayer') ? 1 : 0,
-        progress = progressWindow('Align and fit layer', '', frames.length);
+        progress = progressWindow('Align and fit layer', '', subjects.length);
     progress.show();
     for (var i = 0; i < subjects.length; i++) {
         progress.updateProgress(lr.getProperty('name', false, subjects[i].id))
@@ -124,12 +129,13 @@ function main() {
             lr.selectLayer(subjects[i].id)
             if (!lr.getProperty('group', false, subjects[i].id)) lr.groupCurrentLayer()
             alignLayer(subjects[i], frames[x])
-            frames[x].processed = true
+            if (clipped != subjects.length) frames[x].processed = true
             break;
         }
     }
     progress.close();
     for (var i = 0; i < targetIds.count; i++) doc.selectLayer(targetIds.getReference(i).getIdentifier('layerID'), true)
+    doc.setSelectionMode(curentState);
 }
 function alignLayer(subject, frame) {
     var dH = frame.center.x - subject.center.x,
@@ -138,11 +144,11 @@ function alignLayer(subject, frame) {
         scale = frame.width / (border * 2 + subject.width) * 100;
     lr.transform(dH, dV, scale, subject.center.x, subject.center.y, subject, true)
     if (subject.height > frame.height) {
-        var ratioTop = frame.height * (frame.vertical ? 0.1 : 0.05);
+        var ratioTop = frame.height * (frame.vertical ? 0.025 : 0.05);
         ratioTop = ratioTop < subject.offset.top ? ratioTop : subject.offset.top
         lr.move(0, frame.top - subject.top + ratioTop, subject, true)
     } else {
-        var ratioTop = frame.height * (frame.vertical ? 0.1 : 0.1),
+        var ratioTop = frame.height * (frame.vertical ? 0.05 : 0.1),
             ratioBottom = frame.height * (frame.vertical ? 0.1 : 0.05),
             ratioWidth = frame.width * (frame.vertical ? 0.05 : 0.1)
         ratioTop = ratioTop < subject.offset.top ? ratioTop : subject.offset.top
@@ -363,6 +369,25 @@ function AM(target, order) {
         d.putReference(s2t('from'), r1);
         d.putUnitDouble(s2t('tolerance'), s2t('pixelsUnit'), tolerance);
         executeAction(s2t('make'), d, DialogModes.NO);
+    }
+    this.setLayerVisiblity = function (id, makeVisible) {
+        var mode = makeVisible ? "show" : "hide";
+        (r = new ActionReference()).putIdentifier(s2t('layer'), id);
+        (d = new ActionDescriptor()).putReference(s2t('target'), r);
+        executeAction(s2t(mode), d, DialogModes.NO);
+    }
+    this.getSelectionMode = function () {
+        (r = new ActionReference()).putProperty(s2t('property'), p = s2t('imageProcessingPrefs'));
+        r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
+        return t2s(executeActionGet(r).getObjectValue(p).getEnumerationValue(s2t('imageProcessingSelectSubjectPrefs')));
+    }
+    this.setSelectionMode = function (state) {
+        (r = new ActionReference()).putProperty(s2t("property"), s2t("imageProcessingPrefs"));
+        r.putEnumerated(s2t("application"), s2t("ordinal"), s2t("targetEnum"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        (d1 = new ActionDescriptor()).putEnumerated(s2t("imageProcessingSelectSubjectPrefs"), s2t("imageProcessingSelectSubjectPrefs"), s2t(state));
+        d.putObject(s2t("to"), s2t("imageProcessingPrefs"), d1);
+        executeAction(s2t("set"), d, DialogModes.NO);
     }
     function getDescValue(d, p) {
         switch (d.getType(p)) {

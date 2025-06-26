@@ -22,7 +22,7 @@ dl.preferredSize.width = 250;
 
 dl.active = true
 var ok = w.add("button", undefined, undefined, { name: "ok" });
-ok.text = localize('$$$/Project/Deblur/PrefDialog/OkButton');
+ok.text = localize('$$$/ControlStrings/OK');
 
 ok.onClick = function () {
     (r = new ActionReference()).putProperty(s2t("property"), s2t("imageProcessingPrefs"));

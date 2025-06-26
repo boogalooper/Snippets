@@ -2,6 +2,8 @@
 #target photoshop
 s2t = stringIDToTypeID;
 t2s = typeIDToStringID;
+AD = ActionDescriptor;
+
 try {
     (d = new ActionDescriptor()).putObject(s2t('object'), s2t('object'), arguments[0]);
     eval('textKey = ' + executeAction(s2t('convertJSONdescriptor'), d).getString(s2t('json')));
