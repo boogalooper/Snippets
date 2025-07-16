@@ -8,32 +8,34 @@ var s2t = stringIDToTypeID,
     UUID = '2e4fad67-d0ca-4794-928c-6095afecff97',
     cfg = new Config;
 try {
-    var evt = arguments[0],
+    var evt = t2s(arguments[1]),
         doc = new AM('document'),
         lr = new AM('layer'),
         ref = arguments[0].getList(s2t('null')).getReference(0),
         currentLayer = ref.getForm() == ReferenceFormType.NAME ? ref.getName() : lr.getProperty('layerID');
-
-    if (evt && ScriptUI.environment.keyboardState.shiftKey) {
+    if (evt == 'hide' && ScriptUI.environment.keyboardState.shiftKey) {
         var d = cfg.getScriptSettings();
         if (d.count && d.hasKey(doc.getProperty('documentID')) && d.getList(doc.getProperty('documentID')).count) {
-            var layers = d.getList(doc.getProperty('documentID'));
+            var layers = d.getList(doc.getProperty('documentID')),
+                filteredLayers = new ActionList();
             d.putList(doc.getProperty('documentID'), new ActionList());
             cfg.putScriptSettings(d);
-            doc.setLayersVisiblity(layers, 'show')
-            //  alert(currentLayer)
-            doc.setOneLayerVisiblity(currentLayer, 'show');
+            for (var i = 0; i < layers.count; i++) {
+                var cur = layers.getInteger(i);
+                if (lr.hasProperty('layerID', cur) != null) filteredLayers.putInteger(cur)
+            }
+            doc.setLayersVisiblity(filteredLayers, 'show')
+            doc.setLayerVisiblity(currentLayer, 'show');
         } else {
-            var l = getLayersVisiblity();
-            d.putList(doc.getProperty('documentID'), l);
+            var layers = getLayersVisiblity();
+            d.putList(doc.getProperty('documentID'), layers);
             cfg.putScriptSettings(d);
-            doc.setLayersVisiblity(l, 'hide');
-            // alert(currentLayer)
-            doc.setOneLayerVisiblity(currentLayer, 'show');
-            if (lr.hasProperty('parentLayerID') && lr.getProperty('parentLayerID') != -1) doc.setOneLayerVisiblity(lr.getProperty('parentLayerID'), 'show');
+            doc.setLayersVisiblity(layers, 'hide');
+            doc.setLayerVisiblity(currentLayer, 'show');
+            if (lr.hasProperty('parentLayerID', currentLayer) && lr.getProperty('parentLayerID', currentLayer) != -1) doc.setLayerVisiblity(lr.getProperty('parentLayerID', currentLayer), 'show');
         }
     }
-} catch (e) { alert(e) }
+} catch (e) { }
 if (!evt) {
     dialogWindow();
 }
@@ -94,25 +96,24 @@ function AM(target, order) {
         t2s = typeIDToStringID;
     target = target ? s2t(target) : null;
     this.getProperty = function (property, id, idxMode) {
-        alert(property)
         property = s2t(property);
         (r = new ActionReference()).putProperty(s2t('property'), property);
-        if (id == undefined) {
-            r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
-        }
-        else if (id instanceof Number) {
-            idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id);
-        } else {
-            r.putName(target, id);
-        }
+        if (id == undefined) r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
+        else if (typeof id == 'number') idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id);
+        else r.putName(target, id)
         return getDescValue(executeActionGet(r), property)
     }
     this.hasProperty = function (property, id, idxMode) {
-        property = s2t(property);
-        (r = new ActionReference()).putProperty(s2t('property'), property);
-        id ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id))
-            : r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
-        return executeActionGet(r).hasKey(property)
+        try {
+            property = s2t(property);
+            (r = new ActionReference()).putProperty(s2t('property'), property);
+            (r = new ActionReference()).putProperty(s2t('property'), property);
+            if (id == undefined) r.putEnumerated(target, s2t('ordinal'), order ? s2t(order) : s2t('targetEnum'));
+            else if (typeof id == 'number') idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id);
+            else r.putName(target, id)
+            return executeActionGet(r).hasKey(property)
+        }
+        catch (e) { return null }
     }
     this.descToObject = function (d) {
         var o = {}
@@ -141,14 +142,12 @@ function AM(target, order) {
         (d = new ActionDescriptor()).putList(s2t("null"), l);
         executeAction(s2t(visibility), d, DialogModes.NO);
     }
-    this.setOneLayerVisiblity = function (id, visibility) {
+    this.setLayerVisiblity = function (id, visibility) {
         var r = new ActionReference();
-        if (id instanceof Number) r.putIdentifier(s2t('layer'), id) else r.putName(s2t('layer'), id);
+        typeof id == 'number' ? r.putIdentifier(s2t('layer'), id) : r.putName(s2t('layer'), id);
         (l = new ActionList()).putReference(r);
         (d = new ActionDescriptor()).putList(s2t("null"), l);
-        try {
-            executeAction(s2t(visibility), d, DialogModes.NO);
-        } catch (e) { }
+        executeAction(s2t(visibility), d, DialogModes.NO);
     }
     function getDescValue(d, p) {
         switch (d.getType(p)) {
