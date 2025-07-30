@@ -2,14 +2,17 @@
  * Straighten multiple layers inside photoshop 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/straighten-multiple-layers-inside-photoshop/m-p/15429999#M875741
  */
-const BORDER_RIGHT_GAIN = 5,
-    BORDER_LEFT_GAIN = 10,
-    BORDER_THRESHOLD = 100,
-    FRAME_OVERLAP = 0.8,
-    PERFORATION_GAIN = 20,
-    PERFORATION_OFFSET = 0.22,
-    PERFORATION_THRESHOLD = 165,
-    BORDER_OFFSET = 0.03;
+const BORDER_RIGHT_GAIN = 40, // minimum size of rigth dark border (pixels)
+    BORDER_LEFT_GAIN = 70, // minimum size of left dark border (pixels)
+    PERFORATION_GAIN = 124, // minimum height of white perforation (pixels)
+    NOISE_GAIN = 10, // maximum heigth of black pixels (noise) in perforation
+    BORDER_THRESHOLD = 130, // threshold filter value at which the film edges are maximally contrasted
+    PERFORATION_THRESHOLD = 165, // threshold value at which the film perforation is maximally contrasting
+    PERFORATION_OFFSET = 0.22, // offset from the left edge of the aligned image to search for perforation (%)
+    BORDER_OFFSET = 0.1, // offset from the top and bottom edges of the image to find the film boundaries and also to determine the tilt angle (%)
+    FRAME_OVERLAP = 0.8, // the acceptable value of the cropped frame height (top or bottom) in relation to the defined frame height    
+    REVERSE_FRAMES = true, //  order of saving frames. if true then frames are saved from top to bottom
+    NATIVE_CROP = false; // if true use crop and straigten plugin
 var apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer');
@@ -19,20 +22,35 @@ try {
 catch (e) { alert('An error has occurred! Too many things can go wrong') }
 function main() {
     var hst = activeDocument.activeHistoryState;
-    var bounds = getObjectBounds(BORDER_THRESHOLD);
-    doc.makeSelection(bounds[0], bounds[1], bounds[2], bounds[3]);
-    doc.crop()
-    lr.duplicateLayer()
-    lr.convertToSmartObject()
-    lr.rotate(bounds[4])
-    lr.revealAll();
-    lr.selectLayer('backwardEnum')
-    lr.fill('white')
-    lr.selectLayer('forwardEnum')
-    lr.flatten();
-    var bounds = getObjectBounds(BORDER_THRESHOLD);
-    doc.makeSelection(bounds[0], bounds[1], bounds[2], bounds[3]);
-    doc.crop();
+    /**
+     * ===================
+     * crop and straighten 
+     * ===================
+     */
+    if (!NATIVE_CROP) {
+        var bounds = getObjectBounds(BORDER_THRESHOLD);
+        doc.makeSelection(bounds[0], bounds[1], bounds[2], bounds[3]);
+        doc.crop()
+        lr.duplicateLayer()
+        lr.convertToSmartObject()
+        lr.rotate(bounds[4])
+        lr.revealAll();
+        lr.selectLayer('backwardEnum')
+        lr.fill('white')
+        lr.selectLayer('forwardEnum')
+        lr.flatten();
+        var bounds = getObjectBounds(BORDER_THRESHOLD);
+        doc.makeSelection(bounds[0], bounds[1], bounds[2], bounds[3]);
+        doc.crop();
+    } else {
+        apl.nativeCrop(true);
+        apl.nativeCrop();
+    }
+    /**
+     * ===================
+     * detect frames
+     * ===================
+     */
     var result = getFramesDimensions(PERFORATION_THRESHOLD);
     var docRes = doc.getProperty('resolution'),
         docW = doc.getProperty('width') * docRes / 72,
@@ -49,21 +67,26 @@ function main() {
         doc.resizeCanvas(offset, 'top')
         var top = result[i][0] + result[i][1] / 2;
         doc.makeSelection(top, 0, top + height, docW)
-        saveLayer(new File(pth + '/' + title + '_' + (0)))
+        saveLayer(new File(pth + '/' + title + '_' + (REVERSE_FRAMES ? result.length : 0)))
     }
     for (i--; i >= 0; i--) {
         var top = result[i][0] + result[i][1] / 2;
         doc.makeSelection(top, 0, top + height, docW)
-        saveLayer(new File(pth + '/' + title + '_' + (result.length - 1 - i)))
+        saveLayer(new File(pth + '/' + title + '_' + (REVERSE_FRAMES ? i + 1 : result.length - 1 - i)))
     }
-    var offset = ((result[0][0] + result[0][1] / 2) - height);
-    if (-offset < height - (height * FRAME_OVERLAP)) {
+    var offset = -((result[0][0] + result[0][1] / 2) - height);
+    if (offset < height - (height * FRAME_OVERLAP)) {
         doc.resizeCanvas(offset, 'bottomEnum')
         doc.makeSelection(0, 0, height, docW)
-        saveLayer(new File(pth + '/' + title + '_' + (result.length - 1 - i)))
+        saveLayer(new File(pth + '/' + title + '_' + (REVERSE_FRAMES ? 0 : result.length - 1 - i)))
     }
     activeDocument.activeHistoryState = hst;
     return;
+    /**
+     * ===================
+     * common functions
+     * ===================
+     */
     function getObjectBounds(threshold) {
         var docRes = doc.getProperty('resolution'),
             docW = doc.getProperty('width') * docRes / 72,
@@ -118,62 +141,76 @@ function main() {
         doc.close()
         doc.deleteLayer()
     }
-}
-function readStrip(f) {
-    var content = '';
-    if (f.exists) {
-        f.open('r');
-        f.encoding = "BINARY";
-        content = f.read();
-        f.close();
-        f.remove();
-        var colors = function (s) {
-            var m = 0, c = [];
+    function readStrip(f) {
+        var content = '';
+        if (f.exists) {
+            f.open('r');
+            f.encoding = "BINARY";
+            content = f.read();
+            f.close();
+            f.remove();
+            var colors = function (s) {
+                var m = 0, c = [];
+                for (var i = 0; i < s.length; i++) {
+                    var k = s.charCodeAt(i); m += k; c.push(k)
+                };
+                return c
+            }(content);
+            return colors;
+        }
+    }
+    function findCoordinate(s, threshold) {
+        for (var i = 0; i < s.length; i++) {
+            if (s[i] > 128) continue;
+            if (readWithOffset(s.slice(i), threshold)) return i
+        }
+        return -1
+        function readWithOffset(s, threshold) {
             for (var i = 0; i < s.length; i++) {
-                var k = s.charCodeAt(i); m += k; c.push(k)
-            };
-            return c
-        }(content);
-        return colors;
-    }
-}
-function findCoordinate(s, threshold) {
-    for (var i = 0; i < s.length; i++) {
-        if (s[i] > 128) continue;
-        if (readWithOffset(s.slice(i), threshold)) return i
-    }
-    return -1
-    function readWithOffset(s, threshold) {
-        for (var i = 0; i < s.length; i++) {
-            if (i > threshold) return true
-            if (s[i] > 128) return false;
+                if (i > threshold) return true
+                if (s[i] > 128) return false;
+            }
         }
     }
-}
-function findPerforation(s, threshold) {
-    s.reverse()
-    for (var i = 0; i < s.length; i++) {
-        if (s[i] > 128) { s[i] = 0; continue; }
-        if (s[i] < 128) break;
-    }
-    s.reverse()
-    for (var i = 0; i < s.length; i++) {
-        if (s[i] > 128) continue;
-        if (s[i] < 128) break;
-    }
-    var objects = [];
-    for (var i; i < s.length; i++) {
-        if (s[i] < 128) continue;
-        var result = readWithOffset(s.slice(i));
-        if (result > threshold) {
-            i = i + result;
-            objects.push([i - (result + 1), result])
-        }
-    }
-    return objects
-    function readWithOffset(s) {
+    function findPerforation(s, threshold) {
+        s.reverse()
         for (var i = 0; i < s.length; i++) {
-            if (s[i] < 128) return i;
+            if (s[i] > 128) { s[i] = 0; continue; }
+            if (s[i] < 128) break;
+        }
+        s.reverse()
+        for (var i = 0; i < s.length; i++) {
+            if (s[i] > 128) continue;
+            if (s[i] < 128) break;
+        }
+        var objects = [];
+        for (var i; i < s.length; i++) {
+            if (s[i] < 128) continue;
+            var result = readWithOffset(s.slice(i));
+            if (result > threshold) {
+                i = i + result;
+                objects.push([i - (result + 1), result])
+            }
+        }
+        return objects
+        function readWithOffset(s) {
+            for (var i = 0; i < s.length; i++) {
+                if (s[i] < 128) {
+                    if (endOfPerforation(s.slice(i))) {
+                        return i
+                    }
+                    else {
+                        i += (s.length > NOISE_GAIN ? NOISE_GAIN : s.length)
+                    }
+                }
+            }
+        }
+        function endOfPerforation(s) {
+            var len = s.length > NOISE_GAIN ? NOISE_GAIN : s.length
+            for (var i = 0; i < len; i++) {
+                if (s[i] > 128) return false;
+            }
+            return true;
         }
     }
 }
@@ -280,6 +317,28 @@ function AM(target) {
         d.putUnitDouble(s2t("angle"), s2t("angleUnit"), angle);
         d.putEnumerated(s2t("interfaceIconFrameDimmed"), s2t("interpolationType"), s2t("bicubic"));
         executeAction(s2t("transform"), d, DialogModes.NO);
+    }
+    this.nativeCrop = function (select_only) {
+        var d = executeAction(stringIDToTypeID("CropPhotos0001"), undefined, DialogModes.NO);
+        var l = d.getList(stringIDToTypeID("value"));
+        var p = new Array();
+        for (var i = 0; i < 8; i += 2) p.push([l.getDouble(i), l.getDouble(i + 1)]);
+        if (select_only) { activeDocument.selection.select(p); return; }
+        var d = new ActionDescriptor();
+        var d1 = new ActionDescriptor();
+        var d2 = new ActionDescriptor();
+        d2.putUnitDouble(stringIDToTypeID("horizontal"), stringIDToTypeID("pixelsUnit"), 0);
+        d2.putUnitDouble(stringIDToTypeID("vertical"), stringIDToTypeID("pixelsUnit"), 0);
+        d1.putObject(stringIDToTypeID("center"), stringIDToTypeID("point"), d2);
+        for (var i = 0; i < 4; i++) {
+            var d3 = new ActionDescriptor();
+            d3.putUnitDouble(stringIDToTypeID("horizontal"), stringIDToTypeID("pixelsUnit"), p[i][0]);
+            d3.putUnitDouble(stringIDToTypeID("vertical"), stringIDToTypeID("pixelsUnit"), p[i][1]);
+            d1.putObject(stringIDToTypeID("quadCorner" + i), stringIDToTypeID("offset"), d3);
+        }
+        d.putObject(stringIDToTypeID("to"), stringIDToTypeID("quadrilateral"), d1);
+        executeAction(stringIDToTypeID("perspectiveCrop"), d, DialogModes.NO);
+        return true;
     }
     function getDescValue(d, p) {
         switch (d.getType(p)) {
