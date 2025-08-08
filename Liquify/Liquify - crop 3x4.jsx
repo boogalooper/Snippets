@@ -8,6 +8,7 @@ lr.copyCurentToLayer()
 lr.liquify()
 lr.fade('difference')
 lr.levels([0, 0.2, 8])
+b=0
 lr.makeSelectionFromChannel('blue')
 if (doc.hasProperty('selection')) {
     var selectionBounds = doc.descToObject(doc.getProperty('selection')),
