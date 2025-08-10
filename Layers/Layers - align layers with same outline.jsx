@@ -2,10 +2,9 @@
  * Is it possible to use scripting to align layers to layers with the same outline? 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/is-it-possible-to-use-scripting-to-align-layers-to-layers-with-the-same-outline/td-p/15433652
  */
-
 #target photoshop
 const GRAY_TOLERANCE = 5, // max color difference between CMY or RGB to detect gray layers
-    EXPAND_BY = 20; // the amount of indentation from the opacity mask to account for possible selection errors when separating objects
+    EXPAND_BY = 20; // expand selection from the opacity mask to minimize errors when separating objects
 var apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer'),
@@ -15,32 +14,25 @@ if (apl.getProperty('numberOfDocuments')) {
     var hst = activeDocument.activeHistoryState,
         layers = [];
     try {
-        activeDocument.suspendHistory('Check layers', 'a()')
-        activeDocument.activeHistoryState = hst
-        if (layers.frames.length == layers.objects.length) {
-            activeDocument.suspendHistory('Align layers', 'b()')
-        }
+        activeDocument.suspendHistory('Check layers', 'a()');
+        activeDocument.activeHistoryState = hst;
+        if (layers.frames.length == layers.objects.length) activeDocument.suspendHistory('Align layers', 'b()');
     } catch (e) { activeDocument.activeHistoryState = hst; alert(e) }
     function a() {
-        layers = findLayers();
+        layers = findPixelLayers();
         if (layers.frames.length) {
-            layers.frames = grayFramesToLayers(layers.frames)
+            layers.frames = grayFramesToLayers(layers.frames);
             if (layers.frames.length == layers.objects.length) {
-                for (var i = 0; i < layers.objects.length; i++) {
-                    layers.objects[i] = describeLayer(layers.objects[i].id)
-                } 
+                for (var i = 0; i < layers.objects.length; i++) layers.objects[i] = describeLayer(layers.objects[i].id);
             } else throw new Error('The number of gray shapes found does not match the number of objects found!\nMake sure that the layers do not overlap each other')
         } else throw new Error('No shape layers found!\nUse only pixel layers')
     }
     function b() {
-        var objects = alignLayers(layers.frames, layers.objects);
-        for (var i = 0; i < objects.length; i++) {
-            lr.transform(checkOrientation(objects[i]))
-        }
+        var result = alignLayers(layers.frames, layers.objects);
+        for (var i = 0; i < result.length; i++) lr.transform(checkOrientation(result[i]));
     }
 }
-
-function findLayers() {
+function findPixelLayers() {
     var offset = doc.getProperty('hasBackgroundLayer') ? 0 : 1,
         len = doc.getProperty('numberOfLayers'),
         layers = [];
@@ -48,30 +40,31 @@ function findLayers() {
         if (lr.getProperty('layerKind', i, true) == 1) {
             lr.selectLayer(i, true)
             lr.selectTransparency();
-            layers.push({ id: lr.getProperty('layerID', i, true), color: getAverageColor([ch.getProperty('histogram', 1, true), ch.getProperty('histogram', 2, true), ch.getProperty('histogram', 3, true)]) })
+            layers.push({
+                id: lr.getProperty('layerID', i, true),
+                color: getAverageColor([ch.getProperty('histogram', 1, true), ch.getProperty('histogram', 2, true), ch.getProperty('histogram', 3, true)])
+            })
         }
     }
     var result = {};
     result.frames = [];
     result.objects = [];
-    for (var a in layers) {
-        if (isGray(layers[a].color)) result.frames.push(layers[a]) else result.objects.push(layers[a])
-    }
+    for (var a in layers) if (isGray(layers[a].color)) result.frames.push(layers[a]) else result.objects.push(layers[a]);
     return result;
 }
 function alignLayers(a, b) {
-    var objects = [];
+    var result = [];
     do {
         var cur = b.shift();
         lr.selectLayer(cur.id)
         for (var i = 0; i < a.length; i++) {
             if (cur.center[0] > a[i].bounds.left && cur.center[0] < a[i].bounds.right) {
                 lr.move(a[i].center[0] - cur.center[0], a[i].center[1] - cur.center[1])
-                objects.push({ id: cur.id, bounds: a[i].bounds })
+                result.push({ id: cur.id, bounds: a[i].bounds })
             }
         }
     } while (b.length)
-    return objects;
+    return result;
 }
 function checkOrientation(o) {
     lr.selectLayer(o.id)
@@ -89,9 +82,7 @@ function checkOrientation(o) {
 }
 function grayFramesToLayers(l) {
     var result = [];
-    for (var a in l) {
-        isolateLayers(l[a].id, lr.getProperty('name', l[a].id), result)
-    }
+    for (var a in l) isolateLayers(l[a].id, lr.getProperty('name', l[a].id), result)
     return result;
     function isolateLayers(id, title, result) {
         lr.selectLayer(id)
@@ -139,27 +130,11 @@ function getAverageColor(h) {
     }
     return median
 }
-function getDifferenceValue() {
-    var median = [];
-    for (var i = 1; i <= 3; i++) {
-        var n = p = 0,
-            cur = ch.getProperty('histogram', i, true)
-        for (var x = 1; x < cur.count; x++) {
-            n += cur.getInteger(x)
-        }
-        median.push(p / n)
-    }
-    return median
-}
 function isGray(c) {
     var sum = 0;
-    for (var i = 0; i < c.length; i++) {
-        sum += c[i];
-    }
+    for (var i = 0; i < c.length; i++)  sum += c[i];
     sum = sum / c.length;
-    for (var i = 0; i < c.length; i++) {
-        if (Math.abs(c[i] - sum) > GRAY_TOLERANCE) return false
-    }
+    for (var i = 0; i < c.length; i++) if (Math.abs(c[i] - sum) > GRAY_TOLERANCE) return false;
     return true
 }
 function AM(target) {
@@ -202,7 +177,7 @@ function AM(target) {
         d.putReference(s2t('to'), r1);
         executeAction(s2t('set'), d, DialogModes.NO);
     }
-    this.layerViaCut = function (title) {
+    this.layerViaCut = function () {
         try {
             executeAction(s2t("copyToLayer"), d, DialogModes.NO);
         } catch (e) { return false }
