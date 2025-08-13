@@ -1,4 +1,9 @@
 
+/**
+ *  How to turn visibility on or off for Effects on a layer in JSX?
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/how-to-turn-visibility-on-or-off-for-effects-on-a-layer-in-jsx/m-p/15404878
+ */
+
 toggleBlendOptions();
 function toggleBlendOptions() {
     var s2t = stringIDToTypeID,

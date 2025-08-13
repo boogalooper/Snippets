@@ -1,0 +1,342 @@
+/**
+ * Is it possible to use scripting to align layers to layers with the same outline?
+ * https://community.adobe.com/t5/photoshop-ecosystem-discussions/is-it-possible-to-use-scripting-to-align-layers-to-layers-with-the-same-outline/td-p/15433652
+ */
+#target photoshop
+$.hiresTimer
+const EXPAND_BY = 20; // expand selection from the opacity mask to minimize errors when separating objects
+var apl = new AM('application'),
+    doc = new AM('document'),
+    lr = new AM('layer'),
+    pth = new AM('path');
+if (apl.getProperty('numberOfDocuments')) {
+    var hst = activeDocument.activeHistoryState,
+        layers = [], deltas = [];
+    try {
+        activeDocument.suspendHistory('Checking layers', 'main(1)');
+        if (layers.frames.length == layers.objects.length) activeDocument.suspendHistory('Find optimal position', 'main(2)');
+        activeDocument.activeHistoryState = hst;
+        activeDocument.suspendHistory('Align layers', 'main(3)');
+    } catch (e) { activeDocument.activeHistoryState = hst; alert(e) }
+alert ($.hiresTimer)
+    function main(step) {
+        switch (step) {
+            case 1: doForcedProgress('Step 1/3: Get initial bounds of layers', 'step1()'); break;
+            case 2: doForcedProgress('Step 2/3: Find optimal position for layers', 'step2()'); break;
+            case 3: doForcedProgress('Step 3/3: Align layers', 'step3()'); break;
+        }
+        function step1() {
+            layers = findLayers();
+            if (layers.frames.length) {
+                changeProgressText('Step 1/3: Preparing to split gray shapes')
+                layers.frames = grayFramesToLayers(layers.frames);
+                if (layers.frames.length == layers.objects.length) {
+                    for (var i = 0; i < layers.objects.length; i++) layers.objects[i] = describeLayer(layers.objects[i].id);
+                } else throw new Error('The number of gray shapes found does not match the number of objects found!')
+            } else throw new Error('No shape layers found!')
+        }
+        function step2() {
+            var result = alignLayers(layers.frames, layers.objects);
+            for (var i = 0; i < result.length; i++) {
+                changeProgressText('Step 2/3: Find optimal position for layers ' + Math.round(((i + 1) / result.length) * 100) + '%')
+                deltas.push({ layer: result[i], offset: checkOrientation(result[i]) })
+            };
+        }
+        function step3() {
+            for (var i = 0; i < deltas.length; i++) {
+                lr.selectLayer(deltas[i].layer.id)
+                changeProgressText('Step 3/3: Align layer: ' + lr.getProperty('name', deltas[i].layer.id))
+                lr.transform(deltas[i].offset, deltas[i].layer.center[0], deltas[i].layer.center[1])
+                lr.move(deltas[i].layer.dX, deltas[i].layer.dY)
+            };
+        }
+    }
+}
+function findLayers() {
+    var layers = getLayersCollection(),
+        result = {};
+    result.frames = [];
+    result.objects = [];
+    for (a in layers) {
+        changeProgressText('Step 1/3: Get initial bounds of layers ' + Math.round((parseInt(a) + 1) / (layers.length) * 100) + '%')
+        if (layers[a].length) {
+            lr.selectLayer(layers[a].id)
+            lr.merge();
+            result.objects.push({ id: lr.getProperty('layerID') })
+        } else result.frames.push({ id: layers[a].id })
+    }
+    return result;
+}
+function getLayersCollection() {
+    var doc = new AM('document'),
+        lr = new AM('layer'),
+        indexFrom = doc.getProperty('hasBackgroundLayer') ? 0 : 1,
+        indexTo = doc.getProperty('numberOfLayers');
+    return layersCollection(indexFrom, indexTo)
+    function layersCollection(from, to, parentItem, group) {
+        parentItem = parentItem ? parentItem : [];
+        for (var i = from; i <= to; i++) {
+            var layerSection = lr.getProperty('layerSection', i, true);
+            if (layerSection == 'layerSectionEnd') {
+                i = layersCollection(i + 1, to, [], parentItem)
+                continue;
+            }
+            if (lr.getProperty('background', i, true)) continue;
+            var properties = {};
+            properties.id = lr.getProperty('layerID', i, true);
+            if (layerSection == 'layerSectionStart') {
+                for (o in properties) { parentItem[o] = properties[o] }
+                group.push(parentItem);
+                return i;
+            } else {
+                parentItem.push(properties)
+            }
+        }
+        return parentItem
+    }
+}
+function alignLayers(a, b) {
+    var result = [];
+    do {
+        var cur = b.shift(),
+            target = findNearest(cur, a);
+        lr.selectLayer(cur.id);
+        lr.move(target.center[0] - cur.center[0], target.center[1] - cur.center[1])
+        result.push({ id: cur.id, bounds: target.bounds, dX: target.center[0] - cur.center[0], dY: target.center[1] - cur.center[1], center: cur.center, targetId: target.id })
+    } while (b.length)
+    return result;
+}
+function findNearest(a, b) {
+    var dist = [];
+    for (var i = 0; i < b.length; i++) {
+        if (b[i].found) continue;
+        dist.push({ i: i, dist: Math.round(Math.sqrt(Math.pow(b[i].center[0] - a.center[0], 2) + Math.pow(b[i].center[1] - a.center[1], 2))) });
+    }
+    dist.sort(function (a, b) { return a.dist > b.dist ? 1 : -1 })
+    b[dist[0].i].found = true;
+    return b[dist[0].i];
+}
+function checkOrientation(o) {
+    var transformMatrices = [[100, -100], [-100, 100], [100, -100], [-100, 100]],
+        transform = [[100, -100], [-100, -100], [-100, 100], [100, 100]],
+        result = [];
+    lr.selectLayer(o.id)
+    lr.setBlendingMode('blendSubtraction');
+    for (var i = 0; i < transformMatrices.length; i++) result.push(findDifference(o, transformMatrices[i], transform[i]));
+    result.sort(function (a, b) { return a[0] > b[0] ? 1 : -1 })
+    return result[0][1]
+    function findDifference(o, transformMatrices, transform) {
+        lr.transform(transformMatrices)
+        lr.selectLayer(o.targetId)
+        lr.selectTransparency()
+        lr.expandSelection(EXPAND_BY)
+        var c = getAverageColor(doc.getProperty('histogram'))
+        lr.deselect()
+        return [c, transform]
+    }
+}
+function grayFramesToLayers(l) {
+    var result = [];
+    for (var a in l) isolateLayers(l[a].id, lr.getProperty('name', l[a].id), result)
+    return result;
+    function isolateLayers(id, title, result) {
+        lr.selectLayer(id)
+        lr.selectTransparency();
+        lr.expandSelection(EXPAND_BY);
+        pth.workPathFromSelection(1);
+        var pathComponents = (pth.getProperty('pathContents')).getList(stringIDToTypeID('pathComponents'));
+        if (pathComponents.count > 1) {
+            for (var i = pathComponents.count - 1; i >= 0; i--) {
+                changeProgressText('Step 1/3: Split gray shapes to layers ' + Math.round((pathComponents.count - 1 - i) / (pathComponents.count - 1) * 100) + '%')
+                pth.workPathFromDesc(pathComponents.getObjectValue(i));
+                pth.selectionFromWorkPath();
+                lr.selectLayer(id)
+                if (lr.layerViaCut()) {
+                    lr.setLayerName(title + ' - ' + (i + 1))
+                    result.push(describeLayer(lr.getProperty('layerID')))
+                }
+            }
+            doc.deselect();
+            pth.delete();
+            lr.selectLayer(id);
+            lr.delete();
+        } else { result.push(describeLayer(id)) }
+    }
+}
+function describeLayer(id) {
+    var o = {},
+        bounds = lr.descToObject(lr.getProperty('boundsNoEffects', id));
+    o.id = id;
+    o.width = bounds.right - bounds.left
+    o.heigth = bounds.bottom - bounds.top
+    o.bounds = bounds
+    o.center = [bounds.left + o.width / 2, bounds.top + o.heigth / 2]
+    o.found = false
+    return o
+}
+function getAverageColor(h) {
+    var n = p = 0;
+    for (var i = 0; i < h.count; i++) {
+        n += h.getInteger(i)
+        p += h.getInteger(i) * i
+    }
+    return p / n
+}
+function AM(target) {
+    var s2t = stringIDToTypeID,
+        t2s = typeIDToStringID;
+    target = s2t(target)
+    this.getProperty = function (property, id, idxMode) {
+        property = s2t(property);
+        (r = new ActionReference()).putProperty(s2t('property'), property);
+        id ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id))
+            : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
+        return getDescValue(executeActionGet(r), property)
+    }
+    this.hasProperty = function (property, id, idxMode) {
+        property = s2t(property);
+        (r = new ActionReference()).putProperty(s2t('property'), property);
+        id ? (idxMode ? r.putIndex(target, id) : r.putIdentifier(target, id))
+            : r.putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
+        return executeActionGet(r).hasKey(property)
+    }
+    this.descToObject = function (d) {
+        var o = {};
+        for (var i = 0; i < d.count; i++) {
+            var k = d.getKey(i)
+            o[t2s(k)] = getDescValue(d, k)
+        }
+        return o
+    }
+    this.selectLayer = function (id, idxMode) {
+        var r = new ActionReference();
+        idxMode ? r.putIndex(s2t('layer'), id) : r.putIdentifier(s2t('layer'), id);
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        executeAction(s2t('select'), d, DialogModes.NO);
+    }
+    this.selectTransparency = function () {
+        (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        r1 = new ActionReference();
+        r1.putEnumerated(s2t('channel'), s2t('channel'), s2t('transparencyEnum'));
+        d.putReference(s2t('to'), r1);
+        executeAction(s2t('set'), d, DialogModes.NO);
+    }
+    this.layerViaCut = function () {
+        try {
+            executeAction(s2t("copyToLayer"), d, DialogModes.NO);
+        } catch (e) { return false }
+        return true;
+    }
+    this.expandSelection = function (pixels) {
+        (d = new ActionDescriptor()).putUnitDouble(s2t("by"), s2t("pixelsUnit"), pixels);
+        d.putBoolean(s2t("selectionModifyEffectAtCanvasBounds"), false);
+        executeAction(s2t("expand"), d, DialogModes.NO);
+    }
+    this.deselect = function () {
+        (r = new ActionReference()).putProperty(s2t('channel'), s2t('selection'));
+        (d = new ActionDescriptor()).putReference(s2t('null'), r);
+        d.putEnumerated(s2t('to'), s2t('ordinal'), s2t('none'));
+        executeAction(s2t('set'), d, DialogModes.NO);
+    }
+    this.workPathFromSelection = function (tolerance) {
+        (r = new ActionReference()).putClass(s2t("path"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        (r1 = new ActionReference()).putProperty(s2t("selectionClass"), s2t("selection"));
+        d.putReference(s2t("from"), r1);
+        d.putUnitDouble(s2t("tolerance"), s2t("pixelsUnit"), tolerance);
+        executeAction(s2t("make"), d, DialogModes.NO);
+    }
+    this.selectionFromWorkPath = function () {
+        (r = new ActionReference()).putProperty(s2t("channel"), s2t("selection"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        (r1 = new ActionReference()).putProperty(s2t("path"), s2t("workPath"));
+        d.putReference(s2t("to"), r1);
+        executeAction(s2t("set"), d, DialogModes.NO);
+    }
+    this.workPathFromDesc = function (desc) {
+        (r = new ActionReference()).putProperty(s2t('path'), s2t('workPath'));
+        (d = new ActionDescriptor()).putReference(s2t('target'), r);
+        (l = new ActionList).putObject(s2t('pathComponent'), desc);
+        d.putList(s2t('to'), l);
+        executeAction(s2t('set'), d, DialogModes.NO);
+    }
+    this.merge = function () {
+        executeAction(s2t("mergeLayers"), new ActionDescriptor(), DialogModes.NO);
+    }
+    this.delete = function () {
+        (r = new ActionReference()).putEnumerated(target, s2t('ordinal'), s2t('targetEnum'));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        executeAction(s2t("delete"), d, DialogModes.NO);
+    }
+    this.setLayerName = function (title) {
+        (r = new ActionReference()).putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
+        (d = new ActionDescriptor()).putReference(s2t('target'), r);
+        (d1 = new ActionDescriptor()).putString(s2t('name'), title);
+        d.putObject(s2t('to'), s2t('layer'), d1);
+        executeAction(s2t('set'), d, DialogModes.NO);
+    }
+    this.move = function (dX, dY) {
+        (r = new ActionReference()).putEnumerated(s2t("layer"), s2t("ordinal"), s2t("targetEnum"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        (d1 = new ActionDescriptor()).putUnitDouble(s2t("horizontal"), s2t("pixelsUnit"), dX);
+        d1.putUnitDouble(s2t("vertical"), s2t("pixelsUnit"), dY);
+        d.putObject(s2t("to"), s2t("offset"), d1);
+        executeAction(s2t("move"), d, DialogModes.NO);
+    }
+    this.setBlendingMode = function (mode) {
+        (r = new ActionReference()).putEnumerated(s2t("layer"), s2t("ordinal"), s2t("targetEnum"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        (d1 = new ActionDescriptor()).putEnumerated(s2t("mode"), s2t("blendMode"), s2t(mode));
+        d.putObject(s2t("to"), s2t("layer"), d1);
+        executeAction(s2t("set"), d, DialogModes.NO);
+    }
+    this.makeSelection = function (bounds, offset) {
+        offset = offset ? offset : 0;
+        (r = new ActionReference()).putProperty(s2t("channel"), s2t("selection"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        (d1 = new ActionDescriptor()).putUnitDouble(s2t("top"), s2t("pixelsUnit"), bounds.top - offset);
+        d1.putUnitDouble(s2t("left"), s2t("pixelsUnit"), bounds.left - offset);
+        d1.putUnitDouble(s2t("bottom"), s2t("pixelsUnit"), bounds.bottom + offset);
+        d1.putUnitDouble(s2t("right"), s2t("pixelsUnit"), bounds.right + offset);
+        d.putObject(s2t("to"), s2t("rectangle"), d1);
+        executeAction(s2t("set"), d, DialogModes.NO);
+    }
+    this.transform = function (transform, dX, dY) {
+        (r = new ActionReference()).putEnumerated(s2t("layer"), s2t("ordinal"), s2t("targetEnum"));
+        (d = new ActionDescriptor()).putReference(s2t("null"), r);
+        if (dX != undefined) {
+            d.putEnumerated(s2t("freeTransformCenterState"), s2t("quadCenterState"), s2t("QCSIndependent"));
+            (d1 = new ActionDescriptor()).putUnitDouble(s2t("horizontal"), s2t("pixelsUnit"), dX);
+            d1.putUnitDouble(s2t("vertical"), s2t("pixelsUnit"), dY);
+            d.putObject(s2t("position"), charIDToTypeID("Pnt "), d1);
+            (d2 = new ActionDescriptor()).putUnitDouble(s2t("horizontal"), s2t("pixelsUnit"), 0);
+            d2.putUnitDouble(s2t("vertical"), s2t("pixelsUnit"), 0);
+            d.putObject(s2t("offset"), s2t("offset"), d2);
+        } else {
+            d.putEnumerated(s2t("freeTransformCenterState"), s2t("quadCenterState"), s2t("QCSAverage"));
+        }
+        d.putUnitDouble(s2t("width"), s2t("percentUnit"), transform[0]);
+        d.putUnitDouble(s2t("height"), s2t("percentUnit"), transform[1]);
+        d.putBoolean(s2t("linked"), true);
+        d.putEnumerated(s2t("interpolation"), s2t("interpolationType"), s2t("bicubic"));
+        executeAction(s2t("transform"), d, DialogModes.NO);
+    }
+    function getDescValue(d, p) {
+        switch (d.getType(p)) {
+            case DescValueType.OBJECTTYPE: return (d.getObjectValue(p));
+            case DescValueType.LISTTYPE: return d.getList(p);
+            case DescValueType.REFERENCETYPE: return d.getReference(p);
+            case DescValueType.BOOLEANTYPE: return d.getBoolean(p);
+            case DescValueType.STRINGTYPE: return d.getString(p);
+            case DescValueType.INTEGERTYPE: return d.getInteger(p);
+            case DescValueType.LARGEINTEGERTYPE: return d.getLargeInteger(p);
+            case DescValueType.DOUBLETYPE: return d.getDouble(p);
+            case DescValueType.ALIASTYPE: return d.getPath(p);
+            case DescValueType.CLASSTYPE: return d.getClass(p);
+            case DescValueType.UNITDOUBLE: return (d.getUnitDoubleValue(p));
+            case DescValueType.ENUMERATEDTYPE: return t2s(d.getEnumerationValue(p));
+            default: break;
+        };
+    }
+}
