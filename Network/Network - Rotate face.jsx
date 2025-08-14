@@ -1,6 +1,7 @@
 ﻿/**
  * Straighten photos and save photos in same directory. 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/straighten-photos-and-save-photos-in-same-directory/td-p/15438965
+ * https://youtu.be/NPVtCk4VVXg
  */
 
 #target photoshop

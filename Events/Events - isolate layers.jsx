@@ -1,6 +1,7 @@
 /**
  * Show only layer inside Layer type mode 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/show-only-layer-inside-layer-type-mode/td-p/15413523
+ * https://youtu.be/aLaMwA-PNnU
  */
 #target photoshop
 var s2t = stringIDToTypeID,

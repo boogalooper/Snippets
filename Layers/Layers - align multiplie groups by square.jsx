@@ -1,10 +1,13 @@
 /**
  * Is it possible to use scripting to align layers to layers with the same outline?
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/is-it-possible-to-use-scripting-to-align-layers-to-layers-with-the-same-outline/td-p/15433652
+ * https://youtu.be/0KKeXjXcT14
  */
 #target photoshop
-$.hiresTimer
-const EXPAND_BY = 20; // expand selection from the opacity mask to minimize errors when separating objects
+const EXPAND_BY = 20, // expand selection from the opacity mask to minimize errors when separating objects
+    WXHAccuracy = 100, // multiplier for converting WxH to integer (affects rounding accuracy)
+    WXHTolerance = 0.15, // deviation from the proportion value, below which objects are still compared
+    SCALE = 0.25;
 var apl = new AM('application'),
     doc = new AM('document'),
     lr = new AM('layer'),
@@ -18,7 +21,6 @@ if (apl.getProperty('numberOfDocuments')) {
         activeDocument.activeHistoryState = hst;
         activeDocument.suspendHistory('Align layers', 'main(3)');
     } catch (e) { activeDocument.activeHistoryState = hst; alert(e) }
-alert ($.hiresTimer)
     function main(step) {
         switch (step) {
             case 1: doForcedProgress('Step 1/3: Get initial bounds of layers', 'step1()'); break;
@@ -27,11 +29,15 @@ alert ($.hiresTimer)
         }
         function step1() {
             layers = findLayers();
+            doc.setScale(SCALE * 100);
             if (layers.frames.length) {
                 changeProgressText('Step 1/3: Preparing to split gray shapes')
                 layers.frames = grayFramesToLayers(layers.frames);
                 if (layers.frames.length == layers.objects.length) {
-                    for (var i = 0; i < layers.objects.length; i++) layers.objects[i] = describeLayer(layers.objects[i].id);
+                    for (var i = 0; i < layers.objects.length; i++) {
+                        lr.selectLayer(layers.objects[i].id)
+                        layers.objects[i] = describeLayer(layers.objects[i].id)
+                    }
                 } else throw new Error('The number of gray shapes found does not match the number of objects found!')
             } else throw new Error('No shape layers found!')
         }
@@ -46,8 +52,8 @@ alert ($.hiresTimer)
             for (var i = 0; i < deltas.length; i++) {
                 lr.selectLayer(deltas[i].layer.id)
                 changeProgressText('Step 3/3: Align layer: ' + lr.getProperty('name', deltas[i].layer.id))
-                lr.transform(deltas[i].offset, deltas[i].layer.center[0], deltas[i].layer.center[1])
-                lr.move(deltas[i].layer.dX, deltas[i].layer.dY)
+                lr.transform(deltas[i].offset, deltas[i].layer.center[0] / SCALE, deltas[i].layer.center[1] / SCALE)
+                lr.move(deltas[i].layer.dX / SCALE, deltas[i].layer.dY / SCALE)
             };
         }
     }
@@ -110,7 +116,8 @@ function findNearest(a, b) {
     var dist = [];
     for (var i = 0; i < b.length; i++) {
         if (b[i].found) continue;
-        dist.push({ i: i, dist: Math.round(Math.sqrt(Math.pow(b[i].center[0] - a.center[0], 2) + Math.pow(b[i].center[1] - a.center[1], 2))) });
+        if (Math.abs(b[i].WxH - a.WxH) > WXHTolerance) continue;
+        dist.push({ i: i, dist: Math.abs(b[i].square - a.square) });
     }
     dist.sort(function (a, b) { return a.dist > b.dist ? 1 : -1 })
     b[dist[0].i].found = true;
@@ -122,6 +129,7 @@ function checkOrientation(o) {
         result = [];
     lr.selectLayer(o.id)
     lr.setBlendingMode('blendSubtraction');
+    lr.deselect()
     for (var i = 0; i < transformMatrices.length; i++) result.push(findDifference(o, transformMatrices[i], transform[i]));
     result.sort(function (a, b) { return a[0] > b[0] ? 1 : -1 })
     return result[0][1]
@@ -129,7 +137,7 @@ function checkOrientation(o) {
         lr.transform(transformMatrices)
         lr.selectLayer(o.targetId)
         lr.selectTransparency()
-        lr.expandSelection(EXPAND_BY)
+        lr.expandSelection(EXPAND_BY*SCALE)
         var c = getAverageColor(doc.getProperty('histogram'))
         lr.deselect()
         return [c, transform]
@@ -142,7 +150,7 @@ function grayFramesToLayers(l) {
     function isolateLayers(id, title, result) {
         lr.selectLayer(id)
         lr.selectTransparency();
-        lr.expandSelection(EXPAND_BY);
+        lr.expandSelection(EXPAND_BY*SCALE);
         pth.workPathFromSelection(1);
         var pathComponents = (pth.getProperty('pathContents')).getList(stringIDToTypeID('pathComponents'));
         if (pathComponents.count > 1) {
@@ -172,6 +180,9 @@ function describeLayer(id) {
     o.bounds = bounds
     o.center = [bounds.left + o.width / 2, bounds.top + o.heigth / 2]
     o.found = false
+    lr.selectTransparency()
+    o.square = countPixels(doc.getProperty('histogram'))
+    o.WxH = Math.round((o.width / o.heigth) * WXHAccuracy) / WXHAccuracy
     return o
 }
 function getAverageColor(h) {
@@ -181,6 +192,13 @@ function getAverageColor(h) {
         p += h.getInteger(i) * i
     }
     return p / n
+}
+function countPixels(h) {
+    var s = 0;
+    for (var i = 0; i < h.count; i++) {
+        s += h.getInteger(i)
+    }
+    return s
 }
 function AM(target) {
     var s2t = stringIDToTypeID,
@@ -321,6 +339,13 @@ function AM(target) {
         d.putBoolean(s2t("linked"), true);
         d.putEnumerated(s2t("interpolation"), s2t("interpolationType"), s2t("bicubic"));
         executeAction(s2t("transform"), d, DialogModes.NO);
+    }
+    this.setScale = function (width) {
+        (d = new ActionDescriptor()).putUnitDouble(s2t("width"), s2t("percentUnit"), width);
+        d.putBoolean(s2t("scaleStyles"), true);
+        d.putBoolean(s2t("constrainProportions"), true);
+        d.putEnumerated(s2t("interpolation"), s2t("interpolationType"), s2t("bicubicSharper"));
+        executeAction(s2t("imageSize"), d, DialogModes.NO);
     }
     function getDescValue(d, p) {
         switch (d.getType(p)) {

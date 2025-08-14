@@ -1,6 +1,8 @@
 /**
  * Straighten multiple layers inside photoshop 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/straighten-multiple-layers-inside-photoshop/m-p/15429999#M875741
+ * https://youtu.be/wU7mGvKuobg
+ * https://youtu.be/KDXJd7C2YQ8
  */
 const BORDER_RIGHT_GAIN = 40, // minimum size of rigth dark border (pixels)
     BORDER_LEFT_GAIN = 70, // minimum size of left dark border (pixels)

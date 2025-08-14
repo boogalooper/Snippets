@@ -1,6 +1,7 @@
 /**
  * Is it possible to use scripting to align layers to layers with the same outline? 
  * https://community.adobe.com/t5/photoshop-ecosystem-discussions/is-it-possible-to-use-scripting-to-align-layers-to-layers-with-the-same-outline/td-p/15433652
+ * https://youtu.be/o3A5q-b_NI4
  */
 #target photoshop
 const GRAY_TOLERANCE = 5, // max color difference between CMY or RGB to detect gray layers

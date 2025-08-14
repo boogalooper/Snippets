@@ -1,6 +1,6 @@
 # Snippets
 
-Snippets of code that I used for answers in the [**Photoshop ecosystem**](https://community.adobe.com/t5/photoshop-ecosystem/ct-p/ct-photoshop) of [**Adobe Support Community**](https://community.adobe.com/ "Adobe Support Community") and some interesting answers of other users.
+Snippets of code that I used for answers in the [**Photoshop ecosystem**](https://community.adobe.com/t5/photoshop-ecosystem/ct-p/ct-photoshop) of [**Adobe Product Community**](https://community.adobe.com/ "Adobe Support Community") and some interesting answers of other users.
 
 Most snippets in have a link to the topic in which the issue was discussed (this is necessary to understand the context of their work) and a link to a video with an example of work (if possible).
 
@@ -15,6 +15,7 @@ Most snippets in have a link to the topic in which the issue was discussed (this
 * [Layers](Layers) - Working with document layers (many snippets are complex and involve other objects)
 * [Liquify](Liquify) - Using Liquify filter for different tasks
 * [Metadata](Metadata) - Working with metadata with AdobeXMPScript external library
+* [Network](Network) - Local network communication between scripts
 * [Paths](Paths) - Working with path points
 * [ScriptUI](ScriptUI) - Samples of building ScriptUI interfaces
 * [Textlayers](Textlayers) - Work with stylesheets in text layers
