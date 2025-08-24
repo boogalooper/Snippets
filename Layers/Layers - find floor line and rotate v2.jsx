@@ -8,7 +8,8 @@ var apl = new AM('application'),
     lr = new AM('layer'),
     floorY = [];
 const STRIPE_SIZE = 25,
-    MAX_DE = 5;
+    MAX_DE = 50,
+    OFFSET = 0.1;
 try {
     if (apl.getProperty('numberOfDocuments')) {
         var docRes = doc.getProperty('resolution'),
@@ -25,8 +26,9 @@ try {
 function measureDocument(floor) {
     doc.flatten()
     doc.convertToGrayscale();
-    floor.length ? doc.selectStrip(docH * 0.5, 0, docH, 1) : doc.selectStrip(docH * 0.5, docW - 1, docH, docW);
+    floor.length ? doc.selectStrip(docH * 0.5, docW * OFFSET, docH, (docW * OFFSET) + 1) : doc.selectStrip(docH * 0.5, docW - (docW * OFFSET) - 1, docH, docW - docW * OFFSET);
     doc.crop();
+   // lr.equalize();
     var f = new File(Folder.temp + '/colors.raw');
     doc.saveToRAW(f)
     floor.push(findFloor(f));
@@ -78,7 +80,6 @@ function findFloor(f) {
         for (var i = 0; i < colorDiff.length; i++) {
             if (colorDiff[i] >= max) { max = colorDiff[i]; height = i };
         }
-        $.writeln('---')
         for (var i = height; i >= 0; i--) {
             if (dE(colors[height], colors[i]) > MAX_DE) return i + 1;
         }
@@ -154,6 +155,10 @@ function AM(target) {
         d.putUnitDouble(s2t("angle"), s2t("angleUnit"), angle);
         d.putEnumerated(s2t("interfaceIconFrameDimmed"), s2t("interpolationType"), s2t("bicubic"));
         executeAction(s2t("transform"), d, DialogModes.NO);
+    }
+    this.equalize = function () {
+        (d = new ActionDescriptor()).putEnumerated(s2t("area"), s2t("areaSelector"), s2t("selectionEnum"));
+        executeAction(s2t('equalize'), d, DialogModes.NO);
     }
     function getDescValue(d, p) {
         switch (d.getType(p)) {

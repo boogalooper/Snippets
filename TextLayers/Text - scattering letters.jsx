@@ -42,7 +42,7 @@ function main() {
                         lr.selectRGBChannel()
                         lr.inverseSelection()
                         lr.alignLayer()
-                        lr.deselect()
+                        lr.removeSelection()
                     }
                 }
                 for (var i = 0; i < letters.length; i++) {
