@@ -1,11 +1,11 @@
-﻿/** The script embedded the selected action in metadata of the document **/
-
+﻿/**
+ * File-Embedded Actions for Photoshop Documents 
+ * https://community.adobe.com/t5/photoshop-ecosystem-ideas/file-embedded-actions-for-photoshop-documents/idi-p/15314265
+ * https://youtu.be/pqL96SLdjmM
+ */
 #target photoshop
-
-
 $.localize = true 
 //$.locale = "ru"
-
 var ver = "0.21",
 GUID="0208d667-3679-4139-ab7f-fcef76081453",
 strMessage = "Embedded action",
@@ -32,24 +32,19 @@ strSelect ={ru: "Выберите файл операций", en: "Select action
 strFile  ={ru: "Выбранный файл не может быть загружен!", en: "The selected file could not be loaded!"},
 errDelete ={ru: "В документе не найдены метаданные для удаления!", en: "No metadata to delete in this document!"}
 strSuccess ={ru: "Операция выполнена успешно!", en: "Operation completed successfully!"}
-
 var AM = new ActionManager,
 XMP = new Metadata,
 CFG = new Config,
 event,
 isCancelled = false
-
 try {event = typeIDToStringID(arguments[1])} catch (e) {}
-
 main ()
 isCancelled ? 'cancel' : undefined
-
 function main ()
 {
     if (!app.playbackParameters.count) {
         // normal run
         AM.getScriptSettings(CFG)
-
         switch (event) {
             case "notify":
                 CFG.options = ""
@@ -62,7 +57,6 @@ function main ()
                 }
                 break;
             case "close":
-    
                 var temp = stringToObject(CFG.options)
                 if (getObjectLength(temp) > 0) {
                     var docs = AM.getAllDocumentID()
@@ -82,7 +76,6 @@ function main ()
                 break;
             default:
                 var w = new buildWindow(), result = w.show()
-
                 if (result == 2) { isCancelled = true; return } else  // if cancelled
                 {
                     CFG.mode = result == 1 ? "add" : "delete"
@@ -94,20 +87,16 @@ function main ()
         }
     }
     else {
-
         AM.getScriptSettings (CFG)
         AM.getScriptSettings (CFG, true)
-
         if (app.playbackDisplayDialogs == DialogModes.ALL) {
             //double click from action
             var w = buildWindow(true); var result = w.show()
-
             if (result == 2) { isCancelled = true; return } else // if cancelled
             {
                 AM.putScriptSettings(CFG, true)
             }
         }
-
         if (app.playbackDisplayDialogs != DialogModes.ALL) {
             if (CFG.mode == "add") {
                 try {
@@ -125,7 +114,6 @@ function main ()
         } //run by button "play" with saved in palette settings
     }    // next code  
 }
-
 function buildWindow() {
 // W
 // =
@@ -135,7 +123,6 @@ w.orientation = "column";
 w.alignChildren = ["fill","top"]; 
 w.spacing = 10; 
 w.margins = 16; 
-
 // PNSOURCE
 // ========
 var pnSource = w.add("panel"); 
@@ -144,7 +131,6 @@ pnSource.orientation = "column";
 pnSource.alignChildren = ["left","top"]; 
 pnSource.spacing = 10; 
 pnSource.margins = 10; 
-
 // grSource
 // ======
 var grSource = pnSource.add("group"); 
@@ -152,13 +138,10 @@ grSource.orientation = "row";
 grSource.alignChildren = ["left","center"]; 
 grSource.spacing = 10; 
 grSource.margins = 0; 
-
 var etSource = grSource.add('edittext {properties: {readonly: true}}'); 
 etSource.preferredSize.width = 300; 
-
 var bnBrowse = grSource.add("button"); 
 bnBrowse.text = strBrowse
-
 // PNLOAD
 // ======
 var pnLoad = w.add("panel"); 
@@ -167,13 +150,10 @@ pnLoad.orientation = "column";
 pnLoad.alignChildren = ["left","top"]; 
 pnLoad.spacing = 10; 
 pnLoad.margins = [10,15,10,10]; 
-
 var chAuloLoad = pnLoad.add("checkbox"); 
     chAuloLoad.text = strOnOpen
-
 var chDel = pnLoad.add("checkbox"); 
     chDel.text = strOnClose
-
 // GRBN
 // ====
 var grBn = w.add("group"); 
@@ -181,13 +161,10 @@ grBn.orientation = "row";
 grBn.alignChildren = ["center","center"]; 
 grBn.spacing = 10; 
 grBn.margins = 0; 
-
 var ok = grBn.add("button", undefined, undefined, {name: "ok"}); 
 ok.text = strOkPut
-
 var cancel = grBn.add("button", undefined, undefined, {name: "cancel"}); 
 cancel.text = strCancel
-
 bnBrowse.onClick = function (){
     switch (ok.text) {
         case localize(strOkPut):
@@ -200,7 +177,6 @@ bnBrowse.onClick = function (){
                 }, true);
                 if (fle.length>0) fle = fle[0]
             }
-            
             if (fle) {
                 if (fle.exists) {
                     etSource.enabled = true
@@ -221,12 +197,9 @@ bnBrowse.onClick = function (){
             } else { alert(errDelete, strErr, false); }
             break;
     }    
-    
 }
-
 chDel.onClick = function () {CFG.onClose = this.value; addEvt()}
 chAuloLoad.onClick = function () {CFG.onOpen = this.value; chDel.enabled = this.value; addEvt()}
-
     ok.onClick = function (){
         switch (ok.text)
         {
@@ -250,13 +223,11 @@ chAuloLoad.onClick = function () {CFG.onOpen = this.value; chDel.enabled = this.
             break;
         }
     }
-
     w.onShow = function (){
         chAuloLoad.value = CFG.onOpen
         chDel.value = CFG.onClose
         chDel.enabled = CFG.onOpen
         addEvt ()
-
         switch (XMP.checkMetadata()) {
             case true:
                 ok.text = strOkGet
@@ -275,8 +246,6 @@ chAuloLoad.onClick = function () {CFG.onOpen = this.value; chDel.enabled = this.
     }
     return w
 }
-
-
 function ActionManager () {
     var gClassActionSet = s2t("actionSet"),
         gClassAction = s2t("action"),
@@ -294,7 +263,6 @@ function ActionManager () {
         gDocument = s2t("document"),
         gTitle = s2t("title")
         gDocumentID = s2t("documentID")
-
     this.getDocumentsNumber = function (){
         try {
             var ref = new ActionReference()
@@ -303,25 +271,21 @@ function ActionManager () {
             return executeActionGet(ref).getInteger (gNumberOfDocuments)
         } catch (e) { return 0 }
     }
-
     this.getDocumentName = function () {
             var ref = new ActionReference()
             ref.putProperty(gProperty, gTitle)
             ref.putEnumerated(gDocument, gOrdinal, gTargetEnum)
             return executeActionGet(ref).getString (gTitle)
     }
-
     this.getDocumentID = function () {
         var ref = new ActionReference()
         ref.putProperty(gProperty, gDocumentID)
         ref.putEnumerated(gDocument, gOrdinal, gTargetEnum)
         return String (executeActionGet(ref).getInteger (gDocumentID))
 }
-    
     this.getAllDocumentID = function () {
         var output = [],
         len = this.getDocumentsNumber()
-
         for (var i=1; i<=len; i++)
         {
                 var ref = new ActionReference()
@@ -331,7 +295,6 @@ function ActionManager () {
         }
         return output
     }
-
     this.getActionSetNumber = function () {
         var setCounter = 1;
         while (true) {
@@ -343,16 +306,12 @@ function ActionManager () {
         }
         return setCounter-1
     }
-
     this.getActionSetHash = function (idx) {
-
         var ref = new ActionReference()
         ref.putIndex(gClassActionSet, idx)
         var nm = executeActionGet(ref).getString(gName),
         numberChildren = executeActionGet(ref).getInteger(gKeyNumberOfChildren)
-
         return String (hash(nm + getActions(idx, numberChildren)))
-
         function getActions(setIndex, len) {
             var current = ""
             for (var i = 1; i <= len; i++) {
@@ -365,7 +324,6 @@ function ActionManager () {
             }
             return current
         }
-
         function getCommands (setIndex, actionIndex, len)
         {
             var current = ""
@@ -380,14 +338,11 @@ function ActionManager () {
             return current
         }
     }
-
     this.deleteSetbyIndex = function (idx) {
         var desc = new ActionDescriptor();
         var ref = new ActionReference();
-
         ref.putIndex(gClassActionSet, idx);
         desc.putReference(gTarget, ref);
-
         try {
             executeAction(gDelete, desc)
             return true
@@ -396,10 +351,8 @@ function ActionManager () {
             return false
         }
     }
-
     this.deleteSetByHash = function (hash) {
         var len = this.getActionSetNumber()
-
         for (var i=len; i>=1; i--)
         {
             if (this.getActionSetHash(i) == hash) 
@@ -408,19 +361,15 @@ function ActionManager () {
                 return true
             }
         }
-        
         return false
     }
-
     this.getScriptSettings = function (settingsObj, fromAction) {
         if (fromAction) {
             var d = app.playbackParameters
         } else {
             try { var d = app.getCustomOptions(GUID) } catch (e) { }
         }
-
         if (d != undefined) descriptorToObject(settingsObj, d, strMessage)
-
         function descriptorToObject(o, d, s) {
             var l = d.count;
             if (l) {
@@ -443,16 +392,11 @@ function ActionManager () {
                 }
             }
         }
-
     }
-
     this.putScriptSettings = function (settingsObj, toAction) {
-        
         var d = objectToDescriptor(settingsObj, strMessage)
-
         if (toAction) {app.playbackParameters = d}
         else {app.putCustomOptions(GUID, d)}
-
         function objectToDescriptor(o, s) {
             var d = new ActionDescriptor;
             var l = o.reflect.properties.length;
@@ -471,8 +415,6 @@ function ActionManager () {
             return d;
         }
     }
-
-    
     function hash(str) {
         var hash = 0;
         var str = String(str);
@@ -484,12 +426,9 @@ function ActionManager () {
         }
         return hash;
     }
-
     function s2t(s) {return stringIDToTypeID(s)}
 }
-
 function Metadata () {
-
     this.writeMetadata = function (s) {
         try {
             if (ExternalObject.AdobeXMPScript == undefined) {
@@ -507,7 +446,6 @@ function Metadata () {
             return true
         } catch (e) { return false }
     }   
-
     this.readMetadata = function () {
         try {
             if (ExternalObject.AdobeXMPScript == undefined) {
@@ -524,7 +462,6 @@ function Metadata () {
             }
         } catch (e) { return false }
     }  
-
     this.removeMetadata = function () {
         try {
             if (ExternalObject.AdobeXMPScript == undefined) {
@@ -543,7 +480,6 @@ function Metadata () {
             }
         } catch (e) { return false }
     } 
-
     this.checkMetadata = function () {
         try {
             if (ExternalObject.AdobeXMPScript == undefined) {
@@ -555,30 +491,23 @@ function Metadata () {
             } catch (e) {
                 xmpMeta = new XMPMeta()
             }
-
             if (xmpMeta.doesPropertyExist(source, customPrefix)) return true
         } catch (e) { return false }
         return false
     }
-
     this.getATNFromDocument = function (writeToOptions) {
-
         try {
             var outfile = File(Folder.temp + "/" + generateUUID ()+ ".atn");
-
             outfile.open("w");
             outfile.encoding = "binary";
             outfile.write(eval(XMP.readMetadata()));
             outfile.close();
-
             var b = AM.getActionSetNumber()
             app.load(outfile)
             outfile.remove()
             var a = AM.getActionSetNumber()
-
             if (a == b) throw (errLoadFromDoc)
             var hash = AM.getActionSetHash(a)
-
             for (var i = b; i >= 1; i--) {
                 if (hash == AM.getActionSetHash(i)) {
                     if (!confirm(strConfirm, true, strAlert)) {
@@ -587,7 +516,6 @@ function Metadata () {
                     } else {break;}
                 }
             }
-            
             if (writeToOptions) {
                 var temp = stringToObject (CFG.options)
                 temp[hash] = AM.getDocumentID()
@@ -595,10 +523,8 @@ function Metadata () {
                 AM.putScriptSettings(CFG)
             }
         } catch (e) { alert(errLoad + e, strErr, true); return false}
-
         return true
     }
-
     function generateUUID () {
         var id =  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( c ) {
                var r = Math.random() * 16 | 0;
@@ -607,7 +533,6 @@ function Metadata () {
         return id
        }
 }
-
 function Config() {
     this.mode = "add"
     this.lastPath = ""
@@ -616,14 +541,11 @@ function Config() {
     this.onOpen = false
     this.onClose = false
 }
-
 function addEvt ()
 {
     AM.putScriptSettings (CFG)
-
     delEvt()
     app.notifiersEnabled = true
-    
     if (CFG.onOpen)
     {
         var handlerFile = File($.fileName)
@@ -632,26 +554,22 @@ function addEvt ()
         if (CFG.onClose) app.notifiers.add('Cls ', handlerFile)
     }
 }
-
 function delEvt()
 {
     try {
         var len = app.notifiers.length,
             cur = File($.fileName).name
-
         for (var i = 0; i < len; i++) {
             var ntf = app.notifiers[i]
             if (ntf.eventFile.name == cur) { ntf.remove(); i-- }
         }
     } catch (e) { }
 }
-
 function getObjectLength (obj){
     var len = 0
     for (var a in obj) {len++}
     return len
 }
-
 function stringToObject (s) {
     line = s.split('\n')
     line = s == "" ? [] : line
@@ -662,7 +580,6 @@ function stringToObject (s) {
     }
  return output
 }
-
 function objectToString (o) 
 {
     var output = []

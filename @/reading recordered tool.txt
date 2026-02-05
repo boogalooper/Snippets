@@ -1,0 +1,258 @@
+https://community.adobe.com/t5/photoshop-ecosystem/select-subpath/td-p/10597652
+https://gist.github.com/Manouchehri/f4b41c8272db2d6423fa987e844dd9ac
+
+var len = app.activeDocument.pathItems.length;    
+
+    
+
+if (len)    
+
+    {    
+
+    app.preferences.rulerUnits = Units.POINTS;  
+
+    var pth = app.activeDocument.pathItems[len-1];    
+
+    
+
+    pth.deselect();    
+
+    pth.select();    
+
+    
+
+    len = pth.subPathItems.length;    
+
+    for (var i = 0; i < len; i++)
+
+        {
+
+        var p = pth.subPathItems.pathPoints[0];    
+
+    
+
+        var zoom = get_doc_zoom();    
+
+    
+
+        //set_doc_zoom(100);    
+
+    
+
+        point_select(p.anchor[0], p.anchor[1], true);     
+
+    
+
+        //set_doc_zoom(zoom);    
+
+        }  
+
+    }    
+
+else    
+
+    alert("No path");        
+
+    
+
+function point_select(x, y, add)     
+
+    {    
+
+    var d = new ActionDescriptor();  
+
+    var r = new ActionReference();  
+
+    r.putClass(stringIDToTypeID("pathComponentSelectTool"));  
+
+    d.putReference(stringIDToTypeID("null"), r);  
+
+    d.putData(stringIDToTypeID("toolRecordingData"),   
+
+    String.fromCharCode(  
+
+        0x00,0x00,0x00,0x06,0x03,0x00,0x00,0x00,0x01,0x00,0x00,0x00,  
+
+        0x18,0x54,0x50,0x61,0x74,0x68,0x43,0x6F,0x6D,0x70,0x6F,0x6E,0x65,0x6E,0x74,0x53,0x65,0x6C,0x65,0x63,0x74,0x54,0x6F,0x6F,0x6C,0x00,0x00,0x00,  
+
+        0x18,0x54,0x50,0x61,0x74,0x68,0x43,0x6F,0x6D,0x70,0x6F,0x6E,0x65,0x6E,0x74,0x53,0x65,0x6C,0x65,0x63,0x74,0x54,0x6F,0x6F,0x6C,0x00,0x00,0x00,  
+
+        0x18,0x54,0x50,0x61,0x74,0x68,0x43,0x6F,0x6D,0x70,0x6F,0x6E,0x65,0x6E,0x74,0x53,0x65,0x6C,0x65,0x63,0x74,0x54,0x6F,0x6F,0x6C,0x00,0x00,0x00,  
+
+        0x06,0x3C,0x4E,0x55,0x4C,0x4C,0x3E,0x00,0x00,0x00,0x01,0x00,0x00,add?1:0,0x00,0x00,0x00,0x00,0x00,0x20,0x20,0x20,0x20,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00)+  
+
+        toIEEE754(x, 8, 23) + toIEEE754(y, 8, 23) +    
+
+        String.fromCharCode(0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00));  
+
+    executeAction(stringIDToTypeID("toolRecording"), d, DialogModes.NO);
+
+    }
+
+    
+
+function set_doc_zoom(zoom)      
+
+    {      
+
+    try {      
+
+        if (!zoom) zoom = 100;      
+
+      
+
+        var d = new ActionDescriptor();        
+
+        var r = new ActionReference();        
+
+        r.putProperty(stringIDToTypeID("property"), stringIDToTypeID("zoom"));        
+
+        r.putEnumerated(stringIDToTypeID("document"), stringIDToTypeID("ordinal"), stringIDToTypeID("targetEnum"));        
+
+        d.putReference(stringIDToTypeID("null"), r);        
+
+      
+
+        var d1 = new ActionDescriptor();        
+
+        d1.putUnitDouble(stringIDToTypeID("zoom"), stringIDToTypeID("pixelsUnit"), zoom/100);    
+
+        d.putObject(stringIDToTypeID("to"), stringIDToTypeID("zoom"), d1);        
+
+        executeAction(stringIDToTypeID("set"), d, DialogModes.NO);        
+
+        }      
+
+    catch (e) { /*throw(e);*/ }      
+
+    }      
+
+    
+
+function get_doc_zoom()      
+
+    {      
+
+    try {      
+
+        var r = new ActionReference();        
+
+        r.putProperty(stringIDToTypeID("property"), stringIDToTypeID("zoom"));        
+
+        r.putEnumerated(stringIDToTypeID("document"), stringIDToTypeID("ordinal"), stringIDToTypeID("targetEnum"));        
+
+        return executeActionGet(r).getUnitDoubleValue(stringIDToTypeID("zoom"))*100;    
+
+        }      
+
+    catch (e) { throw(e); }      
+
+    }      
+
+    
+
+function toIEEE754(v, ebits, fbits)     
+
+    {    
+
+    try {    
+
+        var bias = (1 << (ebits - 1)) - 1;    
+
+        
+
+        var s, e, f;    
+
+        if (isNaN(v))     
+
+            {    
+
+            e = (1 << bias) - 1; f = 1; s = 0;    
+
+            }    
+
+        else if (v === Infinity || v === -Infinity)     
+
+            {    
+
+            e = (1 << bias) - 1; f = 0; s = (v < 0) ? 1 : 0;    
+
+            }    
+
+        else if (v === 0)     
+
+            {    
+
+            e = 0; f = 0; s = (1 / v === -Infinity) ? 1 : 0;    
+
+            }    
+
+        else     
+
+            {    
+
+            s = v < 0;    
+
+            v = Math.abs(v);    
+
+        
+
+            if (v >= Math.pow(2, 1 - bias))     
+
+                {    
+
+                var ln = Math.min(Math.floor(Math.log(v) / Math.LN2), bias);    
+
+                e = ln + bias;    
+
+                f = v * Math.pow(2, fbits - ln) - Math.pow(2, fbits);    
+
+                }    
+
+            else     
+
+                {    
+
+                e = 0;    
+
+                f = v / Math.pow(2, 1 - bias - fbits);    
+
+                }    
+
+            }    
+
+             
+
+        var i, bits = [];    
+
+        for (i = fbits; i; i -= 1) { bits.push(f % 2 ? 1 : 0); f = Math.floor(f / 2); }    
+
+        for (i = ebits; i; i -= 1) { bits.push(e % 2 ? 1 : 0); e = Math.floor(e / 2); }    
+
+        bits.push(s ? 1 : 0);    
+
+        bits.reverse();    
+
+        var str = bits.join('');    
+
+             
+
+        var bytes = "";    
+
+        while (str.length)     
+
+            {    
+
+            bytes += String.fromCharCode(parseInt(str.substring(0, 8), 2));    
+
+            str = str.substring(8);    
+
+            }    
+
+        return bytes;    
+
+        }    
+
+    catch (e) { throw(e); }      
+
+    }    

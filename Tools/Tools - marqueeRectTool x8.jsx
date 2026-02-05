@@ -11,9 +11,9 @@ try {
             var doc = new AM('document');
             if (doc.hasProperty('selection')) {
                 var b = doc.descToObject(doc.getProperty('selection')),
-                    w = Math.round((b.right - b.left) / 8) * 8,
-                    hst = Math.round((b.bottom - b.top) / 8) * 8;
-                doc.makeSelection(b.top, b.left, b.top + hst, b.left + w);
+                    w = Math.floor((b.right - b.left) / 8) * 8,
+                    h = Math.floor((b.bottom - b.top) / 8) * 8;
+                doc.makeSelection(b.top, b.left, b.top + h, b.left + w);
                 if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript')
                 const myCustomNamespace = 'Selection',
                     myCustomPrefix = 'SDHelper:';
@@ -21,7 +21,7 @@ try {
                 XMPMeta.registerNamespace(myCustomNamespace, myCustomPrefix);
                 xmpMeta.setProperty(myCustomNamespace, 'top', b.top);
                 xmpMeta.setProperty(myCustomNamespace, 'left', b.left);
-                xmpMeta.setProperty(myCustomNamespace, 'bottom', (b.top + hst));
+                xmpMeta.setProperty(myCustomNamespace, 'bottom', (b.top + h));
                 xmpMeta.setProperty(myCustomNamespace, 'right', (b.left + w));
                 app.activeDocument.xmpMetadata.rawData = xmpMeta.serialize();
             }

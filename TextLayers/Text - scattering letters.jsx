@@ -1,9 +1,9 @@
 var app = app;
 var app = new AM('application'),
     lr = new AM('layer'),
-    scale = 30, // %, randomize size of each letter (percent of size)
-    offset = 2, //%. randomize Y position of each letter, (percent of size)
-    angle = 15; //deg, randomize angle of each letter (max angle)
+    scale = 25, // %, randomize size of each letter (percent of size)
+    offset = 25, //%. randomize Y position of each letter, (percent of size)
+    angle = 25; //deg, randomize angle of each letter (max angle)
 if (app.getProperty('numberOfDocuments')) activeDocument.suspendHistory('Scattering letters', 'main()')
 function main() {
     if (lr.hasProperty('textKey')) {
@@ -42,7 +42,7 @@ function main() {
                         lr.selectRGBChannel()
                         lr.inverseSelection()
                         lr.alignLayer()
-                        lr.removeSelection()
+                        lr.deselect()
                     }
                 }
                 for (var i = 0; i < letters.length; i++) {
@@ -167,7 +167,7 @@ function AM(target) {
         for (var i = 0; i < letters.length; i++) {
             if (!/\s/.test(letters[i].content)) {
                 var impliedFontSize = letters[i].textStyle.getUnitDoubleValue(s2t('impliedFontSize'))
-                letters[i].textStyle.putUnitDouble(s2t('    '), s2t('pointsUnit'), impliedFontSize + impliedFontSize * (Math.random() > 0.5 ? Math.random() * ratio / 100 : -Math.random() * ratio / 100));
+                letters[i].textStyle.putUnitDouble(s2t('impliedFontSize'), s2t('pointsUnit'), impliedFontSize + impliedFontSize * (Math.random() > 0.5 ? Math.random() * ratio / 100 : -Math.random() * ratio / 100));
             }
         }
         var l = new ActionList();

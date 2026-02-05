@@ -1,0 +1,516 @@
+https://community.adobe.com/t5/photoshop-ecosystem-discussions/modifying-levels-adjustment-layer/td-p/5587180
+////////////////////////////////////////////////////////////////////////////////////////////
+
+function edit_levels(l0,gl,l1,l2,l3, r0,gr,r1,r2,r3, g0,gg,g1,g2,g3, b0,gb,b1,b2,b3, k0,gk,k1,k2,k3, dlg)
+
+    {
+
+    try {
+
+        var desc1 = new ActionDescriptor();
+
+        var ref = new ActionReference();
+
+   
+
+        ref.putEnumerated( charIDToTypeID( "AdjL" ), charIDToTypeID( "Ordn" ), charIDToTypeID( "Trgt" ) );
+
+   
+
+        desc1.putReference( charIDToTypeID( "null" ), ref );
+
+   
+
+        var desc2 = new ActionDescriptor();
+
+   
+
+        var list1 = new ActionList();
+
+ 
+
+        function set_chnl(name, x0,gm,x1, y0,y1)
+
+            {      
+
+            var desc = new ActionDescriptor();
+
+ 
+
+            var ref = new ActionReference();
+
+            ref.putEnumerated( charIDToTypeID( "Chnl" ), charIDToTypeID( "Chnl" ), charIDToTypeID( name ) );
+
+ 
+
+            desc.putReference( charIDToTypeID( "Chnl" ), ref );
+
+ 
+
+            var list2 = new ActionList();
+
+            list2.putInteger( x0 );
+
+            list2.putInteger( x1 );
+
+            desc.putList( charIDToTypeID( "Inpt" ), list2 );
+
+            desc.putDouble( charIDToTypeID( "Gmm " ), gm );
+
+ 
+
+            var list3 = new ActionList();
+
+            list3.putInteger( y0 );
+
+            list3.putInteger( y1 );
+
+            desc.putList( charIDToTypeID( "Otpt" ), list3 );
+
+ 
+
+            list1.putObject( charIDToTypeID( "LvlA" ), desc );
+
+ 
+
+            list2 = null;
+
+            list3 = null;
+
+            ref   = null;
+
+            desc  = null;
+
+            }
+
+ 
+
+        set_chnl("Cmps", l0,gl,l1,l2,l3);
+
+ 
+
+        if (app.activeDocument.mode == DocumentMode.RGB)
+
+            {
+
+            if (r0 != undefined) set_chnl("Rd  ", r0,gr,r1,r2,r3);
+
+            if (g0 != undefined) set_chnl("Grn ", g0,gg,g1,g2,g3);
+
+            if (b0 != undefined) set_chnl("Bl  ", b0,gb,b1,b2,b3);
+
+            }
+
+        else if (app.activeDocument.mode == DocumentMode.CMYK)
+
+            {
+
+            if (r0 != undefined) set_chnl("Cyn ", r0,gr,r1,r2,r3);
+
+            if (g0 != undefined) set_chnl("Mgnt", g0,gg,g1,g2,g3);
+
+            if (b0 != undefined) set_chnl("Yllw", b0,gb,b1,b2,b3);
+
+            if (k0 != undefined) set_chnl("Blck", k0,gk,k1,k2,k3);
+
+            }
+
+ 
+
+        desc2.putList( charIDToTypeID( "Adjs" ), list1 );
+
+ 
+
+        desc1.putObject( charIDToTypeID( "T   " ), charIDToTypeID("Lvls"), desc2 );
+
+   
+
+        if (executeAction( charIDToTypeID( "setd" ), desc1, dlg==false?DialogModes.NO:DialogModes.ALL )) return true;
+
+ 
+
+        else return false;
+
+        }
+
+    catch (e) { _alert(e); throw(e); }
+
+    }
+
+ 
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+function get_short(s, len)
+
+    {
+
+    try {
+
+        if (len == undefined) len = 1;
+
+ 
+
+        var ret = [];
+
+ 
+
+        for (var i = 0; i < 2*len; i += 2)
+
+            {
+
+            var c0 = s.charCodeAt(0+i);
+
+            var c1 = s.charCodeAt(1+i);
+
+ 
+
+            var val = c1 + 256*c0;
+
+           
+
+            if (c0 & 0x80) val = -(0xFFFF - val + 1);
+
+           
+
+            ret.push(val);
+
+            }
+
+ 
+
+        if (len == 1) return ret[0];
+
+ 
+
+        return ret;
+
+        }
+
+    catch (e) { _alert(e);  }
+
+    }
+
+ 
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+function get_adjustment_rawdata(id)
+
+    {
+
+    return get_prop_value("layer", id, "adjustment", 0, "legacyContentData");
+
+    }
+
+ 
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+function get_levels(id)
+
+    {
+
+    try {
+
+        var x = get_adjustment_rawdata(id);
+
+ 
+
+        var ret =
+
+            [
+
+            get_short(x.substr(2)),
+
+            get_short(x.substr(10))/100,
+
+            get_short(x.substr(4)),
+
+            get_short(x.substr(6)),
+
+            get_short(x.substr(8)),
+
+            ];
+
+ 
+
+        return ret;
+
+        }
+
+    catch (e) {_alert(e); return null; }
+
+    }
+
+ 
+
+UPD.
+
+ 
+
+function get_prop_value(class_key, id, prop_key)
+
+    {
+
+    try
+
+        {
+
+        if (typeof(class_key) == "string") class_key = stringIDToTypeID(class_key);
+
+        if (typeof(prop_key)  == "string") prop_key  = stringIDToTypeID(prop_key);
+
+ 
+
+        var r = new ActionReference();   
+
+ 
+
+        if (prop_key != undefined) r.putProperty(charIDToTypeID("Prpr"), prop_key);   
+
+ 
+
+        if (id == undefined || id == null) r.putEnumerated(class_key, charIDToTypeID("Ordn"), charIDToTypeID("Trgt"));
+
+        else if (typeof(id) == "string")   r.putName(class_key, id);
+
+        else                               r.putIdentifier(class_key, id);
+
+ 
+
+        var desc;
+
+ 
+
+        if (prop_key == undefined)
+
+            {
+
+            try { return executeActionGet(r); } catch (e) { return undefined; }
+
+            }
+
+ 
+
+        try { desc = executeActionGet(r); } catch (e) { return undefined; }    
+
+ 
+
+        if (!desc.hasKey(prop_key)) return undefined;
+
+ 
+
+        var ret = get_value(desc, prop_key);
+
+ 
+
+        for (var i = 3; i < arguments.length; i++)
+
+            if (arguments != undefined) ret = get_value(ret, arguments); 
+
+ 
+
+        return ret;
+
+ 
+
+        function get_type(obj, key)
+
+            {
+
+            try
+
+                {
+
+                if (obj == undefined) return undefined;           
+
+ 
+
+                if (typeof(key) == "string") key = stringIDToTypeID(key);
+
+       
+
+                switch (obj.typename)
+
+                    {
+
+                    case "ActionDescriptor": 
+
+                    case "ActionList"      : return obj.getType(key);
+
+       
+
+                    case "ActionReference" : return obj.getForm();
+
+                    }
+
+                }
+
+            catch (e) { throw(e); }
+
+            }
+
+       
+
+        function get_value(obj, key)
+
+            {
+
+            try
+
+                {
+
+                if (obj == undefined) return undefined;           
+
+ 
+
+                if (typeof(key) == "string") key = stringIDToTypeID(key);
+
+       
+
+                switch (obj.typename)
+
+                    {
+
+                    case "ActionDescriptor": 
+
+                    case "ActionList"      : return get_desc_value(obj, key);
+
+       
+
+                    case "ActionReference" : return get_ref_value(obj);
+
+                    }
+
+                }
+
+            catch (e) { throw(e); }
+
+            }
+
+       
+
+        function get_desc_value(d, key)
+
+            {
+
+            try
+
+                {
+
+                if (d == undefined) return undefined;           
+
+ 
+
+                if (typeof(key) == "string") key = stringIDToTypeID(key);
+
+       
+
+                var val;
+
+ 
+
+                if (d instanceof ActionDescriptor && !d.hasKey(key)) return undefined;
+
+ 
+
+                else if (d instanceof ActionList && key >= d.count) return undefined;
+
+ 
+
+                var type = d.getType(key);
+
+       
+
+                switch (type)
+
+                    {
+
+                    case DescValueType.ALIASTYPE:        val = d.getPath(key);             break;
+
+                    case DescValueType.BOOLEANTYPE:      val = d.getBoolean(key);          break;
+
+                    case DescValueType.CLASSTYPE:        val = d.getClass(key);            break;
+
+                    case DescValueType.DOUBLETYPE:       val = d.getDouble(key);           break; 
+
+                    case DescValueType.INTEGERTYPE:      val = d.getInteger(key);          break;
+
+                    case DescValueType.LISTTYPE:         val = d.getList(key);             break;
+
+                    case DescValueType.RAWTYPE:          val = d.getData(key);             break;
+
+                    case DescValueType.STRINGTYPE:       val = d.getString(key);           break;
+
+                    case DescValueType.LARGEINTEGERTYPE: val = d.getLargeInteger(key);     break;
+
+                    case DescValueType.REFERENCETYPE:    val = d.getReference(key);        break;
+
+                    case DescValueType.OBJECTTYPE:       val = d.getObjectValue(key);      break;
+
+                    case DescValueType.UNITDOUBLE:       val = d.getUnitDoubleValue(key);  break;
+
+                    case DescValueType.ENUMERATEDTYPE:   val = d.getEnumerationValue(key); break;
+
+                    }
+
+       
+
+                return val;
+
+                }
+
+            catch (e) { throw(e); }
+
+            }
+
+       
+
+        function get_ref_value(r)
+
+            {
+
+            try
+
+                {
+
+                var val;
+
+       
+
+                switch (r.getForm())
+
+                    {
+
+                    case ReferenceFormType.CLASSTYPE:  val = r.getDesiredClass();    break;
+
+                    case ReferenceFormType.IDENTIFIER: val = r.getIdentifier();      break;
+
+                    case ReferenceFormType.INDEX:      val = r.getIndex();           break;
+
+                    case ReferenceFormType.NAME:       val = r.getName();            break;
+
+                    case ReferenceFormType.OFFSET:     val = r.getOffset();          break;
+
+                    case ReferenceFormType.ENUMERATED: val = r.getEnumeratedValue(); break;
+
+                    case ReferenceFormType.PROPERTY:   val = r.getProperty();        break; 
+
+                    }
+
+       
+
+                return val;
+
+                }
+
+            catch (e) { throw(e); }
+
+            }
+
+        }  
+
+    catch(e) { _alert(e); } 
+
+    }

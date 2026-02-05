@@ -1,0 +1,26 @@
+var strings = ["viewInfo", "viewTransform", /*... and so on*/ ];
+
+// how to get all strings
+
+for (var i = 0; i < 0xFFFFFFFF; i++)    
+    {
+    var s = typeIDToStringID(i);
+
+    if (s) strings.push(s);   
+    }    
+
+
+// test if property exists in document
+
+for (var i = 0; i < strings.length; i++)    
+    {
+    var r = new ActionReference();  
+    r.putProperty(stringIDToTypeID("property"), stringIDToTypeID(strings[i]);    
+    r.putEnumerated(stringIDToTypeID("document"), stringIDToTypeID("ordinal"), stringIDToTypeID("targetEnum")); 
+
+    var ok = true;
+
+    try { var result = executeActionGet(r); } catch (e) { ok = false; }
+
+    if (ok) alert(strings[i] + " exists in document");
+    }

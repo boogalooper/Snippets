@@ -1,0 +1,36 @@
+https://community.adobe.com/t5/photoshop-ecosystem/how-to-record-an-action-for-healing-brush-clone-tool/td-p/9342049
+
+
+The hack ))
+
+
+Make a copy of the original ScriptListener.8li file.
+Open it with any binary editor. Find the text "toolRecording".
+Change any letter. Let it be, for example, "toolRRcording". Save the file.
+Launch photoshop. Enable the option "Allow tool recording" if not enabled.
+Create any Action. Turn on the recording. Draw something, or use an arbitrary tool.
+In the file ScriptingListenerJS.log you will see a huge code (not always a huge) code for any tool.
+
+
+UPD.
+
+
+proof
+
+
+
+Indeed that works and SL content for single drawing is really huge:
+
+(function(){
+
+     (fle = File('~/desktop/ScriptListener.8li')).open('r')
+
+     fle.encoding = 'binary'; var r = fle.read().replace
+
+     (/toolRecording/, 'toolrecording')
+
+     fle.open('w'), fle.write(r), fle.close()
+
+})()
+
+Quite similar code to that which is created when you print something.

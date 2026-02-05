@@ -13,199 +13,23 @@ var apl = new AM('application'),
     lr = new AM('layer'),
     pth = new AM('path');
 if (apl.getProperty('numberOfDocuments')) {
-    var hst = activeDocument.activeHistoryState,
-        layers = [], deltas = [];
-    doc.setGlobalFxState(false);
-    try {
-        activeDocument.suspendHistory('Checking layers', 'main(1)');
-        if (layers.frames.length == layers.objects.length) activeDocument.suspendHistory('Find optimal position', 'main(2)');
-        activeDocument.activeHistoryState = hst;
-        activeDocument.suspendHistory('Align layers', 'main(3)');
-    } catch (e) { activeDocument.activeHistoryState = hst; alert(e) }
-    doc.setGlobalFxState(true);
-    function main(step) {
-        switch (step) {
-            case 1: doForcedProgress('Step 1/3: Get initial bounds of layers', 'step1()'); break;
-            case 2: doForcedProgress('Step 2/3: Find optimal position for layers', 'step2()'); break;
-            case 3: doForcedProgress('Step 3/3: Align layers', 'step3()'); break;
+    lr.selectLayer(id)
+    lr.selectTransparency();
+    lr.expandSelection(EXPAND_BY * SCALE);
+    pth.workPathFromSelection(1);
+    var pathComponents = (pth.getProperty('pathContents')).getList(stringIDToTypeID('pathComponents'));
+    if (pathComponents.count > 1) {
+        for (var i = pathComponents.count - 1; i >= 0; i--) {
+            changeProgressText('Step 1/3: Split gray shapes to layers ' + Math.round((pathComponents.count - 1 - i) / (pathComponents.count - 1) * 100) + '%')
+            pth.workPathFromDesc(pathComponents.getObjectValue(i));
+            pth.selectionFromWorkPath();
+            lr.selectLayer(id)
+            if (lr.layerViaCut()) { result.push(describeLayer(lr.getProperty('layerID'))) }
         }
-        function step1() {
-            layers = findLayers();
-            doc.setScale(SCALE * 100);
-            if (layers.frames.length) {
-                changeProgressText('Step 1/3: Preparing to split gray shapes')
-                layers.frames = grayFramesToLayers(layers.frames);
-                if (layers.frames.length == layers.objects.length) {
-                    var docRes = doc.getProperty('resolution');
-                    for (var i = 0; i < layers.objects.length; i++) {
-                        lr.selectLayer(layers.objects[i].id)
-                        layers.objects[i] = describeLayer(layers.objects[i].id, doc.getProperty('width') * docRes / 72, doc.getProperty('height') * docRes / 72)
-                    }
-                } else throw new Error('The number of gray shapes found does not match the number of objects found!')
-            } else throw new Error('No shape layers found!')
-        }
-        function step2() {
-            var result = alignLayers(layers.frames, layers.objects);
-            for (var i = 0; i < result.length; i++) {
-                changeProgressText('Step 2/3: Find optimal position for layers ' + Math.round(((i + 1) / result.length) * 100) + '%')
-                deltas.push({ layer: result[i], transform: checkOrientation(result[i]) })
-            };
-        }
-        function step3() {
-            for (var i = 0; i < deltas.length; i++) {
-                lr.selectLayer(deltas[i].layer.id)
-                changeProgressText('Step 3/3: Align layer: ' + lr.getProperty('name', deltas[i].layer.id))
-                lr.transform(deltas[i].transform, deltas[i].layer.center[0] / SCALE, deltas[i].layer.center[1] / SCALE)
-                lr.move(deltas[i].layer.dX / SCALE, deltas[i].layer.dY / SCALE)
-            };
-        }
-    }
+        pth.delete();
+    } else { result.push(describeLayer(id)) }
 }
-function findLayers() {
-    var layers = getLayersCollection(),
-        result = {};
-    result.frames = [];
-    result.objects = [];
-    for (a in layers) {
-        changeProgressText('Step 1/3: Get initial bounds of layers ' + Math.round((parseInt(a) + 1) / (layers.length) * 100) + '%')
-        if (layers[a].length) {
-            lr.selectLayer(layers[a].id)
-            lr.merge();
-            var id = lr.getProperty('layerID');
-            lr.setVisiblity(id, 'hide')
-            result.objects.push({ id: id })
-        } else result.frames.push({ id: layers[a].id })
-    }
-    return result;
-}
-function getLayersCollection() {
-    var doc = new AM('document'),
-        lr = new AM('layer'),
-        indexFrom = doc.getProperty('hasBackgroundLayer') ? 0 : 1,
-        indexTo = doc.getProperty('numberOfLayers');
-    return layersCollection(indexFrom, indexTo)
-    function layersCollection(from, to, parentItem, group) {
-        parentItem = parentItem ? parentItem : [];
-        for (var i = from; i <= to; i++) {
-            var layerSection = lr.getProperty('layerSection', i, true);
-            if (layerSection == 'layerSectionEnd') {
-                i = layersCollection(i + 1, to, [], parentItem)
-                continue;
-            }
-            if (lr.getProperty('background', i, true)) continue;
-            var properties = {};
-            properties.id = lr.getProperty('layerID', i, true);
-            if (layerSection == 'layerSectionStart') {
-                for (o in properties) { parentItem[o] = properties[o] }
-                group.push(parentItem);
-                return i;
-            } else {
-                parentItem.push(properties)
-            }
-        }
-        return parentItem
-    }
-}
-function alignLayers(a, b) {
-    var result = [];
-    do {
-        var cur = b.shift(),
-            target = findNearest(cur, a);
-        lr.selectLayer(cur.id);
-        lr.move((target.center[0] - cur.center[0]) - cur.offsetX, (target.center[1] - cur.center[1]) - cur.offsetY)
-        result.push({ id: cur.id, bounds: target.bounds, dX: target.center[0] - cur.center[0], dY: target.center[1] - cur.center[1], center: cur.center, targetId: target.id })
-    } while (b.length)
-    return result;
-}
-function findNearest(a, b) {
-    var dist = [];
-    for (var i = 0; i < b.length; i++) {
-        if (b[i].found) continue;
-        if (Math.abs(b[i].WxH - a.WxH) > WXHTolerance) continue;
-        dist.push({ i: i, dist: Math.abs(b[i].square - a.square) });
-    }
-    if (!dist.length) throw new Error('Pair for layer ' + lr.getProperty('name', a.id) + ' not found!');
-    dist.sort(function (a, b) { return a.dist > b.dist ? 1 : -1 })
-    b[dist[0].i].found = true;
-    return b[dist[0].i];
-}
-function checkOrientation(o) {
-    var transformMatrices = [[100, -100], [-100, 100], [100, -100], [-100, 100]],
-        transform = [[100, -100], [-100, -100], [-100, 100], [100, 100]],
-        result = [];
-    lr.selectLayer(o.id, true)
-    lr.setBlendingMode('blendSubtraction');
-    for (var i = 0; i < transformMatrices.length; i++) result.push(findDifference(o, transformMatrices[i], transform[i]));
-    lr.delete(o.id);
-    lr.delete(o.targetId);
-    result.sort(function (a, b) { return a[0] > b[0] ? 1 : -1 })
-    return result[0][1]
-    function findDifference(o, transformMatrices, transform) {
-        lr.removeSelection()
-        lr.transform(transformMatrices)
-        lr.selectLayer(o.targetId)
-        lr.selectTransparency()
-        var c = getAverageColor(doc.getProperty('histogram'))
-        lr.selectLayer(o.id, true)
-        return [c, transform]
-    }
-}
-function grayFramesToLayers(l) {
-    var result = [];
-    for (var a in l) isolateLayers(l[a].id, lr.getProperty('name', l[a].id), result)
-    return result;
-    function isolateLayers(id, title, result) {
-        lr.selectLayer(id)
-        lr.selectTransparency();
-        lr.expandSelection(EXPAND_BY * SCALE);
-        pth.workPathFromSelection(1);
-        var pathComponents = (pth.getProperty('pathContents')).getList(stringIDToTypeID('pathComponents'));
-        if (pathComponents.count > 1) {
-            for (var i = pathComponents.count - 1; i >= 0; i--) {
-                changeProgressText('Step 1/3: Split gray shapes to layers ' + Math.round((pathComponents.count - 1 - i) / (pathComponents.count - 1) * 100) + '%')
-                pth.workPathFromDesc(pathComponents.getObjectValue(i));
-                pth.selectionFromWorkPath();
-                lr.selectLayer(id)
-                if (lr.layerViaCut()) { result.push(describeLayer(lr.getProperty('layerID'))) }
-            }
-            pth.delete();
-        } else { result.push(describeLayer(id)) }
-    }
-}
-function describeLayer(id, docW, docH) {
-    var o = {},
-        bounds = lr.descToObject(lr.getProperty('boundsNoEffects', id));
-    o.id = id;
-    o.width = bounds.right - bounds.left
-    o.heigth = bounds.bottom - bounds.top
-    o.bounds = bounds
-    o.center = [bounds.left + o.width / 2, bounds.top + o.heigth / 2]
-    o.found = false;
-    if (docW && docH) {
-        o.offsetX = o.bounds.left < 0 ? 0 - (o.bounds.left) : (o.bounds.right > docW ? docW - (o.bounds.right) : 0);
-        o.offsetY = o.bounds.top < 0 ? 0 - (o.bounds.top) : (o.bounds.bottom > docH ? docH - (o.bounds.bottom) : 0);
-        if (o.offsetX != 0 || o.offsetY != 0) lr.move(o.offsetX, o.offsetY, 0, 0)
-    }
-    lr.selectTransparency()
-    o.square = countPixels(doc.getProperty('histogram'))
-    o.WxH = Math.round((o.width / o.heigth) * WXHAccuracy) / WXHAccuracy
-    return o
-}
-function getAverageColor(h) {
-    var n = p = 0;
-    for (var i = 0; i < h.count; i++) {
-        n += h.getInteger(i)
-        p += h.getInteger(i) * i
-    }
-    return p / n
-}
-function countPixels(h) {
-    var s = 0;
-    for (var i = 0; i < h.count; i++) {
-        s += h.getInteger(i)
-    }
-    return s
-}
+
 function AM(target) {
     var s2t = stringIDToTypeID,
         t2s = typeIDToStringID;
