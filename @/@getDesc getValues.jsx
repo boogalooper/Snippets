@@ -1,7 +1,7 @@
 ﻿
 #target photoshop
 
-(r = new ActionReference());//.putProperty(s2t('property'), p = s2t('json'));
+    (r = new ActionReference());//.putProperty(s2t('property'), p = s2t('json'));
 r.putEnumerated(s2t('layer'), s2t('ordinal'), s2t('targetEnum'));
 checkDesc(executeActionGet(r));
 

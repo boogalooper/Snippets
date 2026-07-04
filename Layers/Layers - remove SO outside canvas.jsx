@@ -2,7 +2,8 @@
  * https://community.adobe.com/t5/photoshop-ecosystem/selecting-all-smart-objects-outside-canvas/m-p/12330706
 /*
 <javascriptresource>
-<category>jazzy</category>
+<category>User</category>
+<name>Remove SO outside canvas</name>
 <enableinfo>true</enableinfo>
 </javascriptresource>
 */

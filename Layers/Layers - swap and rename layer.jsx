@@ -1,7 +1,7 @@
 ﻿/**transfer of the selected layer to another document  */
 /*
 <javascriptresource>
-    <category>jazzy</category>
+    <category>User</category>
     <enableinfo>true</enableinfo>
     <eventid>2d22904d-cba0-48ca-aabb-cb5a91ab10a8</eventid>
 </javascriptresource>
