@@ -10,6 +10,7 @@
 <javascriptresource>
 <category>alignment</category>
 <name>Align and fit subjects</name>
+<eventid>5a2946a7-c3d1-430b-8527-c854f5bb7241</eventid>
 <enableinfo>true</enableinfo>
 </javascriptresource>
 */

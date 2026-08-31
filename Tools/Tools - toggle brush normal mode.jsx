@@ -12,8 +12,8 @@ currentTool = 'paintbrushTool';
 r.putEnumerated(s2t('application'), s2t('ordinal'), s2t('targetEnum'));
 var tool = executeActionGet(r);
 
-    setBrushMode('color')
-    applyLocking(true)
+    setBrushMode('normal')
+    applyLocking(false)
 
 
 function setBrushMode(mode) {

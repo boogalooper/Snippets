@@ -3,6 +3,7 @@
 <javascriptresource>
 <category>User</category>
 <name>Sort layers</name>
+<eventid>63214c9a-7a01-46fa-adff-41f4a8010da3</eventid>
 <enableinfo>true</enableinfo>
 </javascriptresource>
 */

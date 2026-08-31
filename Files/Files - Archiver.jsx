@@ -20,7 +20,7 @@ $.localize = true;
 if (apl.getProperty('numberOfDocuments')) main();
 function main() {
     var pth = doc.getProperty('fileReference'),
-        title = decodeURI(pth.name).replace(/\..+$/g, ''),
+        title = decodeURI(pth.name).replace(/\.\w+$/, ''),
         newFile = null,
         s = '';
     if (doc.getProperty('numberOfLayers') > 0) {

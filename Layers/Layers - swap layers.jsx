@@ -4,6 +4,7 @@
 <javascriptresource>
 <name>Swap layers</name>
 <category>User</category>
+<eventid>199c9ccc-c24e-4dd7-bdb4-55dc0d58c1e4</eventid>
 <enableinfo>true</enableinfo>
 </javascriptresource>
 // END__HARVEST_EXCEPTION_ZSTRING
@@ -27,9 +28,9 @@
     function main() {
         var ids = selectedLayerIDs();
 
-        if (ids.length !== 2) {
-            throw new Error("Выдели ровно два слоя.");
-        }
+        if (ids.length == 2) {
+            
+        
 
         var A = snap(ids[0]);
         var B = snap(ids[1]);
@@ -52,6 +53,7 @@
         link(B.id, remap(A.links, A.id, B.id));
 
         selectID(A.id, false);
+		}
     }
 
     // ============================================================
