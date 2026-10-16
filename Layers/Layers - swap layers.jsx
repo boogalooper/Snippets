@@ -1,4 +1,4 @@
-#target photoshop
+﻿#target photoshop
 /*
 // BEGIN__HARVEST_EXCEPTION_ZSTRING
 <javascriptresource>
@@ -15,6 +15,10 @@
     var EPS = 0.001;
     var PASSES = 3;
 
+    // true  — два обычных одиночных слоя ИЛИ две группы меняются местами по левому верхнему углу.
+    // false — оба простых случая меняются местами по центру.
+    var ALIGN_SIMPLE_SWAP_TOP_LEFT = true;
+
     // contain — слой целиком помещается в старое место второго слоя.
     // cover — слой полностью перекрывает старое место второго слоя, возможен выход за края.
     var FIT_MODE = "contain";
@@ -27,14 +31,24 @@
 
     function main() {
         var ids = selectedLayerIDs();
-
-        if (ids.length == 2) {
-            
-        
+        if (ids.length !== 2) return;
 
         var A = snap(ids[0]);
         var B = snap(ids[1]);
 
+        // Простая перестановка без Free Transform:
+        // 1) два обычных слоя без обтравочной маски;
+        // 2) две группы.
+        // Меняется только положение на макете. Масштаб, угол, порядок
+        // в палитре, обтравка и прочие свойства остаются прежними.
+        if (isSimplePositionSwap(A, B)) {
+            swapPositions(A, B);
+            selectID(A.id, false);
+            return;
+        }
+
+        // Для остальных сочетаний сохраняем прежнюю логику:
+        // подгонка геометрии, обмен местами в стеке, обтравкой и связями.
         unlink(A.id);
         unlink(B.id);
 
@@ -53,7 +67,6 @@
         link(B.id, remap(A.links, A.id, B.id));
 
         selectID(A.id, false);
-		}
     }
 
     // ============================================================
@@ -63,18 +76,121 @@
     function snap(id) {
         var d = layerDesc(id);
 
+        var b = readBounds(d);
+
         return {
             id: id,
             index: d.getInteger(s2t("itemIndex")),
             clipped: has(d, "group") ? d.getBoolean(s2t("group")) : false,
+            isGroup: isGroupLayer(d),
             links: layerLinks(d),
+            // Для простого обмена используем реальный boundsNoEffects,
+            // а не quad Smart Object. Это та же система координат документа,
+            // в которой Photoshop выполняет обычный Move.
+            position: {
+                left: b.left,
+                top: b.top,
+                cx: (b.left + b.right) / 2,
+                cy: (b.top + b.bottom) / 2
+            },
             frame: layerFrame(d)
         };
+    }
+
+    function isGroupLayer(d) {
+        if (!has(d, "layerSection")) return false;
+
+        try {
+            return d.getEnumerationValue(s2t("layerSection")) === s2t("layerSectionStart");
+        } catch (e) {
+            return false;
+        }
     }
 
     function layerFrame(d) {
         var q = smartObjectQuad(d);
         return q ? frameFromQuad(q) : frameFromBounds(readBounds(d));
+    }
+
+    // ============================================================
+    // Simple position swap
+    // ============================================================
+
+    function isSimplePositionSwap(A, B) {
+        var twoPlainLayers = !A.isGroup && !B.isGroup && !A.clipped && !B.clipped;
+        var twoGroups = A.isGroup && B.isGroup;
+
+        return twoPlainLayers || twoGroups;
+    }
+
+    function swapPositions(A, B) {
+        // Временно снимаем связи, иначе связанный слой может уехать вместе
+        // с перемещаемым. После перестановки восстанавливаем исходные связи.
+        unlink(A.id);
+        unlink(B.id);
+
+        // Точная математика как в Face alignment:
+        // обе абсолютные позиции фиксируются ДО первого Move, после чего
+        // рассчитывается один вектор A -> B. Второй слой получает строго
+        // противоположный вектор. Никаких повторных измерений и Transform.
+        //
+        // При ALIGN_SIMPLE_SWAP_TOP_LEFT=true опорной точкой служит
+        // левый верхний угол boundsNoEffects как для двух обычных слоёв,
+        // так и для двух групп. При false — центр.
+        var useTopLeft = ALIGN_SIMPLE_SWAP_TOP_LEFT;
+        var dx = useTopLeft ? B.position.left - A.position.left : B.position.cx - A.position.cx;
+        var dy = useTopLeft ? B.position.top  - A.position.top  : B.position.cy - A.position.cy;
+
+        moveLayer(A.id, dx, dy);
+        moveLayer(B.id, -dx, -dy);
+
+        // Восстанавливаем связи попарно, чтобы случайно не связать между
+        // собой сторонние слои из двух разных наборов.
+        restoreLinks(A.id, A.links);
+        restoreLinks(B.id, B.links);
+    }
+
+    function restoreLinks(id, ids) {
+        ids = unique(ids);
+
+        for (var i = 0; i < ids.length; i++) {
+            if (ids[i] === id || !exists(ids[i])) continue;
+            linkPair(id, ids[i]);
+        }
+    }
+
+    function linkPair(a, b) {
+        if (!exists(a) || !exists(b) || a === b) return;
+
+        selectIDs([a, b]);
+
+        try {
+            executeAction(s2t("linkSelectedLayers"), new ActionDescriptor(), DialogModes.NO);
+        } catch (e) {
+            try {
+                executeAction(c2t("Lnk "), new ActionDescriptor(), DialogModes.NO);
+            } catch (e) {}
+        }
+    }
+
+    function moveLayer(id, dx, dy) {
+        if (Math.abs(dx) < EPS && Math.abs(dy) < EPS) return;
+
+        // Ровно тот же способ перемещения, что используется в Face alignment:
+        // Action Manager Move -> to: offset. Это не Free Transform.
+        selectID(id, false);
+
+        var d = new ActionDescriptor();
+        var r = new ActionReference();
+        r.putEnumerated(s2t("layer"), s2t("ordinal"), s2t("targetEnum"));
+        d.putReference(s2t("null"), r);
+
+        var o = new ActionDescriptor();
+        o.putUnitDouble(s2t("horizontal"), s2t("pixelsUnit"), dx);
+        o.putUnitDouble(s2t("vertical"), s2t("pixelsUnit"), dy);
+        d.putObject(s2t("to"), s2t("offset"), o);
+
+        executeAction(s2t("move"), d, DialogModes.NO);
     }
 
     // ============================================================
